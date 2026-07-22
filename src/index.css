@@ -1,0 +1,130 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: theme("colors.background");
+  color: theme("colors.on-background");
+  font-family: "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------- Breaking ticker ---------------- */
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: content-box;
+  white-space: nowrap;
+}
+.ticker {
+  display: inline-block;
+  padding-left: 100%;
+}
+.ticker__item {
+  display: inline-block;
+  padding: 0 2rem;
+}
+
+.section-header-border {
+  border-bottom: 2px solid theme("colors.primary");
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+}
+
+/* ---------------- Signature accent underline (nav + links) ---------------- */
+.accent-underline {
+  position: relative;
+}
+.accent-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 2px;
+  width: 0%;
+  background-color: theme("colors.accent");
+  transition: width 0.25s ease;
+}
+.accent-underline:hover::after,
+.accent-underline.is-active::after {
+  width: 100%;
+}
+
+/* ---------------- Card hover lift ---------------- */
+.hover-lift {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -12px rgba(15, 23, 42, 0.18);
+  border-color: theme("colors.accent");
+}
+
+/* ---------------- Image reveal on hover ---------------- */
+.img-fade {
+  filter: grayscale(1);
+  opacity: 0.92;
+  transition: filter 0.6s ease, opacity 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .img-fade {
+  filter: grayscale(0);
+  opacity: 1;
+}
+.group:hover .img-scale {
+  transform: scale(1.06);
+}
+.img-scale {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------------- Reveal-on-scroll ---------------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------------- Focus ring uses the accent ---------------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid theme("colors.accent");
+  outline-offset: 2px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal,
+  .hover-lift,
+  .img-fade,
+  .img-scale,
+  .ticker,
+  .accent-underline::after {
+    transition: none !important;
+    animation: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
