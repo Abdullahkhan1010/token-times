@@ -45,11 +45,13 @@ export default function App() {
   return (
     <div className="w-full min-h-screen flex flex-col bg-background text-on-background">
       {/* Top Header */}
-      <header className="bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50">
-        <Header setActivePage={setActivePage} />
+      <header className="bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50 rounded-none">
+        <Header activePage={activePage} setActivePage={setActivePage} />
         {/* Navigation Menu */}
         <Navigation activePage={activePage} setActivePage={setActivePage} />
       </header>
+
+
 
       {/* Breaking News Ticker */}
       <BreakingTicker />

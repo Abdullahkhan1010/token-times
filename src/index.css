@@ -16,6 +16,10 @@ body {
 }
 
 /* ---------------- Shared rounded surfaces ---------------- */
+header {
+  border-radius: 0 !important;
+}
+
 :where(
   .bg-surface-container-lowest,
   .bg-surface-container-low,
@@ -31,6 +35,7 @@ body {
 ) {
   border-radius: 1rem;
 }
+
 
 
 :where(.bg-surface-container-lowest, .bg-surface-container-low, .bg-surface-container-high, .bg-surface-bright, .bg-surface-variant) {
