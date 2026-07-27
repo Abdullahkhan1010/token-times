@@ -37,6 +37,22 @@ export const heroSubStories = [
   { tag: "GLOBAL", title: "MiCA Framework Goes Live in EU: Implications for Pakistani VASPs", time: "Yesterday" },
 ];
 
+export const heroLeftArticles = [
+  {
+    tag: "INSIGHTS",
+    title: "Navigating Cross-Border Settlement via Distributed Ledger Networks",
+    read: "4 Min Read",
+    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuA4Dz2Z5B-GkDMnrR0bKKkX-dJbfdfbgc7TvBJR_Uu2x7wZDWJiGYBKn2PmOd19Ywfj7yLruR8Bj7o0b1DqDt1geC-5WANRxJDyjou56NB2CANibH5XxWRpLGXKZ6P5z8mvMAsCWSrMqtfDdiQM7f_kPDJxPZJ1pzftbB79vTndbDgwaZ3-dRRkzquQVasw1yx8tOHkXHybuV0GCE4Q_WT7_wvpxCeqe7gauxRthU5B4dseRQnbfxBbIs1aE1t_ewYAoiIClorUnGk",
+  },
+  {
+    tag: "SPOTLIGHT",
+    title: "How Tokenized Sovereign Bonds Could Transform Emerging Debt Markets",
+    read: "5 Min Read",
+    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBgyzCbG60lvIFTQKg26XntSCOHuPXN-3VME8fauPPOKXhlpbiEwff1rA-d3SE1ZFowCZAbA77CvjbrmI4m99zr5DPnXgHsoBmiXATqCh3M2-xFNsSeX_yZXS88H6IBZSAmErDP6HnACV0bBeln1nOdbf3KnbWeLIzN6fv26kDv9qFUIG2EdbdBwkFkfQkhgZC9GCxqpB2AgyTB1IWyVebeAmupft1j6R7sEXRLOraMEL5Zd52dmOwKIDp7W1x1rZt-L2cTvQGNB2A",
+  },
+];
+
+
 export const editorsPicks = [
   {
     tag: "DEEP DIVE",

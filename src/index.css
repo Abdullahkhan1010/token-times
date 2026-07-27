@@ -27,11 +27,11 @@ body {
   .bg-secondary-container,
   .bg-accent-container,
   .bg-error-container,
-  .border-outline-variant,
   .border-surface-container-highest
 ) {
   border-radius: 1rem;
 }
+
 
 :where(.bg-surface-container-lowest, .bg-surface-container-low, .bg-surface-container-high, .bg-surface-bright, .bg-surface-variant) {
   overflow: hidden;
