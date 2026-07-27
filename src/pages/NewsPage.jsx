@@ -15,10 +15,10 @@ export default function NewsPage() {
       {/* Top Banner / Section Header */}
       <Reveal as="div" className="border-b border-outline-variant pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <span className="font-label-caps text-xs text-accent font-bold uppercase tracking-widest block mb-1">
+          <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block mb-1">
             DIGITAL ASSETS INTELLIGENCE STREAM
           </span>
-          <h1 className="font-display-lg text-3xl md:text-5xl font-bold text-on-surface">
+          <h1 className="font-display-lg text-3xl md:text-5xl font-bold text-[#0C133D]">
             Latest News & Market Analysis
           </h1>
         </div>
@@ -33,10 +33,10 @@ export default function NewsPage() {
           <button
             key={cat}
             onClick={() => setSelectedCat(cat)}
-            className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap border ${
+            className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap border ${
               selectedCat === cat
-                ? "bg-accent text-on-accent border-accent shadow-sm"
-                : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-accent hover:text-accent"
+                ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] shadow-sm font-extrabold"
+                : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37] hover:text-[#0C133D]"
             }`}
           >
             {cat}
@@ -51,7 +51,7 @@ export default function NewsPage() {
           {/* Featured Breaking Lead Story */}
           <Reveal
             as="article"
-            className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden cursor-pointer"
+            className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden cursor-pointer shadow-sm hover:border-[#D4AF37]"
           >
             <div className="relative w-full h-64 sm:h-80 md:h-96 overflow-hidden">
               <img
@@ -59,12 +59,12 @@ export default function NewsPage() {
                 alt={newsPageData.leadStory.title}
                 className="img-fade img-scale w-full h-full object-cover"
               />
-              <span className="absolute top-3 left-3 bg-accent text-on-accent text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+              <span className="absolute top-3 left-3 bg-[#D4AF37] text-[#0C133D] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
                 {newsPageData.leadStory.tag}
               </span>
             </div>
             <div className="p-6">
-              <h2 className="font-headline-lg text-xl sm:text-2xl md:text-3xl font-bold text-on-surface group-hover:text-accent transition-colors leading-tight mb-3">
+              <h2 className="font-headline-lg text-xl sm:text-2xl md:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight mb-3">
                 {newsPageData.leadStory.title}
               </h2>
               <p className="text-sm md:text-base text-on-surface-variant mb-4 leading-relaxed">
@@ -75,14 +75,14 @@ export default function NewsPage() {
                 <span>•</span>
                 <span>{newsPageData.leadStory.time}</span>
                 <span>•</span>
-                <span>{newsPageData.leadStory.readTime}</span>
+                <span className="text-[#D4AF37] font-bold">{newsPageData.leadStory.readTime}</span>
               </div>
             </div>
           </Reveal>
 
           {/* Filtered Articles List */}
           <div className="space-y-6">
-            <h3 className="font-headline-sm text-lg font-bold text-primary border-b border-outline-variant pb-2">
+            <h3 className="font-headline-sm text-lg font-bold text-[#0C133D] border-b border-outline-variant pb-2">
               {selectedCat === "All" ? "Recent News Stream" : `${selectedCat} News`}
             </h3>
 
@@ -91,21 +91,21 @@ export default function NewsPage() {
                 key={art.id}
                 as="article"
                 delay={i * 60}
-                className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row gap-5 cursor-pointer"
+                className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row gap-5 cursor-pointer shadow-sm hover:border-[#D4AF37]"
               >
-                <div className="w-full sm:w-48 sm:h-32 h-44 shrink-0 overflow-hidden rounded-lg bg-surface-variant relative">
+                <div className="w-full sm:w-48 sm:h-32 h-44 shrink-0 overflow-hidden rounded-lg bg-surface-variant relative border border-outline-variant/60">
                   <img
                     src={art.img}
                     alt={art.title}
                     className="img-fade img-scale w-full h-full object-cover"
                   />
-                  <span className="absolute top-2 left-2 bg-background/90 text-accent text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+                  <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase shadow-sm">
                     {art.tag}
                   </span>
                 </div>
                 <div className="flex flex-col justify-between flex-grow">
                   <div>
-                    <h4 className="font-headline-md text-base sm:text-lg font-bold text-on-surface group-hover:text-accent transition-colors leading-snug mb-2">
+                    <h4 className="font-headline-md text-base sm:text-lg font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug mb-2">
                       {art.title}
                     </h4>
                     <p className="text-xs sm:text-sm text-on-surface-variant line-clamp-2 mb-3">
@@ -114,8 +114,9 @@ export default function NewsPage() {
                   </div>
                   <div className="flex items-center justify-between text-xs text-on-surface-variant font-data-tabular pt-2 border-t border-outline-variant/30">
                     <span>By {art.author} • {art.time}</span>
-                    <span className="text-accent font-semibold">{art.readTime}</span>
+                    <span className="text-[#D4AF37] font-semibold">{art.readTime}</span>
                   </div>
+
                 </div>
               </Reveal>
             ))}
@@ -125,21 +126,21 @@ export default function NewsPage() {
         {/* Right 4 Columns: Most Read & Breaking Wire Sidebar */}
         <div className="lg:col-span-4 space-y-6">
           {/* Most Read Widget */}
-          <Reveal as="div" className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 space-y-4">
+          <Reveal as="div" className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 space-y-4 shadow-sm">
             <div className="flex items-center justify-between border-b border-outline-variant pb-3">
-              <h3 className="font-headline-sm text-base font-bold text-primary uppercase tracking-wider">
+              <h3 className="font-headline-sm text-base font-bold text-[#0C133D] uppercase tracking-wider">
                 Trending / Most Read
               </h3>
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
             </div>
             <div className="space-y-4">
               {newsPageData.mostRead.map((item) => (
                 <div key={item.rank} className="flex gap-4 items-start group cursor-pointer border-b border-outline-variant/40 pb-3 last:border-none">
-                  <span className="font-display-lg text-2xl font-extrabold text-accent/50 group-hover:text-accent transition-colors w-6">
+                  <span className="font-display-lg text-2xl font-extrabold text-[#D4AF37] group-hover:scale-110 transition-transform w-6">
                     0{item.rank}
                   </span>
                   <div>
-                    <h4 className="text-sm font-semibold text-on-surface group-hover:text-accent transition-colors leading-snug mb-1">
+                    <h4 className="text-sm font-semibold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug mb-1">
                       {item.title}
                     </h4>
                     <span className="text-xs text-on-surface-variant font-data-tabular">
@@ -152,22 +153,22 @@ export default function NewsPage() {
           </Reveal>
 
           {/* Newsletter Box */}
-          <Reveal as="div" className="bg-surface-container-high border border-outline-variant rounded-xl p-6 space-y-4">
-            <span className="font-label-caps text-xs text-accent font-bold uppercase">DAILY DISPATCH</span>
-            <h4 className="font-headline-md text-lg font-bold text-on-surface">
+          <Reveal as="div" className="bg-surface-container-lowest border border-outline-variant border-t-4 border-t-[#D4AF37] rounded-xl p-6 space-y-4 shadow-sm">
+            <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase">DAILY DISPATCH</span>
+            <h4 className="font-headline-md text-lg font-bold text-[#0C133D]">
               Get the Token Times Briefing
             </h4>
-            <p className="text-xs text-on-surface-variant">
+            <p className="text-xs text-on-surface-variant leading-relaxed">
               Every morning, get our curated breakdown of virtual asset policy, markets, and macroeconomic analysis.
             </p>
             <div className="space-y-2">
               <input
                 type="email"
                 placeholder="Enter your email..."
-                className="w-full px-3 py-2 text-xs bg-surface-container-lowest border border-outline-variant rounded-lg focus:outline-none focus:border-accent"
+                className="w-full px-3 py-2 text-xs bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]"
               />
-              <button className="w-full py-2 bg-accent text-on-accent text-xs font-bold rounded-lg hover:bg-accent-dark transition-colors">
-                Subscribe Free
+              <button className="w-full py-2.5 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/60 text-xs font-extrabold rounded-lg hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm">
+                Subscribe Free →
               </button>
             </div>
           </Reveal>
@@ -176,3 +177,4 @@ export default function NewsPage() {
     </div>
   );
 }
+

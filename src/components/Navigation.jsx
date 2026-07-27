@@ -18,8 +18,9 @@ export default function Navigation({ activePage = "Home", setActivePage }) {
               }
             }}
             className={`accent-underline font-label-caps text-label-caps pb-1 whitespace-nowrap transition-colors ${
-              activePage === link ? "text-primary is-active" : "text-on-surface-variant hover:text-primary"
+              activePage === link ? "text-[#D4AF37] font-bold is-active" : "text-[#0C133D] hover:text-[#D4AF37]"
             }`}
+
           >
             {link}
           </a>

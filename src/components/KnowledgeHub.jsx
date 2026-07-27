@@ -5,7 +5,7 @@ import { knowledgeHub } from "../data/content";
 export default function KnowledgeHub() {
   return (
     <section>
-      <Reveal as="h2" className="font-headline-lg text-headline-lg text-primary section-header-border">
+      <Reveal as="h2" className="font-headline-lg text-headline-lg text-[#0C133D] section-header-border">
         Knowledge Hub
       </Reveal>
       <div className="flex flex-col gap-4">
@@ -17,7 +17,7 @@ export default function KnowledgeHub() {
               style={{ textDecoration: "none" }}
             >
               <span className="font-label-caps text-label-caps text-on-surface-variant block mb-1">{item.eyebrow}</span>
-              <h3 className="font-headline-md text-headline-md text-on-surface group-hover:text-accent transition-colors mb-1">
+              <h3 className="font-headline-md text-headline-md text-on-surface group-hover:text-[#D4AF37] transition-colors mb-1">
                 {item.title}
               </h3>
               <p className="font-body-md text-body-md text-on-surface-variant" style={{ fontSize: 14 }}>
@@ -30,3 +30,5 @@ export default function KnowledgeHub() {
     </section>
   );
 }
+
+

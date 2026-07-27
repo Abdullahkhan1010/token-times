@@ -6,46 +6,48 @@ export default {
     extend: {
       colors: {
         // Deep imperial navy & royal gold color system matching the Token Times logo:
-        primary: "#0C133D", // Deep Imperial Navy
+        primary: "#0C133D", // Deep Imperial Navy matching logo
         "on-primary": "#FFFFFF",
         "primary-container": "#121A4B",
         "on-primary-container": "#A8B4E5",
 
-        // Royal Gold Accent matching logo symbol strokes (#fbef53 / #C5A028):
-        accent: "#C5A028", // Royal Warm Gold
-        "accent-dark": "#9E7E19",
-        "accent-container": "#FBF4D3",
+        // Luminous Royal Gold Accent matching logo symbol strokes (#FBDF53 / #D4AF37):
+        accent: "#D4AF37", // Luminous Royal Gold
+        "accent-light": "#F3CF55", // Bright Hover Glow Gold
+        "accent-dark": "#B08D23",
+        "accent-container": "#FAF1D3",
         "on-accent": "#0C133D", // Deep navy text on gold background
 
-        // Secondary Bronze-Gold Accent:
-        secondary: "#8B7020",
-        "secondary-container": "#F8F3DF",
+        // Secondary Warm Rose-Gold / Bronze Accent:
+        secondary: "#B8860B",
+        "secondary-container": "#F8EED8",
         "on-secondary": "#FFFFFF",
 
-        // Porcelain Canvas & Slate-Navy Tinted Surfaces:
-        background: "#F6F7FB",
-        surface: "#F6F7FB",
+        // Elegant Textured Rose Gold Warm Background Canvas:
+        background: "#F7F0EB",
+        surface: "#F7F0EB",
         "on-background": "#0C133D",
         "on-surface": "#0C133D",
-        "on-surface-variant": "#454C73",
+        "on-surface-variant": "#5C525A",
 
         "surface-container-lowest": "#FFFFFF",
-        "surface-container-low": "#EFF2FA",
-        "surface-container": "#EAEFF9",
-        "surface-container-high": "#E2E7F5",
-        "surface-container-highest": "#D7DDEE",
-        "surface-variant": "#E2E7F5",
-        "surface-dim": "#DFE4F2",
-        "surface-bright": "#F6F7FB",
+        "surface-container-low": "#F2E7E1",
+        "surface-container": "#ECE0D8",
+        "surface-container-high": "#E4D6CD",
+        "surface-container-highest": "#DBCAC0",
+        "surface-variant": "#E4D6CD",
+        "surface-dim": "#D7C8BE",
+        "surface-bright": "#F7F0EB",
         "surface-tint": "#0C133D",
 
-        "outline-variant": "#CBD2E8",
-        outline: "#69729E",
+        "outline-variant": "#E2D4CB",
+        outline: "#7F707A",
         error: "#BA1A1A",
         "error-container": "#FFDAD6",
         "on-error": "#FFFFFF",
         "on-error-container": "#93000A",
       },
+
 
       borderRadius: {
         DEFAULT: "0.25rem",

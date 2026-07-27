@@ -9,8 +9,13 @@ html {
 }
 
 body {
-  background-color: theme("colors.background");
-  color: theme("colors.on-background");
+  background-color: #F7F0EB;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 100% 100%, rgba(226, 212, 203, 0.25) 0%, transparent 50%),
+    radial-gradient(circle at 0% 50%, rgba(212, 175, 55, 0.04) 0%, transparent 40%);
+  background-attachment: fixed;
+  color: #0C133D;
   font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -36,8 +41,6 @@ header {
   border-radius: 1rem;
 }
 
-
-
 :where(.bg-surface-container-lowest, .bg-surface-container-low, .bg-surface-container-high, .bg-surface-bright, .bg-surface-variant) {
   overflow: hidden;
 }
@@ -47,6 +50,7 @@ header {
 }
 
 /* ---------------- Breaking ticker ---------------- */
+
 .ticker-wrap {
   width: 100%;
   overflow: hidden;
@@ -70,7 +74,7 @@ header {
 }
 
 .section-header-border {
-  border-bottom: 2px solid theme("colors.primary");
+  border-bottom: 2px solid #0C133D;
   margin-bottom: 24px;
   padding-bottom: 8px;
 }
@@ -86,22 +90,32 @@ header {
   bottom: -2px;
   height: 2px;
   width: 0%;
-  background-color: theme("colors.accent");
-  transition: width 0.25s ease;
+  background-color: #D4AF37;
+  transition: width 0.25s ease, background-color 0.25s ease;
 }
 .accent-underline:hover::after,
 .accent-underline.is-active::after {
   width: 100%;
+  background-color: #F3CF55;
 }
 
-/* ---------------- Card hover lift ---------------- */
+/* ---------------- Card hover lift & Accent Hover Effects ---------------- */
 .hover-lift {
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
 }
 .hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px -12px rgba(15, 23, 42, 0.18);
-  border-color: theme("colors.accent");
+  box-shadow: 0 12px 24px -12px rgba(12, 19, 61, 0.16);
+  border-color: #D4AF37;
+}
+
+/* Accent Button Hover Glow */
+.bg-accent {
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+}
+.bg-accent:hover {
+  background-color: #F3CF55 !important;
+  box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
 }
 
 /* ---------------- Image reveal on hover ---------------- */
@@ -123,7 +137,6 @@ img, video {
   max-width: 100%;
 }
 
-
 /* ---------------- Reveal-on-scroll ---------------- */
 .reveal {
   opacity: 0;
@@ -139,9 +152,10 @@ img, video {
 a:focus-visible,
 button:focus-visible,
 input:focus-visible {
-  outline: 2px solid theme("colors.accent");
+  outline: 2px solid #D4AF37;
   outline-offset: 2px;
 }
+
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;

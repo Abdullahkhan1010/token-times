@@ -6,20 +6,21 @@ export default function BreakingTicker() {
     tickerItems.map((item, i) => (
       <span key={`${prefix}-${i}`} className="ticker__item">
         {item}
-        <span className="ticker__item">•</span>
+        <span className="ticker__item text-accent font-bold">•</span>
       </span>
     ));
 
   return (
-    <div className="bg-accent text-white border-b border-accent-dark py-2 flex items-center">
-      <div className="px-4 md:px-12 font-label-caps text-label-caps whitespace-nowrap bg-accent z-10 font-bold border-r border-accent-dark pr-4 flex items-center gap-2 text-white">
-        <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full rounded-full bg-accent animate-pulse-dot" />
+    <div className="bg-[#0C133D] text-white border-b border-white/10 py-2 flex items-center shadow-sm">
+      <div className="px-4 md:px-12 font-label-caps text-xs whitespace-nowrap bg-[#0C133D] z-10 font-bold border-r border-white/10 pr-4 flex items-center gap-2">
+        <span className="bg-[#D4AF37] text-[#0C133D] px-2.5 py-0.5 rounded-sm text-[11px] font-extrabold tracking-wider flex items-center gap-1.5 shadow-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#0C133D] animate-pulse" />
+          BREAKING
         </span>
-        BREAKING
       </div>
+
       <div className="ticker-wrap h-5">
-        <div className="ticker animate-ticker font-data-tabular text-data-tabular text-white">
+        <div className="ticker animate-ticker font-data-tabular text-xs text-white/90">
           <div className="ticker-group">{tickerLine("a")}</div>
           <div className="ticker-group" aria-hidden="true">
             {tickerLine("b")}
@@ -29,3 +30,5 @@ export default function BreakingTicker() {
     </div>
   );
 }
+
+
