@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { navLinks } from "../data/content";
 
-export default function Navigation() {
-  const [active, setActive] = useState("Home");
-
+export default function Navigation({ activePage = "Home", setActivePage }) {
   return (
     <nav className="flex items-center gap-6 overflow-x-auto no-scrollbar px-4 md:px-12 pb-4">
       {navLinks.map((link) => (
@@ -12,10 +10,13 @@ export default function Navigation() {
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            setActive(link);
+            if (setActivePage) {
+              setActivePage(link);
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
           }}
           className={`accent-underline font-label-caps text-label-caps pb-1 whitespace-nowrap transition-colors ${
-            active === link ? "text-primary is-active" : "text-on-surface-variant hover:text-primary"
+            activePage === link ? "text-primary is-active" : "text-on-surface-variant hover:text-primary"
           }`}
         >
           {link}
@@ -24,3 +25,4 @@ export default function Navigation() {
     </nav>
   );
 }
+

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Search, Rss, Twitter, Linkedin } from "lucide-react";
 import logo from "../assets/TokenTimesLogo.svg";
 
-export default function Header() {
+export default function Header({ setActivePage }) {
   const [dateStr, setDateStr] = useState("");
 
   useEffect(() => {
@@ -14,10 +14,16 @@ export default function Header() {
     <div className="flex justify-between items-center w-full px-4 md:px-12 py-4">
       {/* Logo + date */}
       <div className="flex flex-col min-w-0 gap-2">
-        <div className="flex items-center gap-4 min-w-0">
-          <img alt="Token Times logo" className="w-14 h-14 md:w-16 md:h-16 shrink-0" src={logo} />
+        <div
+          onClick={() => {
+            if (setActivePage) setActivePage("Home");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className="flex items-center gap-4 min-w-0 cursor-pointer group"
+        >
+          <img alt="Token Times logo" className="w-14 h-14 md:w-16 md:h-16 shrink-0 group-hover:scale-105 transition-transform" src={logo} />
           <div className="flex flex-col min-w-0">
-            <h1 className="font-display-lg text-display-lg text-primary tracking-tighter leading-none truncate">
+            <h1 className="font-display-lg text-display-lg text-primary tracking-tighter leading-none truncate group-hover:text-accent transition-colors">
               Tokens Times
             </h1>
             <span className="font-label-caps text-label-caps text-on-surface-variant truncate">
@@ -29,6 +35,7 @@ export default function Header() {
           {dateStr}
         </span>
       </div>
+
 
       {/* Search and social */}
       <div className="flex items-center gap-gutter">

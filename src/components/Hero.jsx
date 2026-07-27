@@ -5,8 +5,8 @@ import { heroLead, heroSubStories, heroLeftArticles } from "../data/content";
 export default function Hero() {
   return (
     <section aria-label="Top featured stories" className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8 items-stretch">
-      {/* Left Column: 2 Featured Spotlight Articles with Top Pictures */}
-      <div className="lg:col-span-3 flex flex-col gap-4 h-full">
+      {/* Left Column: 2 Featured Spotlight Articles (2nd on mobile, 1st on desktop) */}
+      <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col gap-4 h-full">
         {/* Sleek Pill Header Container */}
         <div className="flex items-center justify-between border-b border-outline-variant/60 pb-2.5">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high border border-outline-variant/80 rounded-full max-w-full">
@@ -17,7 +17,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 flex-grow">
+        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex lg:flex-col gap-4 flex-grow">
           {heroLeftArticles.map((art, i) => (
             <Reveal
               key={art.title}
@@ -26,7 +26,7 @@ export default function Hero() {
               className="hover-lift group bg-surface-container-lowest border border-outline-variant flex-1 flex flex-col justify-between rounded-xl overflow-hidden cursor-pointer"
             >
               {/* Picture on Top */}
-              <div className="w-full h-44 sm:h-48 md:h-52 overflow-hidden relative border-b border-outline-variant/60 bg-surface-variant">
+              <div className="w-full h-40 sm:h-44 md:h-52 overflow-hidden relative border-b border-outline-variant/60 bg-surface-variant">
                 <img
                   className="img-fade img-scale w-full h-full object-cover"
                   alt={art.title}
@@ -52,14 +52,14 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Center Column: Main Lead Story (Image on top, Text below) */}
-      <div className="lg:col-span-6 flex flex-col h-full">
+      {/* Center Column: Main Lead Story (1st on mobile, 2nd on desktop) */}
+      <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col h-full">
         <Reveal
           as="article"
           className="hover-lift group bg-surface-container-lowest border border-outline-variant relative flex flex-col h-full rounded-xl overflow-hidden"
         >
           {/* Main Image on TOP */}
-          <div className="relative w-full h-80 sm:h-96 md:h-[440px] overflow-hidden border-b border-outline-variant">
+          <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[440px] overflow-hidden border-b border-outline-variant">
             <img
               className="img-fade img-scale w-full h-full object-cover"
               alt={heroLead.title}
@@ -71,15 +71,15 @@ export default function Hero() {
           </div>
 
           {/* Compact Text BELOW IT */}
-          <div className="p-5 flex flex-col flex-grow relative">
+          <div className="p-4 sm:p-5 flex flex-col flex-grow relative">
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-bl-xl" />
-            <h2 className="font-headline-lg text-xl md:text-2xl font-bold mb-2 text-on-surface group-hover:text-accent transition-colors leading-tight">
+            <h2 className="font-headline-lg text-lg sm:text-xl md:text-2xl font-bold mb-2 text-on-surface group-hover:text-accent transition-colors leading-tight">
               {heroLead.title}
             </h2>
-            <p className="font-body-md text-xs md:text-sm text-on-surface-variant mb-4 flex-grow leading-relaxed line-clamp-3">
+            <p className="font-body-md text-xs sm:text-sm text-on-surface-variant mb-4 flex-grow leading-relaxed line-clamp-3">
               {heroLead.summary}
             </p>
-            <div className="flex items-center gap-3 font-label-caps text-xs text-on-surface-variant pt-3 border-t border-outline-variant/50 mt-auto">
+            <div className="flex items-center gap-3 font-label-caps text-xs text-on-surface-variant pt-3 border-t border-outline-variant/50 mt-auto flex-wrap">
               <span>By {heroLead.author}</span>
               <span>•</span>
               <span>{heroLead.readTime}</span>
@@ -91,8 +91,8 @@ export default function Hero() {
         </Reveal>
       </div>
 
-      {/* Right Column: 4 Featured Sub-Stories */}
-      <div className="lg:col-span-3 flex flex-col gap-4 h-full">
+      {/* Right Column: 4 Featured Sub-Stories (3rd on mobile & desktop) */}
+      <div className="lg:col-span-3 order-3 lg:order-3 flex flex-col gap-4 h-full">
         {/* Sleek Pill Header Container */}
         <div className="flex items-center justify-between border-b border-outline-variant/60 pb-2.5">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high border border-outline-variant/80 rounded-full max-w-full">
@@ -103,7 +103,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 flex-grow">
+        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex lg:flex-col gap-4 flex-grow">
           {heroSubStories.map((s, i) => (
             <Reveal
               key={s.title}
@@ -115,7 +115,7 @@ export default function Hero() {
                 <span className="font-label-caps text-label-caps text-secondary mb-1.5 block">
                   {s.tag}
                 </span>
-                <h3 className="font-headline-md text-on-surface group-hover:text-accent transition-colors text-sm font-semibold leading-snug mb-2 line-clamp-2">
+                <h3 className="font-headline-md text-on-surface group-hover:text-accent transition-colors text-xs sm:text-sm font-semibold leading-snug mb-2 line-clamp-2">
                   {s.title}
                 </h3>
               </div>
@@ -129,6 +129,7 @@ export default function Hero() {
     </section>
   );
 }
+
 
 
 
