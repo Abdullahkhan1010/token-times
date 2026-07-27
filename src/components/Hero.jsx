@@ -52,21 +52,34 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Center Column: Main Lead Story (1st on mobile, 2nd on desktop) */}
-      <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col h-full">
+      {/* Center Column: Main Lead Story with Video */}
+      <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col h-full max-w-full">
         <Reveal
           as="article"
-          className="hover-lift group bg-surface-container-lowest border border-outline-variant relative flex flex-col h-full rounded-xl overflow-hidden"
+          className="hover-lift group bg-surface-container-lowest border border-outline-variant relative flex flex-col h-full rounded-xl overflow-hidden max-w-full"
         >
-          {/* Main Image on TOP */}
-          <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[440px] overflow-hidden border-b border-outline-variant">
-            <img
-              className="img-fade img-scale w-full h-full object-cover"
-              alt={heroLead.title}
-              src={heroLead.img}
-            />
-            <div className="absolute top-3 left-3 bg-accent/90 backdrop-blur-md text-on-accent font-label-caps px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-md max-w-[calc(100%-1.5rem)] truncate">
-              {heroLead.tag}
+          {/* Main Video on TOP */}
+          <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[440px] overflow-hidden border-b border-outline-variant bg-black max-w-full">
+            <video
+              className="w-full h-full object-cover max-w-full block"
+              autoPlay
+              loop
+              muted
+              playsInline
+              poster={heroLead.img}
+            >
+              <source
+                src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-data-42838-large.mp4"
+                type="video/mp4"
+              />
+              <img
+                className="img-fade img-scale w-full h-full object-cover max-w-full"
+                alt={heroLead.title}
+                src={heroLead.img}
+              />
+            </video>
+            <div className="absolute top-3 left-3 bg-accent/90 backdrop-blur-md text-on-accent font-label-caps px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-md max-w-[calc(100%-1.5rem)] truncate z-10">
+              LIVE • {heroLead.tag}
             </div>
           </div>
 
@@ -90,6 +103,7 @@ export default function Hero() {
           </div>
         </Reveal>
       </div>
+
 
       {/* Right Column: 4 Featured Sub-Stories (3rd on mobile & desktop) */}
       <div className="lg:col-span-3 order-3 lg:order-3 flex flex-col gap-4 h-full">
