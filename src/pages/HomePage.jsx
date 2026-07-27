@@ -34,27 +34,24 @@ export default function HomePage() {
       </div>
 
       {/* Regulatory Updates & Market Dashboards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-4 items-end">
-        <div className="pb-2">
-          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Regulatory Briefings</h2>
-        </div>
-        <div className="pb-2">
-          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Forex Trade Rates</h2>
-        </div>
-        <div className="pb-2">
-          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Crypto Marketplace</h2>
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 items-stretch">
-        <div className="h-full">
-          <RegulatoryBriefings />
+        <div className="flex flex-col h-full">
+          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Regulatory Briefings</h2>
+          <div className="flex-1">
+            <RegulatoryBriefings />
+          </div>
         </div>
-        <div className="h-full">
-          <ForexRates />
+        <div className="flex flex-col h-full">
+          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Forex Trade Rates</h2>
+          <div className="flex-1">
+            <ForexRates />
+          </div>
         </div>
-        <div className="h-full">
-          <MarketsDashboard />
+        <div className="flex flex-col h-full">
+          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Crypto Marketplace</h2>
+          <div className="flex-1">
+            <MarketsDashboard />
+          </div>
         </div>
       </div>
       <RegulatoryTracker />
