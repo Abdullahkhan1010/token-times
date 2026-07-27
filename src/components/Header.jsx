@@ -35,7 +35,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
   return (
     <div className="w-full">
       {/* ---------------- SINGLE MOBILE STICKY HEADER BAR (md:hidden) ---------------- */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-surface-container-lowest border-b border-outline-variant rounded-none">
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-background border-b border-outline-variant rounded-none">
         {/* Left: Hamburger Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(true)}
@@ -62,7 +62,8 @@ export default function Header({ activePage = "Home", setActivePage }) {
 
       {/* ---------------- FULL SCREEN MOBILE SLIDE-IN MENU FROM LEFT (md:hidden) ---------------- */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-[100] bg-surface-container-lowest flex flex-col w-screen h-screen overflow-y-auto animate-fade-up">
+        <div className="md:hidden fixed inset-0 z-[100] bg-background flex flex-col w-screen h-screen overflow-y-auto animate-fade-up">
+
           {/* Menu Drawer Header Bar */}
           <div className="flex items-center justify-between px-4 py-3.5 border-b border-outline-variant shrink-0">
             {/* Left: Cross / Close Button */}
