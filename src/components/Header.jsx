@@ -40,7 +40,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
         <button
           onClick={() => setMobileMenuOpen(true)}
           aria-label="Open Navigation Menu"
-          className="p-1.5 text-on-surface hover:text-[#D4AF37] transition-colors flex items-center justify-center rounded-lg"
+          className="p-1.5 text-on-surface hover:text-[#0C133D] transition-colors flex items-center justify-center rounded-lg"
         >
           <Menu size={24} />
         </button>
@@ -51,7 +51,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
           className="flex items-center gap-2 cursor-pointer group"
         >
           <img alt="Token Times logo" className="w-7 h-7 shrink-0" src={logo} />
-          <span className="font-display-lg text-lg font-bold tracking-tight text-[#0C133D] uppercase group-hover:text-[#D4AF37] transition-colors">
+          <span className="font-display-lg text-lg font-bold tracking-tight text-[#0C133D] uppercase group-hover:text-[#0C133D] transition-colors">
             Tokens Times
           </span>
         </div>
@@ -70,9 +70,9 @@ export default function Header({ activePage = "Home", setActivePage }) {
             <button
               onClick={() => setMobileMenuOpen(false)}
               aria-label="Close Navigation Menu"
-              className="p-2 text-on-surface hover:text-[#D4AF37] transition-colors flex items-center justify-center rounded-lg border border-outline-variant/60"
+              className="p-2 text-on-surface hover:text-[#0C133D] transition-colors flex items-center justify-center rounded-lg border border-outline-variant/60"
             >
-              <X size={24} className="text-[#D4AF37]" />
+              <X size={24} className="text-[#0C133D]" />
             </button>
 
             {/* Center: Title & Logo */}
@@ -93,7 +93,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
           {/* Full Screen Menu Content Stream */}
           <div className="p-6 flex-grow flex flex-col justify-between space-y-6">
             <div className="space-y-4">
-              <span className="font-label-caps text-xs text-[#D4AF37] font-bold uppercase tracking-widest block border-b border-outline-variant/40 pb-2">
+              <span className="font-label-caps text-xs text-[#0C133D] font-bold uppercase tracking-widest block border-b border-outline-variant/40 pb-2">
                 MAIN NAVIGATION DIRECTORY
               </span>
 
@@ -106,13 +106,13 @@ export default function Header({ activePage = "Home", setActivePage }) {
                       onClick={() => handleSelectPage(link)}
                       className={`w-full flex items-center justify-between py-3.5 px-2 text-base font-bold font-label-caps tracking-wider uppercase transition-colors text-left ${
                         isActive
-                          ? "text-[#D4AF37] font-extrabold"
-                          : "text-on-surface hover:text-[#D4AF37]"
+                          ? "text-[#0C133D] font-extrabold"
+                          : "text-on-surface hover:text-[#0C133D]"
                       }`}
                     >
                       <span>{link}</span>
                       {isActive && (
-                        <span className="flex items-center gap-2 text-xs text-[#D4AF37] font-bold">
+                        <span className="flex items-center gap-2 text-xs text-[#0C133D] font-bold">
                           ● ACTIVE
                         </span>
                       )}
@@ -124,7 +124,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
 
             {/* Bottom Footer Info inside Fullscreen Mobile Drawer */}
             <div className="pt-4 border-t border-outline-variant/40 text-xs text-on-surface-variant space-y-2">
-              <span className="font-label-caps text-[11px] font-bold text-[#D4AF37] block uppercase">
+              <span className="font-label-caps text-[11px] font-bold text-[#0C133D] block uppercase">
                 Tokens Times Intelligence Platform
               </span>
               <p className="text-[11px] text-on-surface-variant leading-relaxed">
@@ -145,7 +145,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
           >
             <img alt="Token Times logo" className="w-14 h-14 md:w-16 md:h-16 shrink-0 group-hover:scale-105 transition-transform" src={logo} />
             <div className="flex flex-col min-w-0">
-              <h1 className="font-display-lg text-display-lg text-[#0C133D] tracking-tighter leading-none truncate group-hover:text-[#D4AF37] transition-colors">
+              <h1 className="font-display-lg text-display-lg text-[#0C133D] tracking-tighter leading-none truncate group-hover:text-[#0C133D] transition-colors">
                 Tokens Times
               </h1>
               <span className="font-label-caps text-label-caps text-on-surface-variant truncate">
@@ -160,7 +160,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
 
         {/* Search and social */}
         <div className="flex items-center gap-gutter">
-          <div className="hidden md:flex items-center bg-surface-container-low px-3 py-2 rounded border border-outline-variant focus-within:border-[#D4AF37] transition-colors">
+          <div className="hidden md:flex items-center bg-surface-container-low px-3 py-2 rounded border border-outline-variant focus-within:border-[#0C133D] transition-colors">
             <Search size={16} className="text-on-surface-variant mr-2" />
             <input
               className="bg-transparent border-none text-body-md font-body-md text-on-surface w-48 focus:outline-none"
@@ -170,18 +170,19 @@ export default function Header({ activePage = "Home", setActivePage }) {
           </div>
 
           <div className="hidden lg:flex items-center gap-3 pr-3 border-r border-outline-variant">
-            <a href="#" aria-label="Twitter" className="text-on-surface-variant hover:text-[#D4AF37] transition-colors">
+            <a href="#" aria-label="Twitter" className="text-on-surface-variant hover:text-[#0C133D] transition-colors">
               <Twitter size={18} />
             </a>
-            <a href="#" aria-label="LinkedIn" className="text-on-surface-variant hover:text-[#D4AF37] transition-colors">
+            <a href="#" aria-label="LinkedIn" className="text-on-surface-variant hover:text-[#0C133D] transition-colors">
               <Linkedin size={18} />
             </a>
-            <a href="#" aria-label="RSS Feed" className="text-on-surface-variant hover:text-[#D4AF37] transition-colors">
+            <a href="#" aria-label="RSS Feed" className="text-on-surface-variant hover:text-[#0C133D] transition-colors">
               <Rss size={18} />
             </a>
           </div>
         </div>
       </div>
+
 
     </div>
   );
