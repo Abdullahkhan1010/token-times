@@ -9,10 +9,10 @@ export default function MagazinePage() {
     <div className="space-y-12">
       {/* Magazine Edition Header */}
       <Reveal as="div" className="text-center max-w-3xl mx-auto space-y-3">
-        <span className="font-label-caps text-xs text-accent font-bold tracking-widest uppercase block">
+        <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-widest uppercase block">
           TOKEN TIMES QUARTERLY PRINT & DIGITAL EDITION
         </span>
-        <h1 className="font-display-lg text-4xl sm:text-5xl md:text-6xl font-extrabold text-on-surface tracking-tight">
+        <h1 className="font-display-lg text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#0C133D] tracking-tight">
           The Magazine
         </h1>
         <p className="text-sm md:text-base text-on-surface-variant leading-relaxed">
@@ -34,7 +34,7 @@ export default function MagazinePage() {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
-              <span className="text-xs font-bold text-accent tracking-wider uppercase mb-1">
+              <span className="text-xs font-bold text-[#D4AF37] tracking-wider uppercase mb-1">
                 {currentIssue.number}
               </span>
               <h3 className="font-headline-lg text-2xl font-bold leading-tight">
@@ -47,10 +47,10 @@ export default function MagazinePage() {
         {/* Right 7 Columns: Editorial Details */}
         <div className="lg:col-span-7 flex flex-col justify-center space-y-6">
           <div className="space-y-2">
-            <span className="font-label-caps text-xs text-accent font-bold tracking-wider uppercase">
+            <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-wider uppercase">
               {currentIssue.number}
             </span>
-            <h2 className="font-headline-lg text-2xl sm:text-3xl md:text-4xl font-extrabold text-on-surface leading-tight">
+            <h2 className="font-headline-lg text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#0C133D] leading-tight">
               {currentIssue.title}
             </h2>
             <h3 className="text-base sm:text-lg font-semibold text-on-surface-variant">
@@ -62,15 +62,15 @@ export default function MagazinePage() {
             {currentIssue.description}
           </p>
 
-          <blockquote className="p-4 bg-surface-container-low border-l-4 border-accent rounded-r-lg text-xs md:text-sm text-on-surface-variant italic">
+          <blockquote className="p-4 bg-surface-container-low border-l-4 border-l-[#D4AF37] rounded-r-lg text-xs md:text-sm text-on-surface-variant italic">
             "{currentIssue.editorNote}"
           </blockquote>
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
-            <button className="px-6 py-3 bg-accent text-on-accent font-bold text-xs rounded-xl hover:bg-accent-dark transition-colors shadow-md">
+            <button className="px-6 py-3 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-md">
               Read Digital Edition (PDF)
             </button>
-            <button className="px-6 py-3 border border-outline-variant text-on-surface font-bold text-xs rounded-xl hover:border-accent hover:text-accent transition-colors">
+            <button className="px-6 py-3 border-2 border-[#0C133D] bg-transparent text-[#0C133D] font-bold text-xs rounded-xl hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-[#0C133D] transition-all">
               Subscribe to Print
             </button>
           </div>
@@ -81,8 +81,8 @@ export default function MagazinePage() {
       <div className="space-y-6">
         <Reveal as="div" className="border-b border-outline-variant pb-3 flex justify-between items-end">
           <div>
-            <span className="font-label-caps text-xs text-accent font-bold uppercase tracking-wider block">IN THIS ISSUE</span>
-            <h3 className="font-headline-lg text-2xl font-bold text-on-surface">Featured Essays & Special Reports</h3>
+            <span className="font-label-caps text-xs text-[#D4AF37] font-bold uppercase tracking-wider block">IN THIS ISSUE</span>
+            <h3 className="font-headline-lg text-2xl font-bold text-[#0C133D]">Featured Essays & Special Reports</h3>
           </div>
         </Reveal>
 
@@ -93,17 +93,17 @@ export default function MagazinePage() {
               key={item.title}
               as="article"
               delay={i * 80}
-              className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col justify-between cursor-pointer"
+              className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col justify-between cursor-pointer shadow-sm hover:border-[#D4AF37]"
             >
               <div>
                 <div className="w-full h-48 overflow-hidden bg-surface-variant relative">
                   <img src={item.img} alt={item.title} className="img-fade img-scale w-full h-full object-cover" />
-                  <span className="absolute top-2 left-2 bg-background/90 text-accent text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase">
+                  <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase shadow-sm">
                     {item.tag}
                   </span>
                 </div>
                 <div className="p-5 space-y-2">
-                  <h4 className="font-headline-md text-lg font-bold text-on-surface group-hover:text-accent transition-colors leading-snug">
+                  <h4 className="font-headline-md text-lg font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug">
                     {item.title}
                   </h4>
                   <p className="text-xs text-on-surface-variant leading-relaxed line-clamp-3">
@@ -113,7 +113,7 @@ export default function MagazinePage() {
               </div>
               <div className="px-5 pb-5 pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs text-on-surface-variant font-data-tabular">
                 <span>By {item.author}</span>
-                <span className="text-accent font-semibold">{item.readTime}</span>
+                <span className="text-[#D4AF37] font-semibold">{item.readTime}</span>
               </div>
             </Reveal>
           ))}
@@ -122,17 +122,18 @@ export default function MagazinePage() {
 
       {/* Past Editions Archive */}
       <Reveal as="section" className="bg-surface-container-low border border-outline-variant rounded-xl p-6 space-y-4">
-        <h3 className="font-headline-sm text-lg font-bold text-primary">Archived Quarterly Editions</h3>
+        <h3 className="font-headline-sm text-lg font-bold text-[#0C133D]">Archived Quarterly Editions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {pastIssues.map((issue) => (
-            <div key={issue.issue} className="bg-surface-container-lowest p-4 rounded-lg border border-outline-variant hover:border-accent transition-colors cursor-pointer space-y-1">
-              <span className="text-[10px] font-bold text-accent uppercase tracking-wider block">{issue.issue}</span>
-              <h4 className="text-sm font-bold text-on-surface">{issue.title}</h4>
+            <div key={issue.issue} className="bg-surface-container-lowest p-4 rounded-lg border border-outline-variant hover:border-[#D4AF37] transition-colors cursor-pointer space-y-1 shadow-sm">
+              <span className="text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider block">{issue.issue}</span>
+              <h4 className="text-sm font-bold text-[#0C133D]">{issue.title}</h4>
               <span className="text-xs text-on-surface-variant font-data-tabular block">Theme: {issue.theme}</span>
             </div>
           ))}
         </div>
       </Reveal>
     </div>
+
   );
 }

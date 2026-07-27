@@ -10,10 +10,10 @@ export default function TechnologiesPage() {
     <div className="space-y-10">
       {/* Page Header */}
       <Reveal as="div" className="border-b border-outline-variant pb-4 space-y-2">
-        <span className="font-label-caps text-xs text-accent font-bold tracking-widest uppercase block">
+        <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-widest uppercase block">
           INFRASTRUCTURE & PROTOCOL ARCHITECTURE
         </span>
-        <h1 className="font-display-lg text-3xl sm:text-4xl md:text-5xl font-extrabold text-on-surface">
+        <h1 className="font-display-lg text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0C133D]">
           Web3 & Financial Technologies
         </h1>
         <p className="text-sm md:text-base text-on-surface-variant max-w-3xl leading-relaxed">
@@ -23,7 +23,7 @@ export default function TechnologiesPage() {
 
       {/* Tech Stack Cards Grid */}
       <div className="space-y-4">
-        <h2 className="font-headline-sm text-xl font-bold text-primary border-b border-outline-variant pb-2">
+        <h2 className="font-headline-sm text-xl font-bold text-[#0C133D] border-b border-outline-variant pb-2">
           Enterprise Financial Infrastructure Layers
         </h2>
 
@@ -33,21 +33,21 @@ export default function TechnologiesPage() {
               key={t.name}
               as="article"
               delay={i * 80}
-              className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between cursor-pointer space-y-4 shadow-sm"
+              className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between cursor-pointer space-y-4 shadow-sm hover:border-[#D4AF37]"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="p-2.5 bg-accent/10 rounded-lg border border-accent/20">
-                    {i === 0 ? <Cpu size={20} className="text-accent" /> : i === 1 ? <Zap size={20} className="text-accent" /> : <ShieldCheck size={20} className="text-accent" />}
+                  <span className="p-2.5 bg-[#0C133D] rounded-lg border border-[#D4AF37]/40 shadow-sm">
+                    {i === 0 ? <Cpu size={20} className="text-[#D4AF37]" /> : i === 1 ? <Zap size={20} className="text-[#D4AF37]" /> : <ShieldCheck size={20} className="text-[#D4AF37]" />}
                   </span>
-                  <span className="text-xs font-data-tabular font-bold text-accent px-2.5 py-0.5 rounded-full bg-accent/10 border border-accent/20">
+                  <span className="text-xs font-data-tabular font-extrabold text-[#D4AF37] px-2.5 py-0.5 rounded-full bg-[#0C133D] border border-[#D4AF37]/40 shadow-sm">
                     {t.throughput}
                   </span>
                 </div>
-                <h3 className="font-headline-md text-lg font-bold text-on-surface group-hover:text-accent transition-colors leading-snug">
+                <h3 className="font-headline-md text-lg font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug">
                   {t.name}
                 </h3>
-                <span className="text-xs font-data-tabular text-secondary font-semibold block">
+                <span className="text-xs font-data-tabular text-[#D4AF37] font-bold block">
                   Tech: {t.tech}
                 </span>
                 <p className="text-xs text-on-surface-variant leading-relaxed">
@@ -55,14 +55,16 @@ export default function TechnologiesPage() {
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-outline-variant/30 text-xs text-accent font-semibold flex items-center justify-between">
-                <span>View Architecture Spec</span>
-                <span className="group-hover:translate-x-1 transition-transform">→</span>
+              <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs">
+                <a href="#" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm">
+                  View Spec →
+                </a>
               </div>
             </Reveal>
           ))}
         </div>
       </div>
     </div>
+
   );
 }

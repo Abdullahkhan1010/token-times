@@ -44,7 +44,7 @@ export default function Hero() {
                 </h3>
                 <div className="flex items-center justify-between text-[11px] text-on-surface-variant font-data-tabular pt-2 border-t border-outline-variant/30 mt-auto">
                   <span>{art.read}</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#0C133D] text-[#D4AF37] font-bold text-[11px] group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#0C133D] text-[#F7F0EB] font-bold text-[11px] group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all">
                     Read →
                   </span>
                 </div>
@@ -87,7 +87,7 @@ export default function Hero() {
 
           {/* Compact Text BELOW IT */}
           <div className="p-4 sm:p-5 flex flex-col flex-grow relative">
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg.accent rounded-bl-xl bg-[#D4AF37]" />
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-bl-xl bg-[#D4AF37]" />
             <h2 className="font-headline-lg text-lg sm:text-xl md:text-2xl font-bold mb-2 text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight">
               {heroLead.title}
             </h2>
@@ -100,7 +100,7 @@ export default function Hero() {
               <span>{heroLead.readTime}</span>
               <a
                 href="#"
-                className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/50 font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm"
+                className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm"
               >
                 Read Story →
               </a>
@@ -130,9 +130,10 @@ export default function Hero() {
               className="hover-lift group bg-surface-container-lowest border border-outline-variant p-4 flex-1 flex flex-col justify-between rounded-xl cursor-pointer shadow-sm hover:border-[#D4AF37]"
             >
               <div>
-                <span className="font-label-caps text-xs font-bold text-[#B8860B] mb-1.5 block">
+                <span className="font-label-caps text-xs font-bold text-[#D4AF37] mb-1.5 block">
                   {s.tag}
                 </span>
+
                 <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-xs sm:text-sm font-semibold leading-snug mb-2 line-clamp-2">
                   {s.title}
                 </h3>

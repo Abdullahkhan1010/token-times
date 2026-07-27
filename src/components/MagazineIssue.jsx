@@ -20,19 +20,19 @@ export default function MagazineIssue() {
           </div>
         </div>
         <div className="w-full md:w-2/3 flex flex-col items-center md:items-start text-center md:text-left">
-          <span className="font-label-caps text-label-caps text-accent mb-2">{mag.issue}</span>
-          <h2 className="font-display-lg text-display-lg text-primary mb-4">{mag.title}</h2>
+          <span className="font-label-caps text-label-caps text-[#D4AF37] mb-2">{mag.issue}</span>
+          <h2 className="font-display-lg text-display-lg text-[#0C133D] mb-4">{mag.title}</h2>
           <p className="font-body-lg text-body-lg text-on-surface-variant mb-6 max-w-2xl">{mag.desc}</p>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-            <button className="bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/60 px-6 py-3 font-label-caps text-xs font-extrabold hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm rounded-lg">
+            <button className="bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/60 px-6 py-3 font-label-caps text-xs font-extrabold hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm rounded-lg">
               Read Online →
             </button>
-            <button className="border-2 border-[#0C133D] text-[#0C133D] px-6 py-3 font-label-caps text-xs font-bold hover:bg-[#0C133D] hover:text-[#D4AF37] transition-all rounded-lg">
+            <button className="border-2 border-[#0C133D] bg-transparent text-[#0C133D] px-6 py-3 font-label-caps text-xs font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-[#0C133D] transition-all rounded-lg">
               Order Print Edition
             </button>
           </div>
-
         </div>
+
       </div>
     </Reveal>
   );
