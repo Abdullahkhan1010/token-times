@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, X, Compass } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { navLinks } from "../data/content";
 
 export default function Navigation({ activePage = "Home", setActivePage }) {
@@ -34,25 +34,27 @@ export default function Navigation({ activePage = "Home", setActivePage }) {
         ))}
       </div>
 
-      {/* Mobile Navigation (under md): Hamburger Toggle + Dropdown Drawer */}
+      {/* Mobile Navigation (under md): Icon on Left, Current Page Name */}
       <div className="md:hidden px-4 pb-3">
-        {/* Toggle Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          aria-expanded={isOpen}
-          aria-label="Toggle navigation menu"
-          className="w-full flex items-center justify-between px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface transition-colors hover:border-accent"
-        >
-          <div className="flex items-center gap-2">
-            <Compass size={16} className="text-accent" />
-            <span className="font-label-caps text-xs font-bold uppercase tracking-wider text-on-surface">
-              Menu: <span className="text-accent">{activePage}</span>
+        <div className="flex items-center gap-3">
+          {/* Hamburger Icon Button on Left */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            aria-expanded={isOpen}
+            aria-label="Toggle navigation menu"
+            className="p-2.5 bg-surface-container-low border border-outline-variant rounded-xl text-on-surface transition-colors hover:border-accent flex items-center justify-center shrink-0 shadow-sm"
+          >
+            {isOpen ? <X size={22} className="text-accent" /> : <Menu size={22} className="text-on-surface" />}
+          </button>
+
+          {/* Display Current Page Name */}
+          <div className="flex-grow px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-xl flex items-center justify-between shadow-sm">
+            <span className="font-headline-sm text-sm font-bold text-primary uppercase tracking-wider">
+              {activePage}
             </span>
+            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
           </div>
-          <div className="flex items-center gap-1.5 text-on-surface-variant">
-            {isOpen ? <X size={20} className="text-accent" /> : <Menu size={20} />}
-          </div>
-        </button>
+        </div>
 
         {/* Mobile Dropdown Menu Drawer */}
         {isOpen && (
@@ -80,5 +82,6 @@ export default function Navigation({ activePage = "Home", setActivePage }) {
     </nav>
   );
 }
+
 
 
