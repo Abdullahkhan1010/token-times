@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Search, Rss, Twitter, Linkedin } from "lucide-react";
+import logo from "../assets/TokenTimesLogo.svg";
 
 export default function Header() {
   const [dateStr, setDateStr] = useState("");
@@ -12,19 +13,24 @@ export default function Header() {
   return (
     <div className="flex justify-between items-center w-full px-4 md:px-12 py-4">
       {/* Logo + date */}
-      <div className="flex flex-col">
-        <h1 className="font-display-lg text-display-lg text-primary tracking-tighter">
-          Token Times
-        </h1>
-        <span className="font-label-caps text-label-caps text-on-surface-variant">
-          Pakistan's Digital Assets Intelligence Platform
-        </span>
-        <span className="font-data-tabular text-data-tabular text-on-surface-variant mt-1">
+      <div className="flex flex-col min-w-0 gap-2">
+        <div className="flex items-center gap-4 min-w-0">
+          <img alt="Token Times logo" className="w-14 h-14 md:w-16 md:h-16 shrink-0" src={logo} />
+          <div className="flex flex-col min-w-0">
+            <h1 className="font-display-lg text-display-lg text-primary tracking-tighter leading-none truncate">
+              Tokens Times
+            </h1>
+            <span className="font-label-caps text-label-caps text-on-surface-variant truncate">
+              Pakistan's Digital Assets Intelligence Platform
+            </span>
+          </div>
+        </div>
+        <span className="font-data-tabular text-data-tabular text-on-surface-variant pl-[4.25rem] md:pl-[5rem]">
           {dateStr}
         </span>
       </div>
 
-      {/* Search, subscribe, login, social */}
+      {/* Search and social */}
       <div className="flex items-center gap-gutter">
         <div className="hidden md:flex items-center bg-surface-container-low px-3 py-2 rounded border border-outline-variant focus-within:border-accent transition-colors">
           <Search size={16} className="text-on-surface-variant mr-2" />
@@ -46,13 +52,6 @@ export default function Header() {
             <Rss size={18} />
           </a>
         </div>
-
-        <button className="font-label-caps text-label-caps text-primary border border-primary px-4 py-2 hover:bg-surface-container-high transition-colors">
-          Login
-        </button>
-        <button className="font-label-caps text-label-caps bg-accent text-on-accent px-4 py-2 hover:bg-accent-dark transition-colors">
-          Subscribe
-        </button>
       </div>
     </div>
   );

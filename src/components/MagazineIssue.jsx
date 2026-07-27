@@ -11,7 +11,7 @@ export default function MagazineIssue() {
             className="w-48 md:w-64 border border-outline-variant relative bg-surface-variant hover-lift"
             style={{ aspectRatio: "3/4", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)" }}
           >
-            <img alt="Magazine Cover" className="w-full h-full object-cover" style={{ filter: "grayscale(1)" }} src={mag.cover} />
+            <img alt="Magazine Cover" className="w-full h-full object-cover" src={mag.cover} />
             <div className="absolute top-4 left-0 w-full text-center" style={{ mixBlendMode: "difference" }}>
               <h4 className="font-display-lg text-display-lg" style={{ color: "#fff", letterSpacing: "-0.03em" }}>
                 TOKEN TIMES

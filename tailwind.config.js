@@ -98,7 +98,7 @@ export default {
       keyframes: {
         ticker: {
           "0%": { transform: "translate3d(0,0,0)" },
-          "100%": { transform: "translate3d(-100%,0,0)" },
+          "100%": { transform: "translate3d(-50%,0,0)" },
         },
         "fade-up": {
           "0%": { opacity: "0", transform: "translateY(16px)" },
@@ -110,7 +110,7 @@ export default {
         },
       },
       animation: {
-        ticker: "ticker 25s linear infinite",
+        ticker: "ticker 90s linear infinite",
         "fade-up": "fade-up 0.6s cubic-bezier(0.16,1,0.3,1) both",
         "pulse-dot": "pulse-dot 2s ease-in-out infinite",
       },

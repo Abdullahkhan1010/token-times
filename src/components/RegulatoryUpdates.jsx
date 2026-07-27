@@ -14,25 +14,26 @@ const STATUS_STYLES = {
 
 export function RegulatoryBriefings() {
   return (
-    <section>
-      <Reveal as="h2" className="font-headline-lg text-headline-lg text-primary section-header-border">
-        Regulatory Briefings
-      </Reveal>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <section className="h-full flex flex-col gap-4 mb-8">
+      <div className="flex flex-col gap-3 flex-1">
         {regulatoryBriefings.map((b, i) => {
           const Icon = ICONS[b.icon];
           return (
-            <Reveal key={b.title} delay={i * 80} as="div" className="hover-lift border border-outline-variant p-5 bg-surface-container-lowest">
-              <Icon size={30} className="text-accent mb-3" />
-              <h4 className="font-headline-md text-headline-md text-on-surface mb-2" style={{ fontSize: 18 }}>
-                {b.title}
-              </h4>
-              <p className="font-body-md text-body-md text-on-surface-variant mb-4" style={{ fontSize: 14 }}>
-                {b.desc}
-              </p>
-              <a className="font-label-caps text-label-caps text-accent hover:underline" href="#">
-                Read Document
-              </a>
+            <Reveal key={b.title} delay={i * 80} as="div" className="rounded-full border border-outline-variant bg-surface-container-lowest px-4 py-3 hover-lift">
+              <div className="flex items-center gap-3">
+                <Icon size={20} className="text-accent shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <h4 className="font-headline-md text-[16px] md:text-[17px] text-on-surface mb-0.5 leading-tight truncate">
+                    {b.title}
+                  </h4>
+                  <p className="font-body-md text-[12px] md:text-[13px] text-on-surface-variant truncate">
+                    {b.desc}
+                  </p>
+                </div>
+                <a className="font-label-caps text-[10px] md:text-[11px] text-accent hover:underline whitespace-nowrap shrink-0" href="#">
+                  Read
+                </a>
+              </div>
             </Reveal>
           );
         })}

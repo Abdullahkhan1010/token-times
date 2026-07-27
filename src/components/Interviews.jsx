@@ -14,7 +14,6 @@ export default function Interviews() {
             <img
               alt="Interviewee"
               className="w-16 h-16 rounded-full object-cover border border-outline-variant"
-              style={{ filter: "grayscale(1)" }}
               src={iv.img}
             />
             <div>

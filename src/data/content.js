@@ -7,7 +7,7 @@ export const navLinks = [
   "Research",
   "Resources",
   "Events",
-  "About",
+  "Technologies",
 ];
 
 export const tickerItems = [
@@ -15,6 +15,9 @@ export const tickerItems = [
   "SBP Announces CBDC Pilot Expansion to Commercial Banks",
   "SECP Publishes Whitepaper on Security Token Offerings (STOs) Framework",
   "FBR Clarifies Tax Treatment of Crypto-Asset Capital Gains",
+  "GLOBAL: U.S. Spot Bitcoin ETFs Record Another Week of Net Inflows",
+  "GLOBAL: EU Markets Tighten Stablecoin Compliance Checks Ahead of MiCA Rollout",
+  "GLOBAL: Japan Signals Fresh Support for Tokenized Securities Pilots",
 ];
 
 export const heroLead = {
@@ -114,6 +117,7 @@ export const globalHighlights = [
 export const regulatoryBriefings = [
   { title: "Consultation Paper 04/24", desc: "Framework for Digital Asset Custodians", icon: "gavel" },
   { title: "Circular No. 12", desc: "Updated KYC/AML Requirements for VASPs", icon: "description" },
+  { title: "Draft Notice 08/24", desc: "Tokenization Disclosure Standards for Market Participants", icon: "description" },
 ];
 
 export const regulatoryTracker = [

@@ -9,7 +9,7 @@ import LatestNews from "./components/LatestNews";
 import PakistanFocus from "./components/PakistanFocus";
 import GlobalHighlights from "./components/GlobalHighlights";
 import { RegulatoryBriefings, RegulatoryTracker } from "./components/RegulatoryUpdates";
-import MarketsDashboard from "./components/MarketsDashboard";
+import MarketsDashboard, { ForexRates } from "./components/MarketsDashboard";
 import FeaturedAnalysis from "./components/FeaturedAnalysis";
 import KnowledgeHub from "./components/KnowledgeHub";
 import MagazineIssue from "./components/MagazineIssue";
@@ -49,12 +49,27 @@ export default function App() {
           <GlobalHighlights />
         </div>
 
-        {/* Regulatory Updates & Markets Dashboard (Future) */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-          <div className="md:col-span-8">
+        {/* Regulatory Updates & Market Dashboards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-4 items-end">
+          <div className="pb-2">
+            <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Regulatory Briefings</h2>
+          </div>
+          <div className="pb-2">
+            <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Forex Trade Rates</h2>
+          </div>
+          <div className="pb-2">
+            <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Crypto Marketplace</h2>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 items-stretch">
+          <div className="h-full">
             <RegulatoryBriefings />
           </div>
-          <div className="md:col-span-4">
+          <div className="h-full">
+            <ForexRates />
+          </div>
+          <div className="h-full">
             <MarketsDashboard />
           </div>
         </div>
