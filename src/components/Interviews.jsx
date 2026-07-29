@@ -5,8 +5,8 @@ import { interviews } from "../data/content";
 export default function Interviews() {
   return (
     <section>
-      <h3 className="font-headline-md text-headline-md text-primary mb-6 flex items-center gap-2">
-        <Mic size={20} className="text-accent" /> Interviews
+      <h3 className="font-headline-md text-headline-md text-[#0C133D] mb-6 flex items-center gap-2">
+        <Mic size={20} className="text-[#D4AF37]" /> Interviews
       </h3>
       <div className="space-y-4">
         {interviews.map((iv) => (
@@ -14,12 +14,11 @@ export default function Interviews() {
             <img
               alt="Interviewee"
               className="w-16 h-16 rounded-full object-cover border border-outline-variant"
-              style={{ filter: "grayscale(1)" }}
               src={iv.img}
             />
             <div>
               <h4 className="font-body-md text-body-md font-semibold text-on-surface leading-tight mb-1">
-                <a className="hover:text-accent hover:underline transition-colors" href="#">
+                <a className="hover:text-[#D4AF37] hover:underline transition-colors" href="#">
                   {iv.quote}
                 </a>
               </h4>
@@ -31,3 +30,5 @@ export default function Interviews() {
     </section>
   );
 }
+
+

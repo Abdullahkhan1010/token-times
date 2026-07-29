@@ -5,60 +5,50 @@ export default {
   theme: {
     extend: {
       colors: {
-        surface: "#f7f9fb",
-        "inverse-primary": "#bec6e0",
-        "on-secondary": "#ffffff",
-        "on-surface": "#191c1e",
-        "surface-container": "#eceef0",
-        "on-surface-variant": "#45464d",
-        "inverse-surface": "#2d3133",
-        "on-primary-container": "#7c839b",
-        "on-primary-fixed-variant": "#3f465c",
-        "tertiary-fixed-dim": "#b9c7e0",
-        "on-tertiary-container": "#76859b",
-        "on-primary-fixed": "#131b2e",
-        "inverse-on-surface": "#eff1f3",
-        "surface-container-low": "#f2f4f6",
-        "on-secondary-container": "#785a26",
-        "primary-fixed": "#dae2fd",
-        "on-tertiary": "#ffffff",
-        "on-background": "#191c1e",
-        "surface-dim": "#d8dadc",
-        "surface-tint": "#565e74",
-        primary: "#000000",
-        "surface-container-lowest": "#ffffff",
-        outline: "#76777d",
-        "secondary-container": "#fdd494",
-        "on-secondary-fixed": "#281900",
-        "on-secondary-fixed-variant": "#5d420f",
-        "on-primary": "#ffffff",
-        "outline-variant": "#c6c6cd",
-        "on-error-container": "#93000a",
-        "surface-container-high": "#e6e8ea",
-        "error-container": "#ffdad6",
-        "surface-variant": "#e0e3e5",
-        secondary: "#775925",
-        tertiary: "#000000",
-        "secondary-fixed-dim": "#e8c182",
-        "tertiary-fixed": "#d5e3fd",
-        error: "#ba1a1a",
-        "primary-container": "#131b2e",
-        "surface-bright": "#f7f9fb",
-        "tertiary-container": "#0d1c2f",
-        "primary-fixed-dim": "#bec6e0",
-        background: "#f7f9fb",
-        "on-tertiary-fixed": "#0d1c2f",
-        "on-tertiary-fixed-variant": "#3a485c",
-        "surface-container-highest": "#e0e3e5",
-        "on-error": "#ffffff",
-        "secondary-fixed": "#ffdeab",
+        // Deep imperial navy & royal gold color system matching the Token Times logo:
+        primary: "#0C133D", // Deep Imperial Navy matching logo
+        "on-primary": "#FFFFFF",
+        "primary-container": "#121A4B",
+        "on-primary-container": "#A8B4E5",
 
-        /* ---- the one new accent color: a deep signal-emerald ---- */
-        accent: "#0E7C61",
-        "accent-dark": "#0A5C48",
-        "accent-container": "#DCF3EA",
-        "on-accent": "#ffffff",
+        // Luminous Royal Gold Accent matching logo symbol strokes (#FBDF53 / #D4AF37):
+        accent: "#D4AF37", // Luminous Royal Gold
+        "accent-light": "#F3CF55", // Bright Hover Glow Gold
+        "accent-dark": "#B08D23",
+        "accent-container": "#FAF1D3",
+        "on-accent": "#0C133D", // Deep navy text on gold background
+
+        // Secondary Warm Rose-Gold / Bronze Accent:
+        secondary: "#B8860B",
+        "secondary-container": "#F8EED8",
+        "on-secondary": "#FFFFFF",
+
+        // Elegant Textured Rose Gold Warm Background Canvas:
+        background: "#F7F0EB",
+        surface: "#F7F0EB",
+        "on-background": "#0C133D",
+        "on-surface": "#0C133D",
+        "on-surface-variant": "#5C525A",
+
+        "surface-container-lowest": "#FFFFFF",
+        "surface-container-low": "#F2E7E1",
+        "surface-container": "#ECE0D8",
+        "surface-container-high": "#E4D6CD",
+        "surface-container-highest": "#DBCAC0",
+        "surface-variant": "#E4D6CD",
+        "surface-dim": "#D7C8BE",
+        "surface-bright": "#F7F0EB",
+        "surface-tint": "#0C133D",
+
+        "outline-variant": "#E2D4CB",
+        outline: "#7F707A",
+        error: "#BA1A1A",
+        "error-container": "#FFDAD6",
+        "on-error": "#FFFFFF",
+        "on-error-container": "#93000A",
       },
+
+
       borderRadius: {
         DEFAULT: "0.25rem",
         lg: "0.5rem",
@@ -98,7 +88,7 @@ export default {
       keyframes: {
         ticker: {
           "0%": { transform: "translate3d(0,0,0)" },
-          "100%": { transform: "translate3d(-100%,0,0)" },
+          "100%": { transform: "translate3d(-50%,0,0)" },
         },
         "fade-up": {
           "0%": { opacity: "0", transform: "translateY(16px)" },
@@ -110,7 +100,7 @@ export default {
         },
       },
       animation: {
-        ticker: "ticker 25s linear infinite",
+        ticker: "ticker 90s linear infinite",
         "fade-up": "fade-up 0.6s cubic-bezier(0.16,1,0.3,1) both",
         "pulse-dot": "pulse-dot 2s ease-in-out infinite",
       },

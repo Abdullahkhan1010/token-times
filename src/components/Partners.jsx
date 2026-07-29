@@ -9,7 +9,7 @@ export default function Partners() {
       </h3>
       <div
         className="flex flex-wrap justify-center items-center gap-8 md:gap-16 transition-opacity hover:opacity-100"
-        style={{ opacity: 0.6, filter: "grayscale(1)" }}
+        style={{ opacity: 0.6 }}
       >
         <div className="font-display-lg text-display-lg font-bold">
           CHAIN<span className="font-light">ANALYTICS</span>

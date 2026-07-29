@@ -7,10 +7,10 @@ export default function LatestNews() {
   return (
     <section className="mb-8 bg-surface-container-low p-6 border border-outline-variant rounded-xl">
       <div className="flex justify-between items-center section-header-border mb-6">
-        <h2 className="font-headline-lg text-headline-lg text-primary m-0" style={{ border: 0, paddingBottom: 0 }}>
+        <h2 className="font-headline-lg text-headline-lg text-[#0C133D] m-0" style={{ border: 0, paddingBottom: 0 }}>
           Latest News
         </h2>
-        <a className="font-label-caps text-label-caps text-accent hover:text-accent-dark flex items-center gap-1 group" href="#">
+        <a className="font-label-caps text-label-caps text-[#D4AF37] hover:text-[#B08D23] flex items-center gap-1 group" href="#">
           View All <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
         </a>
       </div>
@@ -23,7 +23,7 @@ export default function LatestNews() {
             <div className="flex flex-col justify-center">
               <span className="font-label-caps text-label-caps text-on-surface-variant mb-1">{n.cat}</span>
               <h4
-                className="font-headline-md text-headline-md text-on-surface leading-snug group-hover:text-accent transition-colors"
+                className="font-headline-md text-headline-md text-[#0C133D] leading-snug group-hover:text-[#D4AF37] transition-colors"
                 style={{ fontSize: 18 }}
               >
                 {n.title}
@@ -35,3 +35,5 @@ export default function LatestNews() {
     </section>
   );
 }
+
+

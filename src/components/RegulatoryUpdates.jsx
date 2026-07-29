@@ -6,37 +6,36 @@ import { regulatoryBriefings, regulatoryTracker } from "../data/content";
 const ICONS = { gavel: Gavel, description: FileText };
 
 const STATUS_STYLES = {
-  "Public Consultation": "bg-secondary-fixed text-on-secondary-fixed border-secondary-container",
-  "Pilot Phase": "bg-primary-fixed text-on-primary-fixed border-primary-fixed-dim",
-  Active: "bg-accent-container text-accent-dark border-accent",
-  "Under Review": "bg-surface-container-high text-on-surface-variant border-outline-variant",
+  "Public Consultation": "bg-surface-container-high text-[#0C133D] border-outline-variant",
+  "Pilot Phase": "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37]/50",
+  Active: "bg-[#D4AF37] text-[#0C133D] border-[#D4AF37]",
+  "Under Review": "bg-surface-container-low text-on-surface-variant border-outline-variant",
 };
 
 export function RegulatoryBriefings() {
   return (
-    <section>
-      <Reveal as="h2" className="font-headline-lg text-headline-lg text-primary section-header-border">
-        Regulatory Briefings
-      </Reveal>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {regulatoryBriefings.map((b, i) => {
-          const Icon = ICONS[b.icon];
-          return (
-            <Reveal key={b.title} delay={i * 80} as="div" className="hover-lift border border-outline-variant p-5 bg-surface-container-lowest">
-              <Icon size={30} className="text-accent mb-3" />
-              <h4 className="font-headline-md text-headline-md text-on-surface mb-2" style={{ fontSize: 18 }}>
-                {b.title}
-              </h4>
-              <p className="font-body-md text-body-md text-on-surface-variant mb-4" style={{ fontSize: 14 }}>
-                {b.desc}
-              </p>
-              <a className="font-label-caps text-label-caps text-accent hover:underline" href="#">
-                Read Document
+    <section className="h-full flex flex-col justify-between gap-3">
+      {regulatoryBriefings.map((b, i) => {
+        const Icon = ICONS[b.icon];
+        return (
+          <Reveal key={b.title} delay={i * 80} as="div" className="rounded-full border border-outline-variant bg-surface-container-lowest px-4 py-3 hover-lift flex-1 flex items-center">
+            <div className="flex items-center gap-3 w-full">
+              <Icon size={20} className="text-[#D4AF37] shrink-0" />
+              <div className="min-w-0 flex-1">
+                <h4 className="font-headline-md text-[15px] md:text-[16px] text-on-surface mb-0.5 leading-tight truncate">
+                  {b.title}
+                </h4>
+                <p className="font-body-md text-[12px] text-on-surface-variant truncate">
+                  {b.desc}
+                </p>
+              </div>
+              <a className="font-label-caps text-[10px] md:text-[11px] text-[#D4AF37] hover:underline whitespace-nowrap shrink-0" href="#">
+                Read
               </a>
-            </Reveal>
-          );
-        })}
-      </div>
+            </div>
+          </Reveal>
+        );
+      })}
     </section>
   );
 }
@@ -46,7 +45,7 @@ export function RegulatoryTracker() {
     <section className="mb-8 border border-outline-variant bg-surface-container-lowest rounded-xl">
       <div className="px-6 py-4 border-b border-outline-variant bg-surface-bright flex justify-between items-center">
         <h2 className="font-headline-md text-headline-md text-on-surface">Pakistan Regulatory Tracker</h2>
-        <a className="font-label-caps text-label-caps text-accent hover:text-accent-dark flex items-center gap-1 group" href="#">
+        <a className="font-label-caps text-label-caps text-[#D4AF37] hover:text-[#B08D23] flex items-center gap-1 group" href="#">
           View Full Dashboard <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
         </a>
       </div>
@@ -86,3 +85,5 @@ export function RegulatoryTracker() {
     </section>
   );
 }
+
+

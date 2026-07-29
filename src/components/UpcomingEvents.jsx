@@ -5,15 +5,15 @@ import { upcomingEvents } from "../data/content";
 export default function UpcomingEvents() {
   return (
     <section>
-      <h3 className="font-headline-md text-headline-md text-primary mb-6 flex items-center gap-2">
-        <Calendar size={20} className="text-accent" /> Upcoming Events
+      <h3 className="font-headline-md text-headline-md text-[#0C133D] mb-6 flex items-center gap-2">
+        <Calendar size={20} className="text-[#D4AF37]" /> Upcoming Events
       </h3>
       <div className="space-y-4">
         {upcomingEvents.map((ev) => (
           <div key={ev.title} className="hover-lift flex gap-4 bg-surface-container-low p-3 border border-outline-variant">
             <div
               className={`flex flex-col items-center justify-center p-2 ${
-                ev.filled ? "bg-accent text-on-accent" : "border border-accent text-accent"
+                ev.filled ? "bg-[#D4AF37] text-[#0C133D]" : "border border-[#D4AF37] text-[#D4AF37]"
               }`}
               style={{ minWidth: 60 }}
             >
@@ -30,3 +30,5 @@ export default function UpcomingEvents() {
     </section>
   );
 }
+
+

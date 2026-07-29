@@ -1,90 +1,81 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Header from "./components/Header";
 import Navigation from "./components/Navigation";
 import BreakingTicker from "./components/BreakingTicker";
-import Hero from "./components/Hero";
-import EditorsPick from "./components/EditorsPick";
-import LatestNews from "./components/LatestNews";
-import PakistanFocus from "./components/PakistanFocus";
-import GlobalHighlights from "./components/GlobalHighlights";
-import { RegulatoryBriefings, RegulatoryTracker } from "./components/RegulatoryUpdates";
-import MarketsDashboard from "./components/MarketsDashboard";
-import FeaturedAnalysis from "./components/FeaturedAnalysis";
-import KnowledgeHub from "./components/KnowledgeHub";
-import MagazineIssue from "./components/MagazineIssue";
-import ResearchPapers from "./components/ResearchPapers";
-import Interviews from "./components/Interviews";
-import UpcomingEvents from "./components/UpcomingEvents";
-import Newsletter from "./components/Newsletter";
-import Partners from "./components/Partners";
 import Footer from "./components/Footer";
+import SEOHead from "./components/SEOHead";
+import { useRouteSync } from "./hooks/useRouteSync";
+
+import HomePage from "./pages/HomePage";
+import NewsPage from "./pages/NewsPage";
+import MagazinePage from "./pages/MagazinePage";
+import KnowledgeHubPage from "./pages/KnowledgeHubPage";
+import RegulationsPage from "./pages/RegulationsPage";
+import ResearchPage from "./pages/ResearchPage";
+import ResourcesPage from "./pages/ResourcesPage";
+import EventsPage from "./pages/EventsPage";
+import TechnologiesPage from "./pages/TechnologiesPage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
 
 export default function App() {
+  const [activePage, setActivePage] = useState("Home");
+  const changePage = useRouteSync(activePage, setActivePage);
+
+  const renderCurrentPage = () => {
+    switch (activePage) {
+      case "News":
+        return <NewsPage onNavigate={changePage} />;
+      case "Magazine":
+        return <MagazinePage onNavigate={changePage} />;
+      case "Knowledge Hub":
+        return <KnowledgeHubPage onNavigate={changePage} />;
+      case "Regulations":
+        return <RegulationsPage onNavigate={changePage} />;
+      case "Research":
+        return <ResearchPage onNavigate={changePage} />;
+      case "Resources":
+        return <ResourcesPage onNavigate={changePage} />;
+      case "Events":
+        return <EventsPage onNavigate={changePage} />;
+      case "Technologies":
+        return <TechnologiesPage onNavigate={changePage} />;
+      case "About":
+        return <AboutPage onNavigate={changePage} />;
+      case "Contact":
+        return <ContactPage onNavigate={changePage} />;
+      case "Privacy Policy":
+        return <PrivacyPage onNavigate={changePage} />;
+      case "Terms of Service":
+        return <TermsPage onNavigate={changePage} />;
+      case "Home":
+      default:
+        return <HomePage onNavigate={changePage} />;
+    }
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-col bg-background text-on-background">
       {/* Top Header */}
-      <header className="bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-50">
-        <Header />
+      <header className="bg-background border-b border-outline-variant/60 sticky top-0 z-50 rounded-none">
+        <Header activePage={activePage} setActivePage={changePage} />
         {/* Navigation Menu */}
-        <Navigation />
+        <Navigation activePage={activePage} setActivePage={changePage} />
       </header>
 
       {/* Breaking News Ticker */}
       <BreakingTicker />
 
-      <main className="flex-grow w-full px-4 md:px-12 py-8">
-        {/* Hero Section — top 5 featured stories */}
-        <Hero />
-
-        {/* Editor's Pick */}
-        <EditorsPick />
-
-        {/* Latest News */}
-        <LatestNews />
-
-        {/* Pakistan Focus & Global Highlights */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <PakistanFocus />
-          <GlobalHighlights />
-        </div>
-
-        {/* Regulatory Updates & Markets Dashboard (Future) */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-          <div className="md:col-span-8">
-            <RegulatoryBriefings />
-          </div>
-          <div className="md:col-span-4">
-            <MarketsDashboard />
-          </div>
-        </div>
-        <RegulatoryTracker />
-
-        {/* Featured Analysis & Knowledge Hub */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <FeaturedAnalysis />
-          <KnowledgeHub />
-        </div>
-
-        {/* Current Magazine Issue */}
-        <MagazineIssue />
-
-        {/* Research, Interviews, Events */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 border-t border-outline-variant pt-8">
-          <ResearchPapers />
-          <Interviews />
-          <UpcomingEvents />
-        </div>
-
-        {/* Newsletter Subscription */}
-        <Newsletter />
-
-        {/* Partners / Sponsors */}
-        <Partners />
+      {/* Main Dynamic Content Area */}
+      <main id="main-content" className="flex-grow w-full px-4 md:px-12 py-8" role="main">
+        {renderCurrentPage()}
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer setActivePage={changePage} />
     </div>
   );
 }
