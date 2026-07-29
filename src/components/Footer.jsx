@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import logo from "../assets/TokenTimesLogo.svg";
 import {
   ArrowUp,
   Mail,
@@ -46,9 +47,7 @@ export default function Footer({ setActivePage }) {
           {/* Brand Info */}
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#D4AF37] to-[#997B15] flex items-center justify-center font-bold text-[#0C133D] text-lg shadow-md">
-                TT
-              </div>
+              <img src={logo} alt="Token Times logo" className="w-10 h-10 shrink-0" />
               <h2 className="font-headline-lg text-2xl font-bold text-white tracking-tight">
                 Tokens Times
               </h2>

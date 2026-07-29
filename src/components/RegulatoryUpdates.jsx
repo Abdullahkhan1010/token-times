@@ -14,30 +14,28 @@ const STATUS_STYLES = {
 
 export function RegulatoryBriefings() {
   return (
-    <section className="h-full flex flex-col gap-4 mb-8">
-      <div className="flex flex-col gap-3 flex-1">
-        {regulatoryBriefings.map((b, i) => {
-          const Icon = ICONS[b.icon];
-          return (
-            <Reveal key={b.title} delay={i * 80} as="div" className="rounded-full border border-outline-variant bg-surface-container-lowest px-4 py-3 hover-lift">
-              <div className="flex items-center gap-3">
-                <Icon size={20} className="text-[#D4AF37] shrink-0" />
-                <div className="min-w-0 flex-1">
-                  <h4 className="font-headline-md text-[16px] md:text-[17px] text-on-surface mb-0.5 leading-tight truncate">
-                    {b.title}
-                  </h4>
-                  <p className="font-body-md text-[12px] md:text-[13px] text-on-surface-variant truncate">
-                    {b.desc}
-                  </p>
-                </div>
-                <a className="font-label-caps text-[10px] md:text-[11px] text-[#D4AF37] hover:underline whitespace-nowrap shrink-0" href="#">
-                  Read
-                </a>
+    <section className="h-full flex flex-col justify-between gap-3">
+      {regulatoryBriefings.map((b, i) => {
+        const Icon = ICONS[b.icon];
+        return (
+          <Reveal key={b.title} delay={i * 80} as="div" className="rounded-full border border-outline-variant bg-surface-container-lowest px-4 py-3 hover-lift flex-1 flex items-center">
+            <div className="flex items-center gap-3 w-full">
+              <Icon size={20} className="text-[#D4AF37] shrink-0" />
+              <div className="min-w-0 flex-1">
+                <h4 className="font-headline-md text-[15px] md:text-[16px] text-on-surface mb-0.5 leading-tight truncate">
+                  {b.title}
+                </h4>
+                <p className="font-body-md text-[12px] text-on-surface-variant truncate">
+                  {b.desc}
+                </p>
               </div>
-            </Reveal>
-          );
-        })}
-      </div>
+              <a className="font-label-caps text-[10px] md:text-[11px] text-[#D4AF37] hover:underline whitespace-nowrap shrink-0" href="#">
+                Read
+              </a>
+            </div>
+          </Reveal>
+        );
+      })}
     </section>
   );
 }

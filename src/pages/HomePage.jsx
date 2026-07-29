@@ -35,21 +35,21 @@ export default function HomePage() {
 
       {/* Regulatory Updates & Market Dashboards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 items-stretch">
-        <div className="flex flex-col h-full">
-          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Regulatory Briefings</h2>
-          <div className="flex-1">
+        <div className="flex flex-col h-full min-h-0">
+          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Regulatory Briefings</h2>
+          <div className="flex-1 flex flex-col min-h-0">
             <RegulatoryBriefings />
           </div>
         </div>
-        <div className="flex flex-col h-full">
-          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Forex Trade Rates</h2>
-          <div className="flex-1">
+        <div className="flex flex-col h-full min-h-0">
+          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Forex Trade Rates</h2>
+          <div className="flex-1 flex flex-col min-h-0">
             <ForexRates />
           </div>
         </div>
-        <div className="flex flex-col h-full">
-          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border">Crypto Marketplace</h2>
-          <div className="flex-1">
+        <div className="flex flex-col h-full min-h-0">
+          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Crypto Marketplace</h2>
+          <div className="flex-1 flex flex-col min-h-0">
             <MarketsDashboard />
           </div>
         </div>

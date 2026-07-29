@@ -49,10 +49,9 @@ export default function MarketsDashboard() {
   return (
     <Reveal
       as="section"
-      className="bg-surface-container-lowest text-on-surface p-3 md:p-4 flex flex-col gap-2 rounded-xl relative overflow-hidden border border-outline-variant"
+      className="bg-surface-container-lowest text-on-surface p-4 md:p-5 flex flex-col justify-between h-full rounded-xl relative overflow-hidden border border-outline-variant"
     >
-
-      <div className="relative space-y-2 overflow-hidden">
+      <div className="relative space-y-3 overflow-hidden flex-1 flex flex-col justify-between">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
           {marketCards.map((coin) => (
             <div key={coin.asset} className="rounded-xl border border-outline-variant bg-surface-container-low px-2.5 py-1.5 flex items-center justify-between gap-2">
@@ -135,13 +134,13 @@ export function ForexRates() {
   return (
     <Reveal
       as="section"
-      className="bg-surface-container-lowest text-on-surface p-4 md:p-5 flex flex-col gap-3 rounded-xl relative overflow-hidden h-full border border-outline-variant"
+      className="bg-surface-container-lowest text-on-surface p-3 md:p-4 flex flex-col rounded-xl relative overflow-hidden h-full border border-outline-variant"
     >
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-outline-variant">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-outline-variant shrink-0">
         <span className="font-label-caps text-[10px] md:text-[11px] tracking-[0.16em] text-on-surface-variant font-bold uppercase">Currency</span>
         <span className="font-label-caps text-[10px] md:text-[11px] tracking-[0.16em] text-on-surface-variant font-bold uppercase">Rate</span>
       </div>
-      <div className="divide-y divide-outline-variant/40 max-h-[24rem] overflow-y-auto">
+      <div className="divide-y divide-outline-variant/40 overflow-y-auto flex-1 min-h-0 pr-1">
         {[
           { name: "USD PKR Interbank Selling", date: "Jul 24", rate: "278.07", accent: "bg-accent/15 text-accent border border-accent/30" },
           { name: "USD PKR Interbank Buying", date: "Jul 24", rate: "277.87", accent: "bg-primary/10 text-primary border border-primary/20" },
@@ -151,11 +150,11 @@ export function ForexRates() {
           { name: "Euro to USD", date: "Jul 27", rate: "1.14", accent: "bg-primary/10 text-primary border border-primary/20" },
           { name: "SOFR %", date: "Jul 24", rate: "3.57", accent: "bg-accent/15 text-accent border border-accent/30" },
         ].map((row) => (
-          <div key={row.name} className="flex items-center justify-between gap-3 px-4 py-2.5 md:py-3 hover:bg-surface-container-low transition-colors">
+          <div key={row.name} className="flex items-center justify-between gap-3 px-4 py-2 md:py-2.5 hover:bg-surface-container-low transition-colors">
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 min-w-0">
-                <span className="font-body-md text-xs sm:text-sm font-semibold leading-tight text-on-surface truncate">{row.name}</span>
-                <span className="font-body-md text-xs text-accent font-medium">/ {row.date}</span>
+                <span className="font-body-md text-xs font-semibold leading-tight text-on-surface truncate">{row.name}</span>
+                <span className="font-body-md text-[11px] text-accent font-medium">/ {row.date}</span>
               </div>
             </div>
             <span className={`rounded-full ${row.accent} px-2.5 py-0.5 font-label-caps text-[10px] md:text-[11px] font-bold whitespace-nowrap shrink-0`}>
@@ -167,4 +166,3 @@ export function ForexRates() {
     </Reveal>
   );
 }
-
