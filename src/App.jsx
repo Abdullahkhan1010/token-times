@@ -14,6 +14,10 @@ import ResearchPage from "./pages/ResearchPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import EventsPage from "./pages/EventsPage";
 import TechnologiesPage from "./pages/TechnologiesPage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
 
 export default function App() {
   const [activePage, setActivePage] = useState("Home");
@@ -36,6 +40,14 @@ export default function App() {
         return <EventsPage />;
       case "Technologies":
         return <TechnologiesPage />;
+      case "About":
+        return <AboutPage />;
+      case "Contact":
+        return <ContactPage />;
+      case "Privacy Policy":
+        return <PrivacyPage />;
+      case "Terms of Service":
+        return <TermsPage />;
       case "Home":
       default:
         return <HomePage />;
@@ -51,9 +63,6 @@ export default function App() {
         <Navigation activePage={activePage} setActivePage={setActivePage} />
       </header>
 
-
-
-
       {/* Breaking News Ticker */}
       <BreakingTicker />
 
@@ -62,7 +71,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer setActivePage={setActivePage} />
     </div>
   );
 }
