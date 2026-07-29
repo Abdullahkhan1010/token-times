@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { newsPageData } from "../data/pagesData";
+import { BASE_URL } from "../data/seoData";
 
-export default function NewsPage() {
+export default function NewsPage({ onNavigate }) {
   const [selectedCat, setSelectedCat] = useState("All");
 
   const filteredArticles =
@@ -10,8 +13,42 @@ export default function NewsPage() {
       ? newsPageData.articles
       : newsPageData.articles.filter((a) => a.category.toLowerCase() === selectedCat.toLowerCase());
 
+  // Generate NewsArticle schema for Lead Story
+  const leadArticleSchema = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: newsPageData.leadStory.title,
+    description: newsPageData.leadStory.summary,
+    image: [newsPageData.leadStory.img],
+    datePublished: "2026-07-29T14:30:00+05:00",
+    dateModified: "2026-07-29T15:00:00+05:00",
+    author: {
+      "@type": "Person",
+      name: newsPageData.leadStory.author,
+    },
+    publisher: {
+      "@id": `${BASE_URL}/#organization`,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${BASE_URL}/news`,
+    },
+  };
+
   return (
     <div className="space-y-8">
+      <SEOHead
+        pageKey="News"
+        customTitle={selectedCat !== "All" ? `${selectedCat} News & Digital Asset Analysis` : undefined}
+        customSchema={leadArticleSchema}
+      />
+
+      <Breadcrumbs
+        currentPage="News"
+        category={selectedCat !== "All" ? selectedCat : undefined}
+        onNavigate={onNavigate}
+      />
+
       {/* Top Banner / Section Header */}
       <Reveal as="div" className="border-b border-outline-variant pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -28,10 +65,12 @@ export default function NewsPage() {
       </Reveal>
 
       {/* Category Filter Tabs */}
-      <Reveal as="div" className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+      <Reveal as="div" className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2" role="tablist">
         {newsPageData.categories.map((cat) => (
           <button
             key={cat}
+            role="tab"
+            aria-selected={selectedCat === cat}
             onClick={() => setSelectedCat(cat)}
             className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap border ${
               selectedCat === cat
@@ -57,6 +96,8 @@ export default function NewsPage() {
               <img
                 src={newsPageData.leadStory.img}
                 alt={newsPageData.leadStory.title}
+                loading="eager"
+                decoding="async"
                 className="img-fade img-scale w-full h-full object-cover"
               />
               <span className="absolute top-3 left-3 bg-[#D4AF37] text-[#0C133D] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
@@ -97,6 +138,8 @@ export default function NewsPage() {
                   <img
                     src={art.img}
                     alt={art.title}
+                    loading="lazy"
+                    decoding="async"
                     className="img-fade img-scale w-full h-full object-cover"
                   />
                   <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase shadow-sm">
@@ -116,7 +159,6 @@ export default function NewsPage() {
                     <span>By {art.author} • {art.time}</span>
                     <span className="text-[#D4AF37] font-semibold">{art.readTime}</span>
                   </div>
-
                 </div>
               </Reveal>
             ))}
@@ -161,20 +203,23 @@ export default function NewsPage() {
             <p className="text-xs text-on-surface-variant leading-relaxed">
               Every morning, get our curated breakdown of virtual asset policy, markets, and macroeconomic analysis.
             </p>
-            <div className="space-y-2">
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-2">
               <input
                 type="email"
                 placeholder="Enter your email..."
+                aria-label="Email address for daily briefing newsletter"
                 className="w-full px-3 py-2 text-xs bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]"
               />
-              <button className="w-full py-2.5 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/60 text-xs font-extrabold rounded-lg hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm">
+              <button
+                type="submit"
+                className="w-full py-2.5 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/60 text-xs font-extrabold rounded-lg hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm"
+              >
                 Subscribe Free →
               </button>
-            </div>
+            </form>
           </Reveal>
         </div>
       </div>
     </div>
   );
 }
-

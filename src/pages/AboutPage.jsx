@@ -1,9 +1,15 @@
 import React from "react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 
-export default function AboutPage() {
+export default function AboutPage({ onNavigate }) {
   return (
     <div className="max-w-4xl mx-auto space-y-8 py-4">
+      <SEOHead pageKey="About" />
+
+      <Breadcrumbs currentPage="About" onNavigate={onNavigate} />
+
       <Reveal as="div" className="border-b border-outline-variant pb-6 space-y-2">
         <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block">
           ABOUT TOKEN TIMES

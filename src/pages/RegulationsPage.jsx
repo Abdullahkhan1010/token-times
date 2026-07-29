@@ -1,13 +1,19 @@
 import React from "react";
 import { Download, FileText, Gavel, CheckCircle2 } from "lucide-react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { regulationsPageData } from "../data/pagesData";
 
-export default function RegulationsPage() {
+export default function RegulationsPage({ onNavigate }) {
   const { hero, trackers, briefings } = regulationsPageData;
 
   return (
     <div className="space-y-10">
+      <SEOHead pageKey="Regulations" />
+
+      <Breadcrumbs currentPage="Regulations" onNavigate={onNavigate} />
+
       {/* Header */}
       <Reveal as="div" className="border-b border-outline-variant pb-4 space-y-2">
         <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-widest uppercase block">
@@ -93,15 +99,14 @@ export default function RegulationsPage() {
 
               <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs">
                 <span className="text-on-surface-variant font-data-tabular">{b.format}</span>
-                <a href="#" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm">
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
                   Download <Download size={14} />
-                </a>
+                </button>
               </div>
             </Reveal>
           ))}
         </div>
       </div>
     </div>
-
   );
 }

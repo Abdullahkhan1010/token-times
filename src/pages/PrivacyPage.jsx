@@ -1,9 +1,15 @@
 import React from "react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 
-export default function PrivacyPage() {
+export default function PrivacyPage({ onNavigate }) {
   return (
     <div className="max-w-4xl mx-auto space-y-6 py-4">
+      <SEOHead pageKey="Privacy Policy" />
+
+      <Breadcrumbs currentPage="Privacy Policy" onNavigate={onNavigate} />
+
       <Reveal as="div" className="border-b border-outline-variant pb-6 space-y-2">
         <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block">
           LEGAL & COMPLIANCE
@@ -32,7 +38,7 @@ export default function PrivacyPage() {
 
         <h3 className="text-base font-bold text-[#0C133D]">4. Contact Us</h3>
         <p>
-          For privacy requests or data inquiries, contact <strong className="text-[#0C133D]">privacy@tokentimes.pk</strong>.
+          For privacy requests or data inquiries, contact <strong className="text-[#0C133D]">privacy@tokentimes.io</strong>.
         </p>
       </Reveal>
     </div>

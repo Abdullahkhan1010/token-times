@@ -1,13 +1,19 @@
 import React from "react";
 import { Cpu, ShieldCheck, Zap } from "lucide-react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { technologiesPageData } from "../data/pagesData";
 
-export default function TechnologiesPage() {
+export default function TechnologiesPage({ onNavigate }) {
   const { techStack } = technologiesPageData;
 
   return (
     <div className="space-y-10">
+      <SEOHead pageKey="Technologies" />
+
+      <Breadcrumbs currentPage="Technologies" onNavigate={onNavigate} />
+
       {/* Page Header */}
       <Reveal as="div" className="border-b border-outline-variant pb-4 space-y-2">
         <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-widest uppercase block">
@@ -56,15 +62,14 @@ export default function TechnologiesPage() {
               </div>
 
               <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs">
-                <a href="#" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm">
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
                   View Spec →
-                </a>
+                </button>
               </div>
             </Reveal>
           ))}
         </div>
       </div>
     </div>
-
   );
 }

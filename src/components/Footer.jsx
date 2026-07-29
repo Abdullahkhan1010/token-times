@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import logo from "../assets/TokenTimesLogo.svg";
+import { ROUTE_PATH_MAP } from "../data/seoData";
 import {
   ArrowUp,
   Mail,
@@ -40,16 +41,16 @@ export default function Footer({ setActivePage }) {
   };
 
   return (
-    <footer className="bg-[#0C133D] text-white w-full border-t border-white/10 relative">
+    <footer className="bg-[#0C133D] text-white w-full border-t border-white/10 relative" role="contentinfo">
       {/* Top Header Block & Newsletter Subscription */}
       <div className="px-4 md:px-12 py-8 border-b border-white/10 bg-gradient-to-b from-[#0C133D] to-[#080E2E]">
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6">
           {/* Brand Info */}
           <div className="space-y-2 max-w-xl">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="Token Times logo" className="w-10 h-10 shrink-0" />
+              <img src={logo} alt="Token Times logo" loading="lazy" decoding="async" className="w-10 h-10 shrink-0" />
               <h2 className="font-headline-lg text-2xl font-bold text-white tracking-tight">
-                Tokens Times
+                Token Times
               </h2>
             </div>
             <p className="text-xs text-white/70 leading-relaxed font-sans">
@@ -60,15 +61,16 @@ export default function Footer({ setActivePage }) {
             <div className="flex items-center gap-2 pt-1">
               <span className="text-xs text-white/50 font-medium mr-1">Connect:</span>
               {[
-                { label: "X / Twitter", icon: "𝕏" },
-                { label: "Telegram", icon: "✈" },
-                { label: "LinkedIn", icon: "in" },
-                { label: "YouTube", icon: "▶" }
+                { label: "X / Twitter", icon: "𝕏", href: "https://twitter.com/TokenTimesIO" },
+                { label: "Telegram", icon: "✈", href: "https://t.me/tokentimes" },
+                { label: "LinkedIn", icon: "in", href: "https://linkedin.com/company/tokentimes" },
               ].map((s, idx) => (
                 <a
                   key={idx}
-                  href="#"
-                  onClick={(e) => e.preventDefault()}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
                   title={s.label}
                   className="w-7 h-7 rounded-full bg-white/5 hover:bg-[#D4AF37] hover:text-[#0C133D] text-white/80 transition-all flex items-center justify-center text-xs font-bold border border-white/10"
                 >
@@ -102,6 +104,7 @@ export default function Footer({ setActivePage }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter email address..."
+                  aria-label="Email address for daily newsletter"
                   required
                   className="bg-[#0C133D] border border-white/20 rounded-lg px-3 py-2 text-xs text-white placeholder-white/40 focus:outline-none focus:border-[#D4AF37] flex-grow"
                 />
@@ -121,7 +124,7 @@ export default function Footer({ setActivePage }) {
         </div>
       </div>
 
-      {/* Main 3-Column Navigation Grid (Simple & Fully Working) */}
+      {/* Main 3-Column Navigation Grid */}
       <div className="px-4 md:px-12 py-8 border-b border-white/10">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-xs">
           {/* Column 1: Publication */}
@@ -132,27 +135,27 @@ export default function Footer({ setActivePage }) {
             </h4>
             <ul className="space-y-2 text-white/80">
               <li>
-                <a href="#" onClick={handleNavClick("Home")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Home"]} onClick={handleNavClick("Home")} className="hover:text-[#D4AF37] transition-colors">
                   Home Overview
                 </a>
               </li>
               <li>
-                <a href="#" onClick={handleNavClick("News")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["News"]} onClick={handleNavClick("News")} className="hover:text-[#D4AF37] transition-colors">
                   Latest News & Stream
                 </a>
               </li>
               <li>
-                <a href="#" onClick={handleNavClick("Regulations")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Regulations"]} onClick={handleNavClick("Regulations")} className="hover:text-[#D4AF37] transition-colors">
                   SBP & SECP Regulations
                 </a>
               </li>
               <li>
-                <a href="#" onClick={handleNavClick("Research")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Research"]} onClick={handleNavClick("Research")} className="hover:text-[#D4AF37] transition-colors">
                   Research Papers & Whitepapers
                 </a>
               </li>
               <li>
-                <a href="#" onClick={handleNavClick("Magazine")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Magazine"]} onClick={handleNavClick("Magazine")} className="hover:text-[#D4AF37] transition-colors">
                   Print & Digital Magazine
                 </a>
               </li>
@@ -167,22 +170,22 @@ export default function Footer({ setActivePage }) {
             </h4>
             <ul className="space-y-2 text-white/80">
               <li>
-                <a href="#" onClick={handleNavClick("Knowledge Hub")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Knowledge Hub"]} onClick={handleNavClick("Knowledge Hub")} className="hover:text-[#D4AF37] transition-colors">
                   Knowledge Hub & Glossary
                 </a>
               </li>
               <li>
-                <a href="#" onClick={handleNavClick("Technologies")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Technologies"]} onClick={handleNavClick("Technologies")} className="hover:text-[#D4AF37] transition-colors">
                   Web3 & Blockchain Tech
                 </a>
               </li>
               <li>
-                <a href="#" onClick={handleNavClick("Events")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Events"]} onClick={handleNavClick("Events")} className="hover:text-[#D4AF37] transition-colors">
                   Industry Events & Summits
                 </a>
               </li>
               <li>
-                <a href="#" onClick={handleNavClick("Resources")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Resources"]} onClick={handleNavClick("Resources")} className="hover:text-[#D4AF37] transition-colors">
                   Data Resources & Tools
                 </a>
               </li>
@@ -197,22 +200,22 @@ export default function Footer({ setActivePage }) {
             </h4>
             <ul className="space-y-2 text-white/80">
               <li>
-                <a href="#" onClick={handleNavClick("About")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["About"]} onClick={handleNavClick("About")} className="hover:text-[#D4AF37] transition-colors">
                   About Token Times
                 </a>
               </li>
               <li>
-                <a href="#" onClick={handleNavClick("Contact")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Contact"]} onClick={handleNavClick("Contact")} className="hover:text-[#D4AF37] transition-colors">
                   Contact & Newsroom Desk
                 </a>
               </li>
               <li>
-                <a href="#" onClick={handleNavClick("Privacy Policy")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Privacy Policy"]} onClick={handleNavClick("Privacy Policy")} className="hover:text-[#D4AF37] transition-colors">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" onClick={handleNavClick("Terms of Service")} className="hover:text-[#D4AF37] transition-colors">
+                <a href={ROUTE_PATH_MAP["Terms of Service"]} onClick={handleNavClick("Terms of Service")} className="hover:text-[#D4AF37] transition-colors">
                   Terms of Service
                 </a>
               </li>
@@ -244,6 +247,7 @@ export default function Footer({ setActivePage }) {
           <button
             onClick={scrollToTop}
             title="Back to Top"
+            aria-label="Back to Top"
             className="flex items-center gap-1.5 bg-white/5 hover:bg-[#D4AF37] hover:text-[#0C133D] text-white/80 px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 transition-all"
           >
             <span>Back to Top</span>

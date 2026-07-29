@@ -1,9 +1,11 @@
 import React from "react";
 import { CheckSquare, Calculator, Code, FileText, ArrowRight } from "lucide-react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { resourcesPageData } from "../data/pagesData";
 
-export default function ResourcesPage() {
+export default function ResourcesPage({ onNavigate }) {
   const { vaspDirectory, tools } = resourcesPageData;
 
   const getIcon = (iconName) => {
@@ -18,6 +20,10 @@ export default function ResourcesPage() {
 
   return (
     <div className="space-y-10">
+      <SEOHead pageKey="Resources" />
+
+      <Breadcrumbs currentPage="Resources" onNavigate={onNavigate} />
+
       {/* Page Header */}
       <Reveal as="div" className="border-b border-outline-variant pb-4 space-y-2">
         <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-widest uppercase block">
@@ -56,9 +62,9 @@ export default function ResourcesPage() {
                     {t.desc}
                   </p>
                 </div>
-                <a href="#" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm w-fit mt-3">
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm w-fit mt-3">
                   Launch Tool <ArrowRight size={14} />
-                </a>
+                </button>
               </div>
             </Reveal>
           ))}
@@ -102,6 +108,5 @@ export default function ResourcesPage() {
         </div>
       </Reveal>
     </div>
-
   );
 }

@@ -1,13 +1,19 @@
 import React from "react";
-import { Download, BarChart3, BookOpen } from "lucide-react";
+import { Download, BookOpen } from "lucide-react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { researchPageData } from "../data/pagesData";
 
-export default function ResearchPage() {
+export default function ResearchPage({ onNavigate }) {
   const { featuredReport, papers, keyMetrics } = researchPageData;
 
   return (
     <div className="space-y-10">
+      <SEOHead pageKey="Research" />
+
+      <Breadcrumbs currentPage="Research" onNavigate={onNavigate} />
+
       {/* Page Header */}
       <Reveal as="div" className="border-b border-outline-variant pb-4 space-y-2">
         <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-widest uppercase block">
@@ -37,7 +43,13 @@ export default function ResearchPage() {
         className="bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-8"
       >
         <div className="lg:col-span-5 relative h-64 sm:h-80 lg:h-full rounded-xl overflow-hidden">
-          <img src={featuredReport.img} alt={featuredReport.title} className="w-full h-full object-cover" />
+          <img
+            src={featuredReport.img}
+            alt={featuredReport.title}
+            loading="eager"
+            decoding="async"
+            className="w-full h-full object-cover"
+          />
           <span className="absolute top-3 left-3 bg-[#D4AF37] text-[#0C133D] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
             {featuredReport.edition}
           </span>
@@ -93,9 +105,9 @@ export default function ResearchPage() {
 
               <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs">
                 <span>By {p.author}</span>
-                <a href="#" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm">
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
                   Download <Download size={14} />
-                </a>
+                </button>
               </div>
             </Reveal>
           ))}

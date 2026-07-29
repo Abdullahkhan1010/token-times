@@ -1,13 +1,19 @@
 import React from "react";
 import { Calendar, MapPin, Users, Ticket } from "lucide-react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { eventsPageData } from "../data/pagesData";
 
-export default function EventsPage() {
+export default function EventsPage({ onNavigate }) {
   const { flagshipEvent, upcoming } = eventsPageData;
 
   return (
     <div className="space-y-10">
+      <SEOHead pageKey="Events" />
+
+      <Breadcrumbs currentPage="Events" onNavigate={onNavigate} />
+
       {/* Page Header */}
       <Reveal as="div" className="border-b border-outline-variant pb-4 space-y-2">
         <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-widest uppercase block">
@@ -102,15 +108,14 @@ export default function EventsPage() {
 
               <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs">
                 <span className="text-on-surface-variant font-data-tabular">{ev.status}</span>
-                <a href="#" className="inline-flex items-center gap-1 px-3 py-1 rounded bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm">
+                <button className="inline-flex items-center gap-1 px-3 py-1 rounded bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
                   Register →
-                </a>
+                </button>
               </div>
             </Reveal>
           ))}
         </div>
       </div>
     </div>
-
   );
 }

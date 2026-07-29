@@ -1,0 +1,17 @@
+{
+  "name": "Token Times | Financial Intelligence",
+  "short_name": "Token Times",
+  "description": "Digital asset intelligence, regulatory briefings, and Web3 macroeconomic reporting.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0C133D",
+  "theme_color": "#0C133D",
+  "icons": [
+    {
+      "src": "/src/assets/TokenTimesLogo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

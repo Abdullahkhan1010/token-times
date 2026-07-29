@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
 
-export default function ContactPage() {
+export default function ContactPage({ onNavigate }) {
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
@@ -13,6 +15,10 @@ export default function ContactPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 py-4">
+      <SEOHead pageKey="Contact" />
+
+      <Breadcrumbs currentPage="Contact" onNavigate={onNavigate} />
+
       <Reveal as="div" className="border-b border-outline-variant pb-6 space-y-2">
         <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block">
           CONTACT & NEWSROOM
@@ -38,7 +44,7 @@ export default function ContactPage() {
                 <Mail className="w-4 h-4 text-[#D4AF37]" />
                 <div>
                   <p className="font-semibold text-[#0C133D]">Editorial Tips</p>
-                  <p className="text-xs text-on-surface-variant">editor@tokentimes.pk</p>
+                  <p className="text-xs text-on-surface-variant">editor@tokentimes.io</p>
                 </div>
               </div>
 
@@ -77,20 +83,20 @@ export default function ContactPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-3 text-xs">
                 <div>
-                  <label className="block font-semibold text-[#0C133D] mb-1">Full Name</label>
-                  <input required type="text" placeholder="Your name..." className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]" />
+                  <label htmlFor="contact-fullname" className="block font-semibold text-[#0C133D] mb-1">Full Name</label>
+                  <input id="contact-fullname" required type="text" placeholder="Your name..." className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]" />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#0C133D] mb-1">Email Address</label>
-                  <input required type="email" placeholder="Your email..." className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]" />
+                  <label htmlFor="contact-email" className="block font-semibold text-[#0C133D] mb-1">Email Address</label>
+                  <input id="contact-email" required type="email" placeholder="Your email..." className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]" />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#0C133D] mb-1">Subject</label>
-                  <input required type="text" placeholder="News Tip / Media Inquiry..." className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]" />
+                  <label htmlFor="contact-subject" className="block font-semibold text-[#0C133D] mb-1">Subject</label>
+                  <input id="contact-subject" required type="text" placeholder="News Tip / Media Inquiry..." className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]" />
                 </div>
                 <div>
-                  <label className="block font-semibold text-[#0C133D] mb-1">Message</label>
-                  <textarea required rows={4} placeholder="Details of your message..." className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]" />
+                  <label htmlFor="contact-message" className="block font-semibold text-[#0C133D] mb-1">Message</label>
+                  <textarea id="contact-message" required rows={4} placeholder="Details of your message..." className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]" />
                 </div>
                 <button type="submit" className="w-full py-2.5 bg-[#0C133D] text-[#D4AF37] font-bold rounded-lg hover:bg-[#D4AF37] hover:text-[#0C133D] transition-colors flex items-center justify-center gap-2">
                   <span>Submit Message</span>

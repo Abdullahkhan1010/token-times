@@ -1,12 +1,18 @@
 import React from "react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { magazinePageData } from "../data/pagesData";
 
-export default function MagazinePage() {
+export default function MagazinePage({ onNavigate }) {
   const { currentIssue, features, pastIssues } = magazinePageData;
 
   return (
     <div className="space-y-12">
+      <SEOHead pageKey="Magazine" />
+
+      <Breadcrumbs currentPage="Magazine" onNavigate={onNavigate} />
+
       {/* Magazine Edition Header */}
       <Reveal as="div" className="text-center max-w-3xl mx-auto space-y-3">
         <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-widest uppercase block">
@@ -31,6 +37,8 @@ export default function MagazinePage() {
             <img
               src={currentIssue.coverImg}
               alt={currentIssue.title}
+              loading="eager"
+              decoding="async"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
@@ -87,7 +95,6 @@ export default function MagazinePage() {
         </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
           {features.map((item, i) => (
             <Reveal
               key={item.title}
@@ -97,7 +104,13 @@ export default function MagazinePage() {
             >
               <div>
                 <div className="w-full h-48 overflow-hidden bg-surface-variant relative">
-                  <img src={item.img} alt={item.title} className="img-fade img-scale w-full h-full object-cover" />
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="img-fade img-scale w-full h-full object-cover"
+                  />
                   <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase shadow-sm">
                     {item.tag}
                   </span>
@@ -134,6 +147,5 @@ export default function MagazinePage() {
         </div>
       </Reveal>
     </div>
-
   );
 }

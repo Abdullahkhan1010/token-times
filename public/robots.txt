@@ -1,0 +1,23 @@
+# https://www.robotstxt.org/robotstxt.html
+# Robots.txt for Token Times (https://tokentimes.io)
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*?*query=
+
+# Crawl Delay
+Crawl-delay: 1
+
+# Specific Search Engine Directives
+User-agent: Googlebot
+Allow: /
+Allow: /src/assets/
+
+User-agent: Bingbot
+Allow: /
+
+# Sitemap Index Files
+Sitemap: https://tokentimes.io/sitemap.xml
+Sitemap: https://tokentimes.io/news-sitemap.xml

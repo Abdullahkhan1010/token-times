@@ -4,6 +4,8 @@ import Header from "./components/Header";
 import Navigation from "./components/Navigation";
 import BreakingTicker from "./components/BreakingTicker";
 import Footer from "./components/Footer";
+import SEOHead from "./components/SEOHead";
+import { useRouteSync } from "./hooks/useRouteSync";
 
 import HomePage from "./pages/HomePage";
 import NewsPage from "./pages/NewsPage";
@@ -21,36 +23,37 @@ import TermsPage from "./pages/TermsPage";
 
 export default function App() {
   const [activePage, setActivePage] = useState("Home");
+  const changePage = useRouteSync(activePage, setActivePage);
 
   const renderCurrentPage = () => {
     switch (activePage) {
       case "News":
-        return <NewsPage />;
+        return <NewsPage onNavigate={changePage} />;
       case "Magazine":
-        return <MagazinePage />;
+        return <MagazinePage onNavigate={changePage} />;
       case "Knowledge Hub":
-        return <KnowledgeHubPage />;
+        return <KnowledgeHubPage onNavigate={changePage} />;
       case "Regulations":
-        return <RegulationsPage />;
+        return <RegulationsPage onNavigate={changePage} />;
       case "Research":
-        return <ResearchPage />;
+        return <ResearchPage onNavigate={changePage} />;
       case "Resources":
-        return <ResourcesPage />;
+        return <ResourcesPage onNavigate={changePage} />;
       case "Events":
-        return <EventsPage />;
+        return <EventsPage onNavigate={changePage} />;
       case "Technologies":
-        return <TechnologiesPage />;
+        return <TechnologiesPage onNavigate={changePage} />;
       case "About":
-        return <AboutPage />;
+        return <AboutPage onNavigate={changePage} />;
       case "Contact":
-        return <ContactPage />;
+        return <ContactPage onNavigate={changePage} />;
       case "Privacy Policy":
-        return <PrivacyPage />;
+        return <PrivacyPage onNavigate={changePage} />;
       case "Terms of Service":
-        return <TermsPage />;
+        return <TermsPage onNavigate={changePage} />;
       case "Home":
       default:
-        return <HomePage />;
+        return <HomePage onNavigate={changePage} />;
     }
   };
 
@@ -58,20 +61,21 @@ export default function App() {
     <div className="w-full min-h-screen flex flex-col bg-background text-on-background">
       {/* Top Header */}
       <header className="bg-background border-b border-outline-variant/60 sticky top-0 z-50 rounded-none">
-        <Header activePage={activePage} setActivePage={setActivePage} />
+        <Header activePage={activePage} setActivePage={changePage} />
         {/* Navigation Menu */}
-        <Navigation activePage={activePage} setActivePage={setActivePage} />
+        <Navigation activePage={activePage} setActivePage={changePage} />
       </header>
 
       {/* Breaking News Ticker */}
       <BreakingTicker />
 
-      <main className="flex-grow w-full px-4 md:px-12 py-8">
+      {/* Main Dynamic Content Area */}
+      <main id="main-content" className="flex-grow w-full px-4 md:px-12 py-8" role="main">
         {renderCurrentPage()}
       </main>
 
       {/* Footer */}
-      <Footer setActivePage={setActivePage} />
+      <Footer setActivePage={changePage} />
     </div>
   );
 }

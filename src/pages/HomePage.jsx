@@ -1,4 +1,5 @@
 import React from "react";
+import SEOHead from "../components/SEOHead";
 import Hero from "../components/Hero";
 import EditorsPick from "../components/EditorsPick";
 import LatestNews from "../components/LatestNews";
@@ -15,9 +16,11 @@ import UpcomingEvents from "../components/UpcomingEvents";
 import Newsletter from "../components/Newsletter";
 import Partners from "../components/Partners";
 
-export default function HomePage() {
+export default function HomePage({ onNavigate }) {
   return (
     <>
+      <SEOHead pageKey="Home" />
+
       {/* Hero Section — top featured stories */}
       <Hero />
 

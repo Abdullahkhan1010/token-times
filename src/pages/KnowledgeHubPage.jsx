@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Search } from "lucide-react";
+import SEOHead from "../components/SEOHead";
+import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { knowledgeHubPageData } from "../data/pagesData";
 
-export default function KnowledgeHubPage() {
+export default function KnowledgeHubPage({ onNavigate }) {
   const [selectedCategory, setSelectedCategory] = useState("All Guides");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -15,6 +17,10 @@ export default function KnowledgeHubPage() {
 
   return (
     <div className="space-y-10">
+      <SEOHead pageKey="Knowledge Hub" />
+
+      <Breadcrumbs currentPage="Knowledge Hub" onNavigate={onNavigate} />
+
       {/* Header & Search Hero */}
       <Reveal as="div" className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 text-center space-y-6 max-w-4xl mx-auto shadow-sm">
         <span className="font-label-caps text-xs text-[#D4AF37] font-bold uppercase tracking-widest block">
@@ -35,16 +41,19 @@ export default function KnowledgeHubPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search guides, terms, CBDC, ZK-proofs, Travel Rule..."
+            aria-label="Search guides, terms, CBDC, ZK-proofs, Travel Rule"
             className="w-full pl-11 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl text-sm font-medium text-[#0C133D] focus:outline-none focus:border-[#D4AF37]"
           />
         </div>
       </Reveal>
 
       {/* Category Pills */}
-      <Reveal as="div" className="flex items-center gap-2 overflow-x-auto no-scrollbar justify-center pb-2">
+      <Reveal as="div" className="flex items-center gap-2 overflow-x-auto no-scrollbar justify-center pb-2" role="tablist">
         {knowledgeHubPageData.categories.map((cat) => (
           <button
             key={cat}
+            role="tab"
+            aria-selected={selectedCategory === cat}
             onClick={() => setSelectedCategory(cat)}
             className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap border ${
               selectedCategory === cat
@@ -87,9 +96,9 @@ export default function KnowledgeHubPage() {
 
               <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs">
                 <span className="text-on-surface-variant font-data-tabular">Tag: {guide.tag}</span>
-                <a href="#" className="inline-flex items-center gap-1 px-3 py-1 rounded bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm">
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
                   Read Guide →
-                </a>
+                </span>
               </div>
             </Reveal>
           ))}
@@ -112,6 +121,5 @@ export default function KnowledgeHubPage() {
         </div>
       </Reveal>
     </div>
-
   );
 }
