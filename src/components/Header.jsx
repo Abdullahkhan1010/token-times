@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Search, Rss, Twitter, Linkedin } from "lucide-react";
-
+import logo from "../../assets/logo.svg";
 export default function Header() {
   const [dateStr, setDateStr] = useState("");
 
@@ -12,16 +12,27 @@ export default function Header() {
   return (
     <div className="flex justify-between items-center w-full px-4 md:px-12 py-4">
       {/* Logo + date */}
-      <div className="flex flex-col">
-        <h1 className="font-display-lg text-display-lg text-primary tracking-tighter">
-          Token Times
-        </h1>
-        <span className="font-label-caps text-label-caps text-on-surface-variant">
-          Pakistan's Digital Assets Intelligence Platform
-        </span>
-        <span className="font-data-tabular text-data-tabular text-on-surface-variant mt-1">
-          {dateStr}
-        </span>
+      <div className="flex items-center gap-4">
+        <img
+          src={logo}
+          alt="Token Times Logo"
+          className="object-contain"
+          width={72}
+          height={72}
+        />
+        <div className="flex flex-col">
+          <h1 className="font-display-lg text-display-lg text-primary tracking-tighter">
+            Token Times
+          </h1>
+
+          <span className="font-label-caps text-label-caps text-on-surface-variant">
+            Pakistan's Digital Assets Intelligence Platform
+          </span>
+
+          <span className="font-data-tabular text-data-tabular text-on-surface-variant mt-1">
+            {dateStr}
+          </span>
+        </div>
       </div>
 
       {/* Search, subscribe, login, social */}

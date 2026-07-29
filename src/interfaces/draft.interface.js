@@ -1,0 +1,15 @@
+export const createDraftInterface = (overrides = {}) => ({
+    article_id: '',
+    original_title: '',
+    article: '',
+    summary: '',
+    author: '',
+    image: '',
+    approx_time_to_read: '',
+    category: [],
+    tags: [],
+    views: 0,
+    headlines: [],
+    status: '',
+    ...overrides,
+});
