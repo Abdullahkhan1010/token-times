@@ -1,16 +1,48 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar } from "lucide-react";
-import { upcomingEvents } from "../data/content";
+import { upcomingEvents as staticEvents } from "../data/content";
+import { getEvents } from "../services/event.service";
 
 export default function UpcomingEvents() {
+  const [events, setEvents] = useState(staticEvents);
+
+  useEffect(() => {
+    let active = true;
+    getEvents()
+      .then((data) => {
+        if (!active) return;
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((ev) => {
+            const dateObj = ev.event_date ? new Date(ev.event_date) : null;
+            const month = dateObj && !isNaN(dateObj) ? dateObj.toLocaleString("en-US", { month: "short" }).toUpperCase() : "2026";
+            const day = dateObj && !isNaN(dateObj) ? dateObj.getDate() : "15";
+            return {
+              id: ev.id,
+              month,
+              day: String(day),
+              title: ev.event_title,
+              meta: `${ev.event_venue || "Islamabad"} • ${ev.event_date || "Upcoming"}`,
+              filled: true,
+            };
+          });
+          setEvents(mapped);
+        }
+      })
+      .catch((err) => console.error("Failed to load events", err));
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <section>
       <h3 className="font-headline-md text-headline-md text-[#0C133D] mb-6 flex items-center gap-2">
         <Calendar size={20} className="text-[#D4AF37]" /> Upcoming Events
       </h3>
       <div className="space-y-4">
-        {upcomingEvents.map((ev) => (
-          <div key={ev.title} className="hover-lift flex gap-4 bg-surface-container-low p-3 border border-outline-variant">
+        {events.map((ev, i) => (
+          <div key={ev.id || ev.title + i} className="hover-lift flex gap-4 bg-surface-container-low p-3 border border-outline-variant">
             <div
               className={`flex flex-col items-center justify-center p-2 ${
                 ev.filled ? "bg-[#D4AF37] text-[#0C133D]" : "border border-[#D4AF37] text-[#D4AF37]"
@@ -30,5 +62,3 @@ export default function UpcomingEvents() {
     </section>
   );
 }
-
-

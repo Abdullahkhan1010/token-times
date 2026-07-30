@@ -1,11 +1,50 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { magazinePageData } from "../data/pagesData";
+import { getMagzines } from "../services/magzine.service";
 
 export default function MagazinePage({ onNavigate }) {
-  const { currentIssue, features, pastIssues } = magazinePageData;
+  const { currentIssue: staticCurrent, features, pastIssues: staticPast } = magazinePageData;
+
+  const [currentIssue, setCurrentIssue] = useState(staticCurrent);
+  const [pastIssues, setPastIssues] = useState(staticPast);
+
+  useEffect(() => {
+    let active = true;
+    getMagzines()
+      .then((data) => {
+        if (!active) return;
+        if (Array.isArray(data) && data.length > 0) {
+          const latest = data[0];
+          setCurrentIssue({
+            number: latest.issue_name || staticCurrent.number,
+            title: latest.title || staticCurrent.title,
+            subtitle: latest.description ? latest.description.slice(0, 80) + "..." : staticCurrent.subtitle,
+            coverImg: latest.cover_img || staticCurrent.coverImg,
+            description: latest.description || staticCurrent.description,
+            editorNote: staticCurrent.editorNote,
+            file: latest.file,
+          });
+
+          if (data.length > 1) {
+            const mappedPast = data.slice(1).map((m) => ({
+              issue: m.issue_name,
+              title: m.title,
+              theme: m.description ? m.description.slice(0, 40) + "..." : "Quarterly Edition",
+              file: m.file,
+            }));
+            setPastIssues(mappedPast);
+          }
+        }
+      })
+      .catch((err) => console.error("Failed to load magazines", err));
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="space-y-12">
@@ -75,9 +114,20 @@ export default function MagazinePage({ onNavigate }) {
           </blockquote>
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
-            <button className="px-6 py-3 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-md">
-              Read Digital Edition (PDF)
-            </button>
+            {currentIssue.file ? (
+              <a
+                href={currentIssue.file}
+                target="_blank"
+                rel="noreferrer"
+                className="px-6 py-3 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-md"
+              >
+                Read Digital Edition (PDF)
+              </a>
+            ) : (
+              <button className="px-6 py-3 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-md">
+                Read Digital Edition (PDF)
+              </button>
+            )}
             <button className="px-6 py-3 border-2 border-[#0C133D] bg-transparent text-[#0C133D] font-bold text-xs rounded-xl hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-[#0C133D] transition-all">
               Subscribe to Print
             </button>
@@ -97,7 +147,7 @@ export default function MagazinePage({ onNavigate }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {features.map((item, i) => (
             <Reveal
-              key={item.title}
+              key={item.title + i}
               as="article"
               delay={i * 80}
               className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col justify-between cursor-pointer shadow-sm hover:border-[#D4AF37]"
@@ -137,8 +187,8 @@ export default function MagazinePage({ onNavigate }) {
       <Reveal as="section" className="bg-surface-container-low border border-outline-variant rounded-xl p-6 space-y-4">
         <h3 className="font-headline-sm text-lg font-bold text-[#0C133D]">Archived Quarterly Editions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {pastIssues.map((issue) => (
-            <div key={issue.issue} className="bg-surface-container-lowest p-4 rounded-lg border border-outline-variant hover:border-[#D4AF37] transition-colors cursor-pointer space-y-1 shadow-sm">
+          {pastIssues.map((issue, i) => (
+            <div key={issue.issue + i} className="bg-surface-container-lowest p-4 rounded-lg border border-outline-variant hover:border-[#D4AF37] transition-colors cursor-pointer space-y-1 shadow-sm">
               <span className="text-[10px] font-bold text-[#D4AF37] uppercase tracking-wider block">{issue.issue}</span>
               <h4 className="text-sm font-bold text-[#0C133D]">{issue.title}</h4>
               <span className="text-xs text-on-surface-variant font-data-tabular block">Theme: {issue.theme}</span>

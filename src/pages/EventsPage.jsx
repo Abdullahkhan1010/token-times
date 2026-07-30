@@ -1,12 +1,51 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar, MapPin, Users, Ticket } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { eventsPageData } from "../data/pagesData";
+import { getEvents } from "../services/event.service";
 
 export default function EventsPage({ onNavigate }) {
-  const { flagshipEvent, upcoming } = eventsPageData;
+  const { flagshipEvent: staticFlagship, upcoming: staticUpcoming } = eventsPageData;
+
+  const [flagshipEvent, setFlagshipEvent] = useState(staticFlagship);
+  const [upcoming, setUpcoming] = useState(staticUpcoming);
+
+  useEffect(() => {
+    let active = true;
+    getEvents()
+      .then((data) => {
+        if (!active) return;
+        if (Array.isArray(data) && data.length > 0) {
+          const first = data[0];
+          setFlagshipEvent({
+            title: first.event_title || staticFlagship.title,
+            date: first.event_date || staticFlagship.date,
+            location: first.event_venue || staticFlagship.location,
+            desc: first.event_description || staticFlagship.desc,
+            speakers: Array.isArray(first.event_guests) && first.event_guests.length > 0 ? first.event_guests : staticFlagship.speakers,
+            agenda: first.event_agenda,
+          });
+
+          if (data.length > 1) {
+            const mappedUpcoming = data.slice(1).map((ev) => ({
+              id: ev.id,
+              format: "Conference",
+              title: ev.event_title,
+              date: ev.event_date || "2026",
+              status: "Open Registration",
+            }));
+            setUpcoming(mappedUpcoming);
+          }
+        }
+      })
+      .catch((err) => console.error("Failed to load events", err));
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="space-y-10">
@@ -59,24 +98,37 @@ export default function EventsPage({ onNavigate }) {
         </div>
 
         {/* Featured Speakers Roster */}
-        <div className="space-y-2">
-          <span className="text-xs font-label-caps text-on-surface-variant uppercase tracking-wider font-bold block">Keynote Roster:</span>
-          <div className="flex flex-wrap gap-2">
-            {flagshipEvent.speakers.map((sp) => (
-              <span key={sp} className="px-3 py-1 bg-surface-container-low border border-outline-variant rounded-lg text-xs font-semibold text-[#0C133D] flex items-center gap-1.5">
-                <Users size={12} className="text-[#D4AF37]" /> {sp}
-              </span>
-            ))}
+        {flagshipEvent.speakers && flagshipEvent.speakers.length > 0 && (
+          <div className="space-y-2">
+            <span className="text-xs font-label-caps text-on-surface-variant uppercase tracking-wider font-bold block">Keynote Roster:</span>
+            <div className="flex flex-wrap gap-2">
+              {flagshipEvent.speakers.map((sp) => (
+                <span key={sp} className="px-3 py-1 bg-surface-container-low border border-outline-variant rounded-lg text-xs font-semibold text-[#0C133D] flex items-center gap-1.5">
+                  <Users size={12} className="text-[#D4AF37]" /> {sp}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="pt-2 flex flex-wrap gap-4">
           <button className="px-6 py-3 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm">
             Register for Summit Pass
           </button>
-          <button className="px-6 py-3 border-2 border-[#0C133D] bg-transparent text-[#0C133D] font-bold text-xs rounded-xl hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-[#0C133D] transition-all">
-            View Summit Agenda
-          </button>
+          {flagshipEvent.agenda ? (
+            <a
+              href={flagshipEvent.agenda}
+              target="_blank"
+              rel="noreferrer"
+              className="px-6 py-3 border-2 border-[#0C133D] bg-transparent text-[#0C133D] font-bold text-xs rounded-xl hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-[#0C133D] transition-all"
+            >
+              View Summit Agenda
+            </a>
+          ) : (
+            <button className="px-6 py-3 border-2 border-[#0C133D] bg-transparent text-[#0C133D] font-bold text-xs rounded-xl hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-[#0C133D] transition-all">
+              View Summit Agenda
+            </button>
+          )}
         </div>
       </Reveal>
 
@@ -89,7 +141,7 @@ export default function EventsPage({ onNavigate }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {upcoming.map((ev, i) => (
             <Reveal
-              key={ev.title}
+              key={ev.id || ev.title + i}
               as="div"
               delay={i * 80}
               className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between cursor-pointer space-y-4 shadow-sm hover:border-[#D4AF37]"

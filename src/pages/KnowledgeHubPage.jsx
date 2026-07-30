@@ -1,15 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { knowledgeHubPageData } from "../data/pagesData";
+import { getKnowlegeHubs } from "../services/knowlege-hub.service";
 
 export default function KnowledgeHubPage({ onNavigate }) {
   const [selectedCategory, setSelectedCategory] = useState("All Guides");
   const [searchQuery, setSearchQuery] = useState("");
+  const [guides, setGuides] = useState(knowledgeHubPageData.featuredGuides);
 
-  const filteredGuides = knowledgeHubPageData.featuredGuides.filter((guide) => {
+  useEffect(() => {
+    let active = true;
+    getKnowlegeHubs()
+      .then((data) => {
+        if (!active) return;
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((item) => ({
+            id: item.id,
+            level: Array.isArray(item.category) && item.category.length > 0 ? item.category[0] : "Guide",
+            time: item.publish_date || "5 min read",
+            title: item.question,
+            desc: item.answer,
+            tag: Array.isArray(item.tags) && item.tags.length > 0 ? item.tags.join(", ") : "General",
+          }));
+          setGuides(mapped);
+        }
+      })
+      .catch((err) => console.error("Failed to load knowledge hub guides", err));
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const filteredGuides = guides.filter((guide) => {
     const matchesCat = selectedCategory === "All Guides" || guide.level.toLowerCase().includes(selectedCategory.toLowerCase());
     const matchesSearch = guide.title.toLowerCase().includes(searchQuery.toLowerCase()) || guide.desc.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCat && matchesSearch;
@@ -74,7 +100,7 @@ export default function KnowledgeHubPage({ onNavigate }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredGuides.map((guide, i) => (
             <Reveal
-              key={guide.title}
+              key={guide.id || guide.title + i}
               as="article"
               delay={i * 70}
               className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between cursor-pointer space-y-4 shadow-sm hover:border-[#D4AF37]"

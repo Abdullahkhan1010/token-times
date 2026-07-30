@@ -1,12 +1,47 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Download, FileText, Gavel, CheckCircle2 } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { regulationsPageData } from "../data/pagesData";
+import { getRegulations } from "../services/regulation.service";
 
 export default function RegulationsPage({ onNavigate }) {
-  const { hero, trackers, briefings } = regulationsPageData;
+  const { hero, trackers: staticTrackers, briefings: staticBriefings } = regulationsPageData;
+
+  const [trackers, setTrackers] = useState(staticTrackers);
+  const [briefings, setBriefings] = useState(staticBriefings);
+
+  useEffect(() => {
+    let active = true;
+    getRegulations()
+      .then((data) => {
+        if (!active) return;
+        if (Array.isArray(data) && data.length > 0) {
+          const mappedBriefings = data.map((r) => ({
+            authority: r.authority || "Regulatory Body",
+            title: r.title,
+            desc: `Directive issued on ${r.publish_date || "Recent"}. Download legal compliance text.`,
+            format: r.file ? "PDF Document" : "Official Directives",
+            file: r.file,
+          }));
+          const mappedTrackers = data.map((r) => ({
+            authority: r.authority || "SBP / SECP",
+            framework: r.title,
+            status: "Active",
+            impact: "High Compliance Impact",
+            lastUpdate: r.publish_date || "2026",
+          }));
+          setBriefings(mappedBriefings);
+          setTrackers(mappedTrackers);
+        }
+      })
+      .catch((err) => console.error("Failed to load regulations", err));
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="space-y-10">
@@ -53,8 +88,8 @@ export default function RegulationsPage({ onNavigate }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-outline-variant/40 font-data-tabular">
-              {trackers.map((row) => (
-                <tr key={row.framework} className="hover:bg-surface-container-low/50 transition-colors">
+              {trackers.map((row, i) => (
+                <tr key={row.framework + i} className="hover:bg-surface-container-low/50 transition-colors">
                   <td className="py-3.5 px-4 font-bold text-[#0C133D]">{row.authority}</td>
                   <td className="py-3.5 px-4 font-semibold text-[#0C133D]">{row.framework}</td>
                   <td className="py-3.5 px-4">
@@ -80,7 +115,7 @@ export default function RegulationsPage({ onNavigate }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {briefings.map((b, i) => (
             <Reveal
-              key={b.title}
+              key={b.title + i}
               as="div"
               delay={i * 80}
               className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between cursor-pointer space-y-4 shadow-sm hover:border-[#D4AF37]"
@@ -99,9 +134,20 @@ export default function RegulationsPage({ onNavigate }) {
 
               <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs">
                 <span className="text-on-surface-variant font-data-tabular">{b.format}</span>
-                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
-                  Download <Download size={14} />
-                </button>
+                {b.file ? (
+                  <a
+                    href={b.file}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm"
+                  >
+                    Download <Download size={14} />
+                  </a>
+                ) : (
+                  <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
+                    Download <Download size={14} />
+                  </button>
+                )}
               </div>
             </Reveal>
           ))}

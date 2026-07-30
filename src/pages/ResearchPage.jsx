@@ -1,12 +1,38 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Download, BookOpen } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { researchPageData } from "../data/pagesData";
+import { getResearches } from "../services/research.service";
 
 export default function ResearchPage({ onNavigate }) {
-  const { featuredReport, papers, keyMetrics } = researchPageData;
+  const { featuredReport, papers: staticPapers, keyMetrics } = researchPageData;
+  const [papers, setPapers] = useState(staticPapers);
+
+  useEffect(() => {
+    let active = true;
+    getResearches()
+      .then((data) => {
+        if (!active) return;
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((p) => ({
+            id: p.id,
+            meta: `Published ${p.publish_date || "2026"} • Institutional PDF`,
+            title: p.title,
+            desc: `Macro report and data analysis by ${p.author || "Research Team"}.`,
+            author: p.author || "Research Desk",
+            file: p.file,
+          }));
+          setPapers(mapped);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch research papers", err));
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="space-y-10">
@@ -86,7 +112,7 @@ export default function ResearchPage({ onNavigate }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {papers.map((p, i) => (
             <Reveal
-              key={p.title}
+              key={p.id || p.title + i}
               as="div"
               delay={i * 80}
               className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between cursor-pointer space-y-4 shadow-sm hover:border-[#D4AF37]"
@@ -105,9 +131,20 @@ export default function ResearchPage({ onNavigate }) {
 
               <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs">
                 <span>By {p.author}</span>
-                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
-                  Download <Download size={14} />
-                </button>
+                {p.file ? (
+                  <a
+                    href={p.file}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm"
+                  >
+                    Download <Download size={14} />
+                  </a>
+                ) : (
+                  <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
+                    Download <Download size={14} />
+                  </button>
+                )}
               </div>
             </Reveal>
           ))}

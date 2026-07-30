@@ -1,10 +1,16 @@
 import React from "react";
-import { Home, Newspaper, BookOpen, Archive, BarChart3, X } from "lucide-react";
+import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", icon: Home },
   { key: "queue", label: "AI Queue", icon: Newspaper },
   { key: "published", label: "Published", icon: BookOpen },
+  { key: "regulations", label: "Regulations", icon: Gavel },
+  { key: "research", label: "Research", icon: FileText },
+  { key: "magazines", label: "Magazines", icon: BookOpen },
+  { key: "knowledge-hub", label: "Knowledge Hub", icon: HelpCircle },
+  { key: "interviews", label: "Interviews", icon: Mic },
+  { key: "events", label: "Events", icon: Calendar },
   { key: "archived", label: "Archived", icon: Archive },
   { key: "analytics", label: "Analytics", icon: BarChart3 },
 ];

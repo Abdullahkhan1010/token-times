@@ -1,8 +1,34 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Reveal from "./Reveal";
-import { magazineIssue as mag } from "../data/content";
+import { magazineIssue as staticMag } from "../data/content";
+import { getMagzines } from "../services/magzine.service";
 
 export default function MagazineIssue() {
+  const [mag, setMag] = useState(staticMag);
+
+  useEffect(() => {
+    let active = true;
+    getMagzines()
+      .then((data) => {
+        if (!active) return;
+        if (Array.isArray(data) && data.length > 0) {
+          const latest = data[0];
+          setMag({
+            cover: latest.cover_img || staticMag.cover,
+            issue: latest.issue_name || staticMag.issue,
+            title: latest.title || staticMag.title,
+            desc: latest.description || staticMag.desc,
+            file: latest.file,
+          });
+        }
+      })
+      .catch((err) => console.error("Failed to load magazine issue", err));
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <Reveal as="section" className="mb-8 bg-surface-container-lowest border border-outline-variant p-8 md:p-12">
       <div className="flex flex-col md:flex-row items-center gap-12">
@@ -24,15 +50,25 @@ export default function MagazineIssue() {
           <h2 className="font-display-lg text-display-lg text-[#0C133D] mb-4">{mag.title}</h2>
           <p className="font-body-lg text-body-lg text-on-surface-variant mb-6 max-w-2xl">{mag.desc}</p>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-            <button className="bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/60 px-6 py-3 font-label-caps text-xs font-extrabold hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm rounded-lg">
-              Read Online →
-            </button>
+            {mag.file ? (
+              <a
+                href={mag.file}
+                target="_blank"
+                rel="noreferrer"
+                className="bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/60 px-6 py-3 font-label-caps text-xs font-extrabold hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm rounded-lg"
+              >
+                Read Online →
+              </a>
+            ) : (
+              <button className="bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/60 px-6 py-3 font-label-caps text-xs font-extrabold hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm rounded-lg">
+                Read Online →
+              </button>
+            )}
             <button className="border-2 border-[#0C133D] bg-transparent text-[#0C133D] px-6 py-3 font-label-caps text-xs font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-[#0C133D] transition-all rounded-lg">
               Order Print Edition
             </button>
           </div>
         </div>
-
       </div>
     </Reveal>
   );

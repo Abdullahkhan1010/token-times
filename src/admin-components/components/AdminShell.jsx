@@ -6,6 +6,13 @@ import AIQueue from "./AIQueue";
 import Published from "./Published";
 import Archived from "./Archived";
 import Analytics from "./Analytics";
+import RegulationsAdmin from "./RegulationsAdmin";
+import ResearchAdmin from "./ResearchAdmin";
+import MagazinesAdmin from "./MagazinesAdmin";
+import KnowledgeHubAdmin from "./KnowledgeHubAdmin";
+import InterviewsAdmin from "./InterviewsAdmin";
+import EventsAdmin from "./EventsAdmin";
+import { requestJson } from "../../services/api";
 import {
   pendingQueue as initialQueue,
   publishedArticles as initialPublished,
@@ -36,14 +43,11 @@ export default function AdminShell() {
 
     async function loadDrafts() {
       try {
-        const res = await fetch('/news/drafts');
-        if (!res.ok) throw new Error('Failed to fetch drafts');
-        const json = await res.json();
-
+        const json = await requestJson('/news/drafts');
         if (cancelled) return;
 
         // Server returns enriched drafts with `id`, `title`, `summary`, `source`, `category`, `fetchedAt`, `content`
-        const mapped = json.map((d) => ({
+        const mapped = (json || []).map((d) => ({
           id: d.id,
           title: d.title,
           summary: d.summary,
@@ -70,17 +74,12 @@ export default function AdminShell() {
     // Call backend approve endpoint
     (async () => {
       try {
-        const res = await fetch('/news/approve', {
+        const body = await requestJson('/news/approve', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id }),
         });
 
-        if (!res.ok) throw new Error('Approve failed');
-
-        const body = await res.json();
-
-        const article = body.article;
+        const article = body.article || {};
 
         setPublished((prev) => [
           { id: article._id || article.id || id, title: article.title, category: article.category || 'Uncategorized', author: 'T.T. Editorial Board', publishedAt: article.publish_date ?? new Date().toISOString(), views: article.views ?? 0 },
@@ -97,8 +96,7 @@ export default function AdminShell() {
   const handleReject = (id) => {
     (async () => {
       try {
-        const res = await fetch(`/news/drafts/${id}`, { method: 'DELETE' });
-        if (!res.ok) throw new Error('Delete failed');
+        await requestJson(`/news/drafts/${id}`, { method: 'DELETE' });
         setQueue((prev) => prev.filter((a) => a.id !== id));
       } catch (err) {
         console.error('Reject failed', err);
@@ -117,15 +115,10 @@ export default function AdminShell() {
           content: updated.content,
         };
 
-        const res = await fetch(`/news/drafts/${updated.id}`, {
+        const updatedDraft = await requestJson(`/news/drafts/${updated.id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-
-        if (!res.ok) throw new Error('Update failed');
-
-        const updatedDraft = await res.json();
 
         setQueue((prev) => prev.map((a) => (a.id === updated.id ? { ...a, title: updatedDraft.original_title ?? updated.title, summary: updatedDraft.summary ?? updated.summary, source: updated.source ?? a.source, category: updated.category ?? a.category, content: updatedDraft.article ?? updated.content } : a)));
       } catch (err) {
@@ -189,6 +182,18 @@ export default function AdminShell() {
         )}
 
         {page === "published" && <Published articles={published} onArchive={handleArchive} />}
+
+        {page === "regulations" && <RegulationsAdmin />}
+
+        {page === "research" && <ResearchAdmin />}
+
+        {page === "magazines" && <MagazinesAdmin />}
+
+        {page === "knowledge-hub" && <KnowledgeHubAdmin />}
+
+        {page === "interviews" && <InterviewsAdmin />}
+
+        {page === "events" && <EventsAdmin />}
 
         {page === "archived" && <Archived articles={archived} onRestore={handleRestore} />}
 

@@ -12,7 +12,7 @@
 [![SEO Ready](https://img.shields.io/badge/SEO-100%25%20Google%20Indexable-brightgreen.svg)](#-enterprise-seo--google-indexation)
 [![License](https://img.shields.io/badge/License-MIT-gold.svg)](LICENSE)
 
-[Live Platform](#) • [SEO Documentation](#-enterprise-seo--google-indexation) • [Features](#-key-features) • [Installation](#-getting-started)
+[Live Platform](#) • [Backend API Services](#-backend-services--api-integration) • [Admin Panel](#-admin-panel--content-management) • [Features](#-key-features) • [Installation](#-getting-started)
 
 </div>
 
@@ -22,7 +22,42 @@
 
 **Token Times** is an enterprise-grade digital media and financial intelligence platform covering virtual assets, central bank digital currencies (CBDC), State Bank of Pakistan (SBP) policy frameworks, SECP compliance, macroeconomic research, and Web3 innovations across Pakistan and global emerging hubs.
 
-Designed with executive typography, dark-mode glassmorphism, responsive micro-animations, clean URL history routing, and a state-of-the-art **Enterprise SEO Engine** built to outperform standard SSR frameworks in search visibility and Google indexation speed.
+Designed with executive typography, dark-mode glassmorphism, responsive micro-animations, clean URL history routing, a full-fledged **Admin Management Panel** (`/admin`), and an end-to-end **Service & Interface API Layer** ready for instant backend integration.
+
+---
+
+## 🔌 Backend Services & API Integration
+
+Token Times includes a complete API service architecture (`src/services/`) and strongly typed interface mappers (`src/interfaces/`) to communicate with REST backend services:
+
+### Configurable Base URL (`VITE_BACKEND_URL`)
+The client automatically resolves API endpoints using the `VITE_BACKEND_URL` environment variable (defaults to `http://localhost:3000`).
+
+### Content Entity Schemas & Services
+
+| Entity | Service Module | Endpoint | Interface Mappings |
+| :--- | :--- | :--- | :--- |
+| **Regulations** | `regulation.service.js` | `/regulation` | `id`, `title`, `authority`, `publish_date`, `file` |
+| **Research** | `research.service.js` | `/research` | `id`, `title`, `author`, `publish_date`, `file` |
+| **Magazines** | `magzine.service.js` | `/magzine` | `id`, `title`, `cover_img`, `description`, `price`, `issue_name`, `publish_date`, `file` |
+| **Knowledge Hub** | `knowlege-hub.service.js` | `/knowlege-hub` | `id`, `question`, `answer`, `author`, `publish_date`, `tags`, `category` |
+| **Interviews** | `interview.service.js` | `/interviews` | `id`, `questions`, `answers`, `interviewee_name`, `interviewer_name`, `interview_title`, `interviewee_image`, `publish_date`, `tags`, `category` |
+| **Events** | `event.service.js` | `/events` | `id`, `event_title`, `event_venue`, `event_adress`, `event_date`, `event_guests`, `event_description`, `event_hosts`, `event_agenda`, `image` |
+| **Drafts / AI Queue** | `draft.service.js` | `/news/drafts`, `/news/approve` | `id`, `title`, `summary`, `source`, `category`, `fetchedAt`, `content` |
+
+---
+
+## 🛠️ Admin Panel & Content Management
+
+Access the admin management suite at `/admin`:
+
+- 📋 **AI Review Queue**: Draft approval, rejection, and content editor modal.
+- 🏛️ **Regulations Manager**: Create and delete institutional compliance directives.
+- 🔬 **Research Manager**: Upload macro reports and whitepapers.
+- 📖 **Magazine Manager**: Publish print and digital quarterly issues.
+- 📚 **Knowledge Hub Manager**: Add educational Q&As and explainer guides.
+- 🎙️ **Interviews Manager**: Publish executive interviews with guest speakers and regulators.
+- 🗓️ **Events Manager**: Schedule summits, keynote rosters, and conference agendas.
 
 ---
 
@@ -47,23 +82,10 @@ Token Times includes a zero-dependency **Master SEO Engine** built directly into
 - Automatically updates `<title>`, `<meta name="description">`, `<meta name="keywords">`, `<meta name="robots">`, `<link rel="canonical">`, Open Graph (`og:*`), and Twitter Cards (`twitter:*`) live on page navigation.
 
 ### 2. Comprehensive JSON-LD Structured Data
-- Injects standard-compliant Google Rich Result schemas:
-  - **`NewsMediaOrganization` & `WebSite`**: Site identity, logo metadata, and sitelinks search box.
-  - **`NewsArticle`**: Deep news reporting markup for Google News inclusion.
-  - **`BreadcrumbList`**: Rich Google Search breadcrumb navigation.
-  - **`FAQPage`**: Interactive search snippet expansion.
-  - **`Event`**: Conference and summit structured data.
+- Injects standard-compliant Google Rich Result schemas (`NewsMediaOrganization`, `WebSite`, `NewsArticle`, `BreadcrumbList`, `FAQPage`, `Event`).
 
 ### 3. URL History & Route Syncing (`useRouteSync.js`)
-- Maps single-page navigation to clean RESTful paths (`/news`, `/magazine`, `/knowledge-hub`, `/regulations`, `/research`, `/resources`, `/events`, `/technologies`, `/about`, `/contact`, `/privacy-policy`, `/terms-of-service`).
-- Full browser back/forward (`popstate`) support.
-
-### 4. Search Engine Indexing Assets
-- 📄 `public/robots.txt`: Directives for Googlebot, Bingbot, and web scrapers.
-- 🗺️ `public/sitemap.xml`: Complete XML sitemap with change frequencies and priorities.
-- 📰 `public/news-sitemap.xml`: Dedicated Google News XML sitemap.
-- 📱 `public/site.webmanifest`: Progressive Web App (PWA) manifest for mobile SERP feature cards.
-- ⚡ `index.html`: Pre-rendered static fallback meta tags and Google Fonts preconnect hints.
+- Maps single-page navigation to clean RESTful paths (`/news`, `/magazine`, `/knowledge-hub`, `/regulations`, `/research`, `/resources`, `/events`, `/technologies`, `/about`, `/contact`, `/privacy-policy`, `/terms-of-service`, `/admin`).
 
 ---
 
@@ -78,56 +100,33 @@ token-times/
 │   ├── site.webmanifest     # PWA manifest file
 │   └── sitemap.xml          # Comprehensive XML sitemap
 ├── src/
-│   ├── assets/              # SVG logos & media assets
-│   ├── components/
-│   │   ├── Breadcrumbs.jsx  # Accessible UI & Google BreadcrumbList schema
-│   │   ├── BreakingTicker.jsx
-│   │   ├── EditorsPick.jsx
-│   │   ├── FeaturedAnalysis.jsx
-│   │   ├── Footer.jsx       # Semantic footer & sitemap links
-│   │   ├── GlobalHighlights.jsx
-│   │   ├── Header.jsx       # Desktop & mobile drawer navigation
-│   │   ├── Hero.jsx         # Featured lead story showcase
-│   │   ├── KnowledgeHub.jsx
-│   │   ├── LatestNews.jsx
-│   │   ├── MagazineIssue.jsx
-│   │   ├── MarketsDashboard.jsx
-│   │   ├── Navigation.jsx   # Clean href navigation links
-│   │   ├── Newsletter.jsx
-│   │   ├── PakistanFocus.jsx
-│   │   ├── Partners.jsx
-│   │   ├── RegulatoryUpdates.jsx
-│   │   ├── ResearchPapers.jsx
-│   │   ├── Reveal.jsx       # IntersectionObserver scroll-reveal wrapper
-│   │   ├── SEOHead.jsx      # Dynamic head tag & JSON-LD manager
-│   │   └── UpcomingEvents.jsx
-│   ├── data/
-│   │   ├── content.js       # Global text content & navigation links
-│   │   ├── pagesData.js     # Page-level data streams
-│   │   └── seoData.js       # Master SEO registry & JSON-LD schemas
-│   ├── hooks/
-│   │   ├── useReveal.js     # Scroll reveal animation hook
-│   │   └── useRouteSync.js  # Clean URL pushState / popstate hook
-│   ├── pages/
-│   │   ├── AboutPage.jsx
-│   │   ├── ContactPage.jsx
-│   │   ├── EventsPage.jsx
-│   │   ├── HomePage.jsx
-│   │   ├── KnowledgeHubPage.jsx
-│   │   ├── MagazinePage.jsx
-│   │   ├── NewsPage.jsx
-│   │   ├── PrivacyPage.jsx
-│   │   ├── RegulationsPage.jsx
-│   │   ├── ResearchPage.jsx
-│   │   ├── ResourcesPage.jsx
-│   │   ├── TechnologiesPage.jsx
-│   │   └── TermsPage.jsx
-│   ├── App.jsx              # Main app wrapper & sub-route router
-│   ├── index.css            # Tailored design system, tokens & typography
+│   ├── admin-components/    # Admin panel management components
+│   │   ├── components/
+│   │   │   ├── AdminShell.jsx
+│   │   │   ├── AdminSideNav.jsx
+│   │   │   ├── EventsAdmin.jsx
+│   │   │   ├── InterviewsAdmin.jsx
+│   │   │   ├── KnowledgeHubAdmin.jsx
+│   │   │   ├── MagazinesAdmin.jsx
+│   │   │   ├── RegulationsAdmin.jsx
+│   │   │   └── ResearchAdmin.jsx
+│   ├── services/            # API Service mappers & REST clients
+│   │   ├── api.js
+│   │   ├── draft.service.js
+│   │   ├── event.service.js
+│   │   ├── interview.service.js
+│   │   ├── knowlege-hub.service.js
+│   │   ├── magzine.service.js
+│   │   ├── regulation.service.js
+│   │   └── research.service.js
+│   ├── interfaces/          # Entity interfaces & factory mappers
+│   ├── components/          # Frontend presentation components
+│   ├── pages/               # Page views
+│   ├── App.jsx              # Main app router
+│   ├── index.css            # Styling system
 │   └── main.jsx             # React entry point
-├── index.html               # Base HTML with static pre-rendered head
+├── index.html
 ├── package.json
-├── tailwind.config.js
 └── vite.config.js
 ```
 
@@ -140,7 +139,14 @@ token-times/
 - **Node.js**: `v18.0.0` or higher
 - **npm**: `v9.0.0` or higher
 
-### Installation
+### Environment Variables
+
+Create a `.env` file in the root directory:
+```env
+VITE_BACKEND_URL=http://localhost:3000
+```
+
+### Installation & Development
 
 1. **Clone the repository:**
    ```bash
@@ -153,31 +159,15 @@ token-times/
    npm install
    ```
 
-3. **Start the local development server:**
+3. **Start local development server:**
    ```bash
    npm run dev
    ```
-   Open `http://localhost:5173` in your browser.
 
 4. **Build for Production:**
    ```bash
    npm run build
    ```
-
-5. **Preview Production Build:**
-   ```bash
-   npm run preview
-   ```
-
----
-
-## 🌐 Deployment
-
-Token Times can be deployed instantly on any static or serverless hosting provider:
-
-- **Vercel**: Push to repository and connect project (handles client-side rewrites automatically with standard `single-page` configuration).
-- **Netlify**: Ensure `_redirects` file contains `/* /index.html 200`.
-- **Cloudflare Pages / GitHub Pages**: Build command `npm run build`, output directory `dist`.
 
 ---
 
