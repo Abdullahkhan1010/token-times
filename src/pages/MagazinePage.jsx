@@ -39,7 +39,7 @@ export default function MagazinePage({ onNavigate }) {
           }
         }
       })
-      .catch((err) => console.error("Failed to load magazines", err));
+      .catch((err) => console.warn("Using static fallback for magazines:", err.message));
 
     return () => {
       active = false;

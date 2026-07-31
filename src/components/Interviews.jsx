@@ -25,7 +25,7 @@ export default function Interviews() {
         }
       })
       .catch((err) => {
-        console.error("Failed to fetch interviews, falling back to static content", err);
+        console.warn("Using static fallback for interviews:", err.message);
         if (active) setInterviewList(staticInterviews);
       })
       .finally(() => {

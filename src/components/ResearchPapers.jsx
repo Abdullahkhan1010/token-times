@@ -21,7 +21,7 @@ export default function ResearchPapers() {
           setPapers(mapped);
         }
       })
-      .catch((err) => console.error("Failed to load research papers", err));
+      .catch((err) => console.warn("Using static fallback for research papers:", err.message));
 
     return () => {
       active = false;

@@ -28,7 +28,7 @@ export default function KnowledgeHubPage({ onNavigate }) {
           setGuides(mapped);
         }
       })
-      .catch((err) => console.error("Failed to load knowledge hub guides", err));
+      .catch((err) => console.warn("Using static fallback for knowledge hub guides:", err.message));
 
     return () => {
       active = false;

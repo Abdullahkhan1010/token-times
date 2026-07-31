@@ -8,7 +8,7 @@
   "theme_color": "#0C133D",
   "icons": [
     {
-      "src": "/src/assets/TokenTimesLogo.svg",
+      "src": "/TokenTimesLogo.svg",
       "sizes": "192x192 512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"

@@ -30,7 +30,7 @@ export function RegulatoryBriefings() {
           setBriefings(mapped);
         }
       })
-      .catch((err) => console.error("Error loading regulatory briefings", err));
+      .catch((err) => console.warn("Using static fallback for regulatory briefings:", err.message));
 
     return () => {
       active = false;
@@ -82,7 +82,7 @@ export function RegulatoryTracker() {
           setTracker(mapped);
         }
       })
-      .catch((err) => console.error("Error loading regulatory tracker", err));
+      .catch((err) => console.warn("Using static fallback for regulatory tracker:", err.message));
 
     return () => {
       active = false;

@@ -22,7 +22,7 @@ export default function MagazineIssue() {
           });
         }
       })
-      .catch((err) => console.error("Failed to load magazine issue", err));
+      .catch((err) => console.warn("Using static fallback for magazine issue:", err.message));
 
     return () => {
       active = false;

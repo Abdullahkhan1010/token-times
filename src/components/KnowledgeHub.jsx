@@ -21,7 +21,7 @@ export default function KnowledgeHub() {
           setHubItems(mapped);
         }
       })
-      .catch((err) => console.error("Failed to load Knowledge Hub entries", err));
+      .catch((err) => console.warn("Using static fallback for Knowledge Hub entries:", err.message));
 
     return () => {
       active = false;

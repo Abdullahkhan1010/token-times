@@ -28,7 +28,7 @@ export default function UpcomingEvents() {
           setEvents(mapped);
         }
       })
-      .catch((err) => console.error("Failed to load events", err));
+      .catch((err) => console.warn("Using static fallback for events:", err.message));
 
     return () => {
       active = false;
