@@ -105,8 +105,8 @@ export default function Header({ activePage = "Home", setActivePage }) {
                       key={link}
                       onClick={() => handleSelectPage(link)}
                       className={`w-full flex items-center justify-between py-3.5 px-2 text-base font-bold font-label-caps tracking-wider uppercase transition-colors text-left ${isActive
-                          ? "text-[#0C133D] font-extrabold"
-                          : "text-on-surface hover:text-[#0C133D]"
+                        ? "text-[#0C133D] font-extrabold"
+                        : "text-on-surface hover:text-[#0C133D]"
                         }`}
                     >
                       <span>{link}</span>
@@ -145,10 +145,10 @@ export default function Header({ activePage = "Home", setActivePage }) {
             <img alt="Token Times logo" className="w-14 h-14 md:w-16 md:h-16 shrink-0 group-hover:scale-105 transition-transform" src={logo} />
             <div className="flex flex-col min-w-0">
               <h1 className="font-display-lg text-display-lg text-[#0C133D] tracking-tighter leading-none truncate group-hover:text-[#0C133D] transition-colors">
-                Tokens Times
+                Token Times
               </h1>
               <span className="font-label-caps text-label-caps text-on-surface-variant truncate">
-                Pakistan's Digital Assets Intelligence Platform
+                Gateway to the Digital Asset Economy
               </span>
             </div>
           </div>
