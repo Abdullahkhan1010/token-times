@@ -187,6 +187,317 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
         }
     };
 
+    const handleSeedSampleArticles = async () => {
+        if (!window.confirm("Inject sample test articles into database for all categories and sections?")) return;
+        setSubmitting(true);
+        setMessage({ type: "info", text: "Injecting sample test articles..." });
+
+        try {
+            const sampleArticles = [
+                {
+                    title: "State Bank of Pakistan Outlines Phase-1 Framework for Wholesale CBDC",
+                    summary: "The State Bank of Pakistan unveils structural directives for institutional CBDC settlement engines, aiming to streamline cross-border interbank clearings and reduce remittance friction.",
+                    article: "The State Bank of Pakistan (SBP) has officially published its phase-1 technical whitepaper outlining the architectural roadmap for a wholesale Central Bank Digital Currency (CBDC).\n\nKey monetary objectives include establishing programmable interbank clearing corridors, reducing cross-border correspondent banking latency, and integrating automated compliance verifications directly at the ledger level.\n\nInstitutional market participants, commercial banks, and licensed payment service providers will participate in closed-loop pilot clearing runs beginning Q3 2026.",
+                    author: "Monetary Policy Desk",
+                    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=1200&auto=format&fit=crop",
+                    approx_time_to_read: 5,
+                    category: ["Regulation", "Policy"],
+                    tags: ["CBDC", "SBP", "Banking"],
+                    headlines: ["SBP Wholesale CBDC Blueprint Released", "Phase-1 Interbank Clearance Pilot Scheduled"],
+                    display_section: ["main_story"],
+                    status: "published"
+                },
+                {
+                    title: "SECP Formulates Sandbox Guidelines for Digital Asset Exchanges",
+                    summary: "Securities regulator issues comprehensive operational rules governing licensed VASP platforms, custody reserves, and investor protection safeguards.",
+                    article: "The Securities and Exchange Commission of Pakistan (SECP) has released its sandbox regulatory guidelines for digital asset trading platforms.\n\nThe framework establishes strict capital adequacy requirements, mandatory cold-storage asset isolation, and real-time transaction monitoring to ensure compliance with FATF AML standards.",
+                    author: "Regulatory Affairs Desk",
+                    image: "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 4,
+                    category: ["Regulation"],
+                    tags: ["SECP", "VASP", "Sandbox"],
+                    display_section: ["sub_stories"],
+                    status: "published"
+                },
+                {
+                    title: "PSX Tests Tokenized Commercial Paper on DLT Settlement Corridor",
+                    summary: "Pakistan Stock Exchange conducts successfully automated issuance and settlement of short-term debt instruments on enterprise blockchain.",
+                    article: "In a landmark pilot, the Pakistan Stock Exchange (PSX) executed the trial settlement of tokenized commercial paper.\n\nThe pilot demonstrated 90% reduction in clearing settlement settlement times from T+2 to real-time T+0, lowering counterparty risk for institutional fixed-income participants.",
+                    author: "Capital Markets Desk",
+                    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 3,
+                    category: ["Markets"],
+                    tags: ["PSX", "Tokenization", "DLT"],
+                    display_section: ["sub_stories"],
+                    status: "published"
+                },
+                {
+                    title: "GCC Monetary Authorities Sign Multi-Currency Settlement Agreement",
+                    summary: "Central monetary bodies across Middle Eastern financial corridors harmonize cross-border DLT payment channels.",
+                    article: "Monetary authorities across the GCC have ratified a multi-lateral agreement to interconnect sovereign wholesale payment rails.\n\nThe initiative enables instantaneous multi-currency clearing between commercial banks in Dubai, Riyadh, and regional trading partners.",
+                    author: "Global Markets Desk",
+                    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 4,
+                    category: ["Global"],
+                    tags: ["GCC", "Payments", "Cross-Border"],
+                    display_section: ["sub_stories"],
+                    status: "published"
+                },
+                {
+                    title: "Institutional Custody Providers Expand Multi-Sig Vault Infrastructure",
+                    summary: "Enterprise digital asset custodians launch HSM-secured multi-signature vaults in regional data centers.",
+                    article: "Leading digital asset custody infrastructure providers have deployed high-availability Hardware Security Module (HSM) vaults across primary regional financial hubs.",
+                    author: "Technology Desk",
+                    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 3,
+                    category: ["Technology"],
+                    tags: ["Custody", "Security", "HSM"],
+                    display_section: ["sub_stories"],
+                    status: "published"
+                },
+                {
+                    title: "Fractional Real Estate Tokenization Unlocks Regional Asset Liquidity",
+                    summary: "High-value commercial property developments offer fractional digital ownership tokens to accredited regional investors.",
+                    article: "Institutional property developers have launched the first tokenized real estate offering, enabling fractional investment in prime commercial towers.",
+                    author: "Special Features Desk",
+                    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 5,
+                    category: ["Markets", "Real Estate"],
+                    tags: ["RWA", "Tokenization", "Real Estate"],
+                    display_section: ["featured_spotlight"],
+                    status: "published"
+                },
+                {
+                    title: "Zero-Knowledge Proof Protocols Adopted for Sovereign Tax Compliance",
+                    summary: "Privacy-preserving cryptographic proofs enable automated tax reporting without exposing sensitive individual wallet transactions.",
+                    article: "Sovereign revenue authorities are piloting zero-knowledge proof (ZKP) compliance engines that allow virtual asset holders to verify tax obligations while maintaining cryptographic privacy.",
+                    author: "Tech & Tax Desk",
+                    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 4,
+                    category: ["Technology"],
+                    tags: ["ZKP", "Privacy", "Tax"],
+                    display_section: ["featured_spotlight"],
+                    status: "published"
+                },
+                {
+                    title: "Macro Analysis: Sovereign Debt Tokenization in Emerging Financial Hubs",
+                    summary: "Evaluating how sovereign debt issuance on public-permissioned ledgers reduces underwriting fees and expands international investor access.",
+                    article: "An extensive macroeconometric study highlights how emerging markets can lower sovereign bond issuance overhead by leveraging tokenized debt standards.",
+                    author: "Dr. Arshad Khan",
+                    image: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 6,
+                    category: ["Analysis", "Markets"],
+                    tags: ["Macro", "Sovereign Debt", "Bonds"],
+                    display_section: ["editor_picks"],
+                    status: "published"
+                },
+                {
+                    title: "How Asia-Pacific Central Banks Balance Web3 Innovation with Capital Controls",
+                    summary: "A comparative review of regulatory approaches across Singapore, Japan, Hong Kong, and South Asia.",
+                    article: "Central monetary bodies across the Asia-Pacific region are adopting distinct frameworks to manage capital flow volatility while supporting Web3 infrastructure development.",
+                    author: "T.T. Policy Research Unit",
+                    image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 5,
+                    category: ["Policy"],
+                    tags: ["APAC", "Policy", "Regulation"],
+                    display_section: ["editor_picks"],
+                    status: "published"
+                },
+                {
+                    title: "The Rise of Institutional Staking and Yield Derivatives in 2026",
+                    summary: "Asset managers allocate record capital into regulated proof-of-stake yield protocols and liquid staking derivatives.",
+                    article: "Institutional treasury managers are increasingly tapping proof-of-stake yield strategies through regulated custody providers.",
+                    author: "DeFi Desk",
+                    image: "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 4,
+                    category: ["DeFi"],
+                    tags: ["Staking", "Yield", "DeFi"],
+                    display_section: ["editor_picks"],
+                    status: "published"
+                },
+                {
+                    title: "Global Crypto Trading Volumes Surge Past $120 Billion Daily Milestone",
+                    summary: "Derivative desks and spot liquidity pools experience elevated volume driven by institutional inflow products.",
+                    article: "Daily aggregate trading volumes across licensed spot and derivative venues breached the $120 billion threshold today.",
+                    author: "Market Ticker",
+                    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 3,
+                    category: ["Markets"],
+                    tags: ["Volume", "Trading", "Liquidity"],
+                    display_section: ["latest_news"],
+                    status: "published"
+                },
+                {
+                    title: "European Union MiCA Regime Completes Phase 2 VASP Compliance Audit",
+                    summary: "ESMA publishes initial audit results for licensed stablecoin issuers and virtual asset service providers under MiCA rules.",
+                    article: "The European Securities and Markets Authority (ESMA) confirmed that 85% of major stablecoin issuers have fulfilled MiCA reserve backing criteria.",
+                    author: "European Desk",
+                    image: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 4,
+                    category: ["Regulation"],
+                    tags: ["MiCA", "EU", "ESMA"],
+                    display_section: ["latest_news"],
+                    status: "published"
+                },
+                {
+                    title: "U.S. Spot Bitcoin ETFs Record $450 Million Single-Day Inflow Stream",
+                    summary: "Institutional momentum accelerates as asset management products see continuous net inflows.",
+                    article: "U.S. regulated spot exchange-traded funds recorded $450 million in aggregate net inflows during yesterday's trading session.",
+                    author: "ETF Desk",
+                    image: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 3,
+                    category: ["Markets"],
+                    tags: ["ETF", "Bitcoin", "Inflows"],
+                    display_section: ["latest_news"],
+                    status: "published"
+                },
+                {
+                    title: "Ministry of IT and Telecom Proposes Digital Asset Tax Exemption Corridor",
+                    summary: "Policy paper recommends tax incentives for registered Web3 software exporters and blockchain R&D centers.",
+                    article: "The Ministry of IT and Telecommunication has submitted a draft policy recommending a 3-year tax exemption for verified Web3 export revenues.",
+                    author: "Pakistan Tech Desk",
+                    image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 4,
+                    category: ["Policy"],
+                    tags: ["MOITT", "Pakistan", "Tax"],
+                    display_section: ["Pakistan_Focus"],
+                    status: "published"
+                },
+                {
+                    title: "Commercial Banks Partner with Local Exchanges for Real-Time Fiat Onramps",
+                    summary: "Leading Pakistani commercial banking institutions integrate API gateways for 1-click fiat deposits.",
+                    article: "Major commercial banks have initiated API connectivity with licensed virtual asset portals to enable instant 24/7 Raast and IBFT fiat deposits.",
+                    author: "Banking Desk",
+                    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 3,
+                    category: ["Banking"],
+                    tags: ["Banking", "Fiat", "Raast"],
+                    display_section: ["Pakistan_Focus"],
+                    status: "published"
+                },
+                {
+                    title: "Dubai VARA Grants Full Operational License to Institutional Custodian",
+                    summary: "Virtual Assets Regulatory Authority approves new tier-1 custodian for institutional digital asset reserves.",
+                    article: "Dubai VARA has granted full commercial operating authorization to a leading institutional custodian following rigorous audit rounds.",
+                    author: "Middle East Desk",
+                    image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 4,
+                    category: ["Middle East"],
+                    tags: ["VARA", "Dubai", "License"],
+                    display_section: ["Global_Highlight"],
+                    status: "published"
+                },
+                {
+                    title: "Japan Financial Services Agency Approves First Sovereign Yield Token",
+                    summary: "FSA establishes regulatory permissions for institutional distribution of tokenized government bond yields.",
+                    article: "Japan's FSA has granted approval for the issuance of tokenized government bond yields on regulated public ledgers.",
+                    author: "Asia-Pacific Desk",
+                    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 4,
+                    category: ["Asia Pacific"],
+                    tags: ["Japan", "FSA", "Yield"],
+                    display_section: ["Global_Highlight"],
+                    status: "published"
+                },
+                {
+                    title: "Econometric Deep-Dive: Valuation Models for Tokenized Real-World Assets",
+                    summary: "Detailed academic and financial modeling analyzing liquidity discounts and yield curves across tokenized treasuries.",
+                    article: "This research paper evaluates discount models applied to tokenized real-world assets (RWA) compared with secondary bond market benchmarks.",
+                    author: "T.T. Quantitative Research Desk",
+                    image: "https://images.unsplash.com/photo-1543286386-713bdd548da4?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 8,
+                    category: ["Research"],
+                    tags: ["Econometrics", "RWA", "Valuation"],
+                    display_section: ["featured_analysis"],
+                    status: "published"
+                }
+            ];
+
+            for (const item of sampleArticles) {
+                await postPublishedNews(item);
+            }
+
+            // Seed Regulations
+            const sampleRegulations = [
+                { title: "SBP Circular No. 4: CBDC Phase-1 Framework Directives", country: "Pakistan", date: "2026-08-01", status: "Active Directives", details: "State Bank guidelines on wholesale CBDC clearing." },
+                { title: "SECP VASP Sandbox Operating Rules v2.0", country: "Pakistan", date: "2026-07-28", status: "Sandbox Guidelines", details: "Custody reserve and AML compliance requirements." },
+                { title: "FBR 15% Flat Capital Gains Tax Consultation", country: "Pakistan", date: "2026-07-25", status: "Under Review", details: "Tax framework for virtual asset capital gains." },
+                { title: "VARA Dubai - Asset-Backed Tokenization Directives", country: "UAE", date: "2026-07-20", status: "Enacted", details: "Licensing framework for real-world asset tokens." },
+                { title: "EU MiCA Travel Rule Compliance Protocol v2.1", country: "EU", date: "2026-07-15", status: "Enacted", details: "Inter-VASP transaction data reporting requirements." }
+            ];
+            for (const reg of sampleRegulations) {
+                try { await requestJson('/regulations', { method: 'POST', body: JSON.stringify(reg) }); } catch (e) {}
+            }
+
+            // Seed Columnists / Op-Eds
+            const sampleInterviews = [
+                {
+                    interview_title: "Why Regulation is Not the Enemy of Web3 Innovation",
+                    interviewee_name: "Dr. Arshad Khan",
+                    interviewee_designation: "Senior Monetary Economist",
+                    interviewee_image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop",
+                    summary: "Clear legal frameworks provide the institutional certainty required for multi-billion dollar capital allocations into digital asset infrastructure."
+                },
+                {
+                    interview_title: "Building Enterprise Blockchain Corridors Across South Asia",
+                    interviewee_name: "Tariq Mansoor",
+                    interviewee_designation: "VASP Association Director",
+                    interviewee_image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop",
+                    summary: "How public-private distributed ledger initiatives are reducing remittance costs and expanding regional cross-border commerce."
+                }
+            ];
+            for (const iv of sampleInterviews) {
+                try { await requestJson('/interviews', { method: 'POST', body: JSON.stringify(iv) }); } catch (e) {}
+            }
+
+            // Seed Events
+            const sampleEvents = [
+                {
+                    event_title: "Pakistan Web3 & Digital Asset Summit 2026",
+                    event_date: "2026-08-15",
+                    event_venue: "Serena Hotel, Islamabad",
+                    description: "Annual gathering of central bank governors, SECP leadership, and global Web3 founders."
+                },
+                {
+                    event_title: "Middle East VASP Regulatory Roundtable",
+                    event_date: "2026-09-02",
+                    event_venue: "DIFC Innovation Hub, Dubai",
+                    description: "Closed-door executive consultation on cross-border virtual asset licensing."
+                }
+            ];
+            for (const ev of sampleEvents) {
+                try { await requestJson('/events', { method: 'POST', body: JSON.stringify(ev) }); } catch (e) {}
+            }
+
+            // Seed Research Papers
+            const sampleResearches = [
+                {
+                    title: "Sovereign Asset Digitization: Institutional Capital Flows & Security",
+                    author: "T.T. Quantitative Research Desk",
+                    publish_date: "2026-08-01",
+                    summary: "Evaluating fractional ownership liquidity and collateralized yield protocols."
+                },
+                {
+                    title: "Cross-Border Interbank Settlement Mechanics Using Distributed Ledgers",
+                    author: "Monetary Policy Study Group",
+                    publish_date: "2026-07-28",
+                    summary: "Architectural comparison of wholesale CBDC clearing networks versus traditional SWIFT corridors."
+                }
+            ];
+            for (const res of sampleResearches) {
+                try { await requestJson('/researches', { method: 'POST', body: JSON.stringify(res) }); } catch (e) {}
+            }
+
+            setMessage({ type: "success", text: "Successfully injected sample test articles for all categories & sections!" });
+            await loadData();
+        } catch (err) {
+            console.error("Failed to seed sample articles", err);
+            setMessage({ type: "error", text: "Failed to seed sample test articles: " + (err.message || "") });
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     return (
         <div className="space-y-8">
             <PageHeader
@@ -194,7 +505,17 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                 subtitle="Create and manage published news articles for the platform."
                 message={message}
                 onDismissMessage={() => setMessage(null)}
-            />
+            >
+                <button
+                    type="button"
+                    onClick={handleSeedSampleArticles}
+                    disabled={submitting}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[#D4AF37] text-[#0C133D] font-extrabold text-xs rounded-lg hover:bg-[#b8972e] transition-all shadow-sm cursor-pointer border border-[#0C133D]/20"
+                >
+                    <Sparkles size={16} />
+                    Inject Sample Test Articles
+                </button>
+            </PageHeader>
 
             {/* Add New Form */}
             <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-4 shadow-sm">
