@@ -97,12 +97,12 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5 sm:space-y-8">
       <SEOHead pageKey="Markets" customTitle="Digital Asset & Crypto Market Intelligence | Token Times" />
       <Breadcrumbs currentPage="Markets" onNavigate={onNavigate} />
 
       {/* Real-time Crypto Price Dashboard Bar */}
-      <Reveal as="div" className="bg-[#0C133D] text-white rounded-xl p-4 border border-[#D4AF37]/40 shadow-md">
+      <Reveal as="div" className="bg-[#0C133D] text-white rounded-xl p-3 sm:p-4 border border-[#D4AF37]/40 shadow-md">
         <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
           <div className="flex items-center gap-2">
             <TrendingUp size={16} className="text-[#D4AF37]" />
@@ -134,7 +134,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
           <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block mb-1">
             FINANCIAL INTELLIGENCE & DATA
           </span>
-          <h1 className="font-display-lg text-3xl md:text-5xl font-bold text-[#0C133D]">
+          <h1 className="font-display-lg text-2xl sm:text-3xl md:text-5xl font-bold text-[#0C133D]">
             Market Dashboards & News
           </h1>
         </div>
@@ -167,13 +167,13 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
           onClick={() => onSelectArticle?.(leadMarket)}
           className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
         >
-          <div className="relative h-72 sm:h-96 overflow-hidden">
+          <div className="relative h-48 sm:h-72 md:h-96 overflow-hidden">
             <img src={leadMarket.image || leadMarket.img} alt={leadMarket.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] text-xs font-extrabold px-3 py-1 rounded-full uppercase border border-[#D4AF37]/40">
               MARKETS LEAD
             </span>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <h2 className="font-headline-lg text-xl sm:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors mb-3">
               {leadMarket.title}
             </h2>
@@ -186,7 +186,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
           </div>
         </Reveal>
 
-        <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-start gap-4 shadow-sm">
+        <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col justify-start gap-4 shadow-sm">
           <h3 className="font-headline-sm text-sm font-bold text-[#0C133D] border-b border-outline-variant pb-3 uppercase tracking-wider">
             Markets Headlines Wire
           </h3>

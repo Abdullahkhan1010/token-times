@@ -33,13 +33,13 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
   const safeSubStories = Array.isArray(substories) ? substories : [];
   const safeMainStory = mainStory && typeof mainStory === "object" ? mainStory : null;
 
-  // Ensure 1 Top Story + 4 Sub Stories = 5 Total Articles in Left Column
-  const displaySubStories = safeSubStories.length >= 5
+  // Ensure 1 Top Story + 3 Sub Stories = 4 Total Articles in Left Column
+  const displaySubStories = safeSubStories.length >= 4
     ? safeSubStories
-    : [...safeSubStories, ...heroSubStories].slice(0, 5);
+    : [...safeSubStories, ...heroSubStories].slice(0, 4);
 
   const topStory = displaySubStories[0];
-  const subStoriesList = displaySubStories.slice(1, 5);
+  const subStoriesList = displaySubStories.slice(1, 4);
 
   const hasContent = safeFeaturedSpotlight.length > 0 || displaySubStories.length > 0 || Boolean(safeMainStory);
 
@@ -57,8 +57,8 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
   return (
 
     <section aria-label="Top featured stories" className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8 items-stretch">
-      {/* Left Column: Top Story + 4 Sub-Stories */}
-      <div className="lg:col-span-3 order-3 lg:order-1 flex flex-col gap-2.5 h-full">
+      {/* Left Column: Top Story + 3 Sub-Stories */}
+      <div className="lg:col-span-3 order-3 lg:order-1 flex flex-col gap-3 h-full justify-between">
         {/* Top Story Header */}
         <div className="flex items-center justify-between border-b border-outline-variant/60 pb-1.5">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 rounded-full max-w-full shadow-sm">
@@ -69,29 +69,37 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
           </div>
         </div>
 
-        {/* Top Story Card (Bigger & Prominent) */}
+        {/* Top Story Card (Text-Only, Bigger & Prominent) */}
         {topStory && (
           <Reveal
             as="article"
             onClick={() => onSelectArticle?.(topStory)}
-            className="hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] p-3.5 sm:p-4 rounded-xl cursor-pointer shadow-md hover:border-[#D4AF37] transition-all relative flex flex-col justify-between"
+            className="hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] p-4 sm:p-5 rounded-xl cursor-pointer shadow-md hover:border-[#D4AF37] transition-all relative flex flex-col justify-between flex-grow"
           >
-            <div>
-              <span className="font-label-caps text-xs font-extrabold text-[#D4AF37] mb-1 block uppercase tracking-wide">
-                {getSingleCleanTag(topStory, "MARKETS")}
-              </span>
-              <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-sm sm:text-base font-bold leading-snug mb-2 line-clamp-3">
-                {topStory.title}
-              </h3>
+            <div className="flex flex-col flex-grow justify-between">
+              <div>
+                <span className="font-label-caps text-xs font-extrabold text-[#D4AF37] mb-2 block uppercase tracking-wide">
+                  {getSingleCleanTag(topStory, "MARKETS")}
+                </span>
+                <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-base sm:text-lg lg:text-xl font-bold leading-snug mb-3">
+                  {topStory.title}
+                </h3>
+                {topStory.summary && (
+                  <p className="text-xs sm:text-sm text-on-surface-variant line-clamp-4 lg:line-clamp-5 mb-4 leading-relaxed">
+                    {topStory.summary}
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center justify-between font-data-tabular text-xs text-on-surface-variant pt-2.5 border-t border-outline-variant/40 mt-auto">
+                <span>By {topStory.author || "Editorial Desk"} • {topStory.time || `${topStory.approx_time_to_read || 4} mins read`}</span>
+                <span className="text-[#D4AF37] font-bold text-xs shrink-0 ml-2">Read Story →</span>
+              </div>
             </div>
-            <span className="font-data-tabular text-xs text-on-surface-variant block pt-1.5 border-t border-outline-variant/40 mt-1">
-              {topStory.time || `${topStory.approx_time_to_read || 4} mins read`}
-            </span>
           </Reveal>
         )}
 
         {/* Sub Stories Header */}
-        <div className="flex items-center justify-between border-b border-outline-variant/60 pb-1 pt-0.5">
+        <div className="flex items-center justify-between border-b border-outline-variant/60 pb-1 pt-1 mt-1">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 rounded-full max-w-full shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] flex-shrink-0" />
             <span className="font-label-caps text-[10px] font-extrabold uppercase tracking-wider truncate">
@@ -100,26 +108,25 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
           </div>
         </div>
 
-        {/* 4 Compact Sub Stories (Smaller & Compact) */}
-        <div className="flex flex-col gap-1.5 flex-grow justify-between">
+        {/* 3 Compact Sub Stories */}
+        <div className="flex flex-col gap-2">
           {subStoriesList.map((s, i) => (
             <Reveal
               key={s.title || i}
               as="article"
               delay={100 + i * 60}
               onClick={() => onSelectArticle?.(s)}
-              className="hover-lift group bg-surface-container-lowest border border-outline-variant p-2 flex-1 flex flex-col justify-between rounded-lg cursor-pointer shadow-sm hover:border-[#D4AF37] transition-all"
+              className="hover-lift group bg-surface-container-lowest border border-outline-variant p-2.5 flex flex-col justify-between rounded-lg cursor-pointer shadow-sm hover:border-[#D4AF37] transition-all"
             >
               <div>
                 <span className="font-label-caps text-[9px] font-bold text-[#D4AF37] mb-0.5 block uppercase">
                   {getSingleCleanTag(s, "NEWS")}
                 </span>
-
-                <h4 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-[10px] font-semibold leading-tight line-clamp-2">
+                <h4 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-xs font-semibold leading-snug line-clamp-2">
                   {s.title}
                 </h4>
               </div>
-              <span className="font-data-tabular text-[9px] text-on-surface-variant pt-0.5">
+              <span className="font-data-tabular text-[9px] text-on-surface-variant pt-1 mt-1 border-t border-outline-variant/20">
                 {s.time || `${s.approx_time_to_read || 3} mins read`}
               </span>
             </Reveal>

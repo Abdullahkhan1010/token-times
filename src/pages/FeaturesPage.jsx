@@ -103,7 +103,7 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5 sm:space-y-8">
       <SEOHead pageKey="Features" customTitle="Features & Long-Read Journalism | Token Times" />
       <Breadcrumbs currentPage="Features" onNavigate={onNavigate} />
 
@@ -112,7 +112,7 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
           <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block mb-1">
             LONG-FORM JOURNALISM & DEEP DIVES
           </span>
-          <h1 className="font-display-lg text-3xl md:text-5xl font-bold text-[#0C133D]">
+          <h1 className="font-display-lg text-2xl sm:text-3xl md:text-5xl font-bold text-[#0C133D]">
             Feature Stories & Analysis
           </h1>
         </div>
@@ -145,13 +145,13 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
           onClick={() => onSelectArticle?.(leadFeature)}
           className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
         >
-          <div className="relative h-72 sm:h-96 overflow-hidden">
+          <div className="relative h-48 sm:h-72 md:h-96 overflow-hidden">
             <img src={leadFeature.image || leadFeature.img} alt={leadFeature.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] text-xs font-extrabold px-3 py-1 rounded-full uppercase border border-[#D4AF37]/40">
               {formatTag(leadFeature.category || leadFeature.tags)}
             </span>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <h2 className="font-headline-lg text-xl sm:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors mb-3">
               {leadFeature.title}
             </h2>
@@ -164,7 +164,7 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
           </div>
         </Reveal>
 
-        <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-start gap-4 shadow-sm">
+        <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col justify-start gap-4 shadow-sm">
           <h3 className="font-headline-sm text-sm font-bold text-[#0C133D] border-b border-outline-variant pb-3 uppercase tracking-wider">
             Featured Reading List
           </h3>
@@ -185,8 +185,8 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
       {/* 3-Across Feature Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {gridFeatures.map((card, i) => (
-          <Reveal key={i} as="article" onClick={() => onSelectArticle?.(card)} className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-4 cursor-pointer shadow-sm hover:border-[#D4AF37]">
-            <div className="h-44 rounded-lg overflow-hidden mb-3 border border-outline-variant/40 relative">
+          <Reveal key={i} as="article" onClick={() => onSelectArticle?.(card)} className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-3 sm:p-4 cursor-pointer shadow-sm hover:border-[#D4AF37]">
+            <div className="h-36 sm:h-44 rounded-lg overflow-hidden mb-3 border border-outline-variant/40 relative">
               <img src={card.image || card.img} alt={card.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
               <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] text-[10px] font-bold px-2 py-0.5 rounded">
                 {formatTag(card.category || card.tags)}

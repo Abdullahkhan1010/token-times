@@ -54,7 +54,7 @@ export default function Footer({ setActivePage }) {
               </h2>
             </div>
             <p className="text-xs text-white/70 leading-relaxed font-sans">
-              Pakistan's Digital Assets & Sovereign Financial Intelligence Platform. Real-time news, regulatory tracking, and Web3 insights.
+              Pakistan's Digital Assets & Sovereign Financial Platform. Real-time news, regulatory tracking, and Web3 insights.
             </p>
 
             {/* Social Connect */}

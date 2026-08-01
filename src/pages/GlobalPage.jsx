@@ -117,7 +117,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
   const feedArticles = activeList.slice(8, 13).length > 0 ? activeList.slice(8, 13) : activeList.slice(0, 4);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5 sm:space-y-8">
       <SEOHead
         pageKey="Global"
         customTitle="Global Web3 & Digital Asset Coverage | Token Times"
@@ -131,7 +131,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
           <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block mb-1">
             INTERNATIONAL INTELLIGENCE HUB
           </span>
-          <h1 className="font-display-lg text-3xl md:text-5xl font-bold text-[#0C133D]">
+          <h1 className="font-display-lg text-2xl sm:text-3xl md:text-5xl font-bold text-[#0C133D]">
             Global Digital Asset Coverage
           </h1>
         </div>
@@ -167,7 +167,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
           onClick={() => onSelectArticle?.(leadStory)}
           className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
         >
-          <div className="relative w-full h-64 sm:h-80 md:h-96 overflow-hidden">
+          <div className="relative w-full h-48 sm:h-80 md:h-96 overflow-hidden">
             <img
               src={leadStory.image || leadStory.img}
               alt={leadStory.title}
@@ -177,7 +177,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
               {formatTag(leadStory.category || leadStory.display_section)}
             </span>
           </div>
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             <h2 className="font-headline-lg text-xl sm:text-2xl md:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight mb-3">
               {leadStory.title}
             </h2>
@@ -193,7 +193,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
         </Reveal>
 
         {/* Secondary Headlines Rail (4-5 text-only headlines) */}
-        <Reveal as="aside" className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-start gap-3 shadow-sm">
+        <Reveal as="aside" className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col justify-start gap-3 shadow-sm">
           <div className="border-b border-outline-variant pb-3 flex items-center justify-between">
             <h3 className="font-headline-sm text-sm font-bold text-[#0C133D] uppercase tracking-wider">
               Global Headlines Wire
@@ -231,10 +231,10 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
             as="article"
             delay={i * 80}
             onClick={() => onSelectArticle?.(card)}
-            className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col justify-between cursor-pointer shadow-sm hover:border-[#D4AF37]"
+            className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-3 sm:p-4 flex flex-col justify-between cursor-pointer shadow-sm hover:border-[#D4AF37]"
           >
             <div>
-              <div className="h-40 w-full overflow-hidden rounded-lg mb-3 border border-outline-variant/40 relative">
+              <div className="h-36 sm:h-40 w-full overflow-hidden rounded-lg mb-3 border border-outline-variant/40 relative">
                 <img src={card.image || card.img} alt={card.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] text-[10px] font-extrabold px-2 py-0.5 rounded">
                   {card.category?.[0] || "GLOBAL"}
@@ -268,9 +268,9 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
               as="article"
               delay={i * 60}
               onClick={() => onSelectArticle?.(art)}
-              className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col sm:flex-row gap-4 cursor-pointer shadow-sm hover:border-[#D4AF37]"
+              className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4 cursor-pointer shadow-sm hover:border-[#D4AF37]"
             >
-              <div className="w-full sm:w-44 h-32 shrink-0 rounded-lg overflow-hidden border border-outline-variant/60 relative">
+              <div className="w-full sm:w-44 h-40 sm:h-32 shrink-0 rounded-lg overflow-hidden border border-outline-variant/60 relative">
                 <img src={art.image || art.img} alt={art.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
               </div>
               <div className="flex flex-col justify-between flex-grow">

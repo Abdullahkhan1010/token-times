@@ -148,10 +148,10 @@ export default function Header({ activePage = "Home", setActivePage }) {
             <h1 className="font-display-lg text-3xl md:text-5xl font-extrabold text-[#0C133D] tracking-tight leading-none truncate uppercase font-serif">
               Token Times
             </h1>
-            <span className="font-label-caps text-xs text-on-surface-variant tracking-widest truncate uppercase mt-1 font-bold pl-2">
+            <span className="font-label-caps text-xs text-on-surface-variant tracking-widest truncate mt-1 font-bold pl-2">
               Gateway to the Digital Asset Economy
             </span>
-            <span className="font-data-tabular text-xs font-bold text-[#0C133D] tracking-wider uppercase mt-0.5 block pl-2">
+            <span className="font-data-tabular text-xs font-bold text-[#0C133D] tracking-wider mt-0.5 block pl-2">
               {dateStr}
             </span>
           </div>
