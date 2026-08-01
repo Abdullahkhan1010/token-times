@@ -4,28 +4,41 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { magazinePageData } from "../data/pagesData";
 import { getMagzines } from "../services/magzine.service";
+import { ToHref } from "../services/file.service";
 
 export default function MagazinePage({ onNavigate }) {
-  const { currentIssue: staticCurrent, features, pastIssues: staticPast } = magazinePageData;
 
-  const [currentIssue, setCurrentIssue] = useState(staticCurrent);
-  const [pastIssues, setPastIssues] = useState(staticPast);
+  const [currentIssue, setcurrentIssue] = useState({
+    number: "",
+    title: "",
+    subtitle: "",
+    coverImg: "",
+    description: "",
+    file: "",
+  });
+  const [pastIssues, setPastIssues] = useState();
+  const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
     let active = true;
-    getMagzines()
-      .then((data) => {
+    (async () => {
+      try {
+        const data = await getMagzines();
         if (!active) return;
+
         if (Array.isArray(data) && data.length > 0) {
+
           const latest = data[0];
-          setCurrentIssue({
-            number: latest.issue_name || staticCurrent.number,
-            title: latest.title || staticCurrent.title,
-            subtitle: latest.description ? latest.description.slice(0, 80) + "..." : staticCurrent.subtitle,
-            coverImg: latest.cover_img || staticCurrent.coverImg,
-            description: latest.description || staticCurrent.description,
-            editorNote: staticCurrent.editorNote,
-            file: latest.file,
+          const coverImgHref = await ToHref(latest.cover_img, "cover.jpg");
+          const fileHref = await ToHref(latest.file, "magazine.pdf");
+
+          setcurrentIssue({
+            number: latest.issue_name,
+            title: latest.title,
+            subtitle: latest.description,
+            coverImg: coverImgHref,
+            description: latest.description,
+            file: fileHref,
           });
 
           if (data.length > 1) {
@@ -33,13 +46,16 @@ export default function MagazinePage({ onNavigate }) {
               issue: m.issue_name,
               title: m.title,
               theme: m.description ? m.description.slice(0, 40) + "..." : "Quarterly Edition",
-              file: m.file,
+              file: ToHref(m.file, `magazine-${m.issue_name}.pdf`),
             }));
             setPastIssues(mappedPast);
           }
+        } else {
+          setStatusMessage("Failed to fetch Magzine")
         }
-      })
-      .catch((err) => console.error("Failed to load magazines", err));
+      }
+      catch (err) { console.error("Failed to load magazines", err); }
+    })();
 
     return () => {
       active = false;
@@ -73,13 +89,19 @@ export default function MagazinePage({ onNavigate }) {
         {/* Left 5 Columns: Cover Preview */}
         <div className="lg:col-span-5 flex flex-col justify-center items-center">
           <div className="relative group w-full max-w-md aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-outline-variant">
-            <img
-              src={currentIssue.coverImg}
-              alt={currentIssue.title}
-              loading="eager"
-              decoding="async"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            />
+            {currentIssue.coverImg && (
+              <img
+                alt={currentIssue.title}
+                loading="eager"
+                src={currentIssue.coverImg}
+                decoding="async"
+                onError={(e) => {
+                  console.log("Image failed:", e.currentTarget.src);
+                }}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            )}
+
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
               <span className="text-xs font-bold text-[#D4AF37] tracking-wider uppercase mb-1">
                 {currentIssue.number}
@@ -109,9 +131,7 @@ export default function MagazinePage({ onNavigate }) {
             {currentIssue.description}
           </p>
 
-          <blockquote className="p-4 bg-surface-container-low border-l-4 border-l-[#D4AF37] rounded-r-lg text-xs md:text-sm text-on-surface-variant italic">
-            "{currentIssue.editorNote}"
-          </blockquote>
+
 
           <div className="flex flex-wrap items-center gap-4 pt-2">
             {currentIssue.file ? (
@@ -136,7 +156,7 @@ export default function MagazinePage({ onNavigate }) {
       </Reveal>
 
       {/* Featured Long Reads & Essays */}
-      <div className="space-y-6">
+      {/* <div className="space-y-6">
         <Reveal as="div" className="border-b border-outline-variant pb-3 flex justify-between items-end">
           <div>
             <span className="font-label-caps text-xs text-[#D4AF37] font-bold uppercase tracking-wider block">IN THIS ISSUE</span>
@@ -181,10 +201,10 @@ export default function MagazinePage({ onNavigate }) {
             </Reveal>
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Past Editions Archive */}
-      <Reveal as="section" className="bg-surface-container-low border border-outline-variant rounded-xl p-6 space-y-4">
+      {/* <Reveal as="section" className="bg-surface-container-low border border-outline-variant rounded-xl p-6 space-y-4">
         <h3 className="font-headline-sm text-lg font-bold text-[#0C133D]">Archived Quarterly Editions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {pastIssues.map((issue, i) => (
@@ -195,7 +215,7 @@ export default function MagazinePage({ onNavigate }) {
             </div>
           ))}
         </div>
-      </Reveal>
+      </Reveal> */}
     </div>
   );
 }

@@ -1,0 +1,16 @@
+export const createPublishedNewsInterface = (overrides = {}) => ({
+    _id: '',
+    title: '',
+    article: '',
+    summary: '',
+    author: '',
+    image: '',
+    approx_time_to_read: 0,
+    category: [],
+    tags: [],
+    headlines: [],
+    display_section: [],
+    view_count: 0,
+    status: 'active',
+    ...overrides,
+});

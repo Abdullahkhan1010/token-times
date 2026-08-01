@@ -3,9 +3,12 @@ import PageHeader from "./PageHeader";
 import { Sparkline, BarList } from "./AnalyticsCharts";
 
 /**
- * Props: summary, trend, categories — see data/adminContent.js for shapes.
- * All three are placeholders; wire them to real aggregation queries once
- * the backend/database is in place.
+ * Analytics Component
+ * Props: 
+ *  - summary: array of summary metrics (label, value, delta)
+ *  - trend: array of numbers representing daily article counts
+ *  - categories: array of category breakdown (label, value)
+ * Note: All data should be fetched from backend analytics APIs
  */
 export default function Analytics({ summary, trend, categories }) {
   return (

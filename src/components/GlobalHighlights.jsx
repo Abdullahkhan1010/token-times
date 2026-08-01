@@ -1,8 +1,7 @@
 import React from "react";
 import Reveal from "./Reveal";
-import { globalHighlights } from "../data/content";
 
-export default function GlobalHighlights() {
+export default function GlobalHighlights({ globalHighlights }) {
   return (
     <section>
       <Reveal as="h2" className="font-headline-lg text-headline-lg text-[#0C133D] section-header-border">
@@ -17,13 +16,13 @@ export default function GlobalHighlights() {
             className="border-l-4 border-l-[#D4AF37] border-y border-r border-outline-variant p-4 bg-surface-container-lowest hover:bg-surface-container-low transition-colors"
           >
             <div className="flex justify-between items-start mb-2">
-              <span className="font-label-caps text-label-caps text-[#D4AF37]">{item.region}</span>
+              <span className="font-label-caps text-label-caps text-[#D4AF37]">{item.tags}</span>
               <span className="font-data-tabular text-data-tabular text-on-surface-variant">{item.date}</span>
             </div>
             <h3 className="font-headline-md text-headline-md text-[#0C133D] mb-2" style={{ fontSize: 20 }}>
               {item.title}
             </h3>
-            <p className="font-body-md text-body-md text-on-surface-variant">{item.desc}</p>
+            <p className="font-body-md text-body-md text-on-surface-variant">{item.summary}</p>
           </Reveal>
         ))}
       </div>

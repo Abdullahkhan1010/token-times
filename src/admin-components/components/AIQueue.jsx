@@ -5,18 +5,17 @@ import ArticleReviewCard from "./ArticleReviewCard";
 import EditArticleModal from "./EditArticleModal";
 
 /**
+ * AI Queue Component - Review pending articles
  * Props:
- *  - queue: array of pending articles (see data/adminContent.js for shape)
- *  - onApprove(id): called when an article is approved — parent should move
- *      it into `published` and, eventually, POST to the backend.
- *  - onReject(id): called when an article is rejected — parent should drop
- *      it from the queue and notify the sourcing agent to fetch a
- *      replacement.
- *  - onEditSave(updatedArticle): called when edits are saved.
+ *  - queue: array of pending articles (id, title, summary, source, category, fetchedAt, content)
+ *  - onApprove(id): called when an article is approved (navigates to published-news form)
+ *  - onReject(id): called when an article is rejected
+ *  - onEditSave(updatedArticle): called when edits are saved
+ *  - onEdit(id): called when edit button is clicked (navigates to published-news form)
  */
-export default function AIQueue({ queue, onApprove, onReject, onEditSave }) {
+export default function AIQueue({ queue, onApprove, onReject, onEditSave, onEdit }) {
   const [editingId, setEditingId] = useState(null);
-  const editingArticle = queue.find((a) => a.id === editingId) || null;
+  const editingArticle = queue.find((a) => a.id === editingId || a._id === editingId) || null;
 
   return (
     <>
@@ -35,11 +34,11 @@ export default function AIQueue({ queue, onApprove, onReject, onEditSave }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-gutter">
           {queue.map((article, i) => (
             <ArticleReviewCard
-              key={article.id}
+              key={article.id || article._id}
               article={article}
               className={article.wide ? "lg:col-span-12" : "lg:col-span-6"}
               style={{ animationDelay: `${i * 60}ms` }}
-              onEdit={setEditingId}
+              onEdit={() => onEdit?.(article.id || article._id)}
               onReject={onReject}
               onApprove={onApprove}
             />

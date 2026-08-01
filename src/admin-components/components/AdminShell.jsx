@@ -12,33 +12,35 @@ import MagazinesAdmin from "./MagazinesAdmin";
 import KnowledgeHubAdmin from "./KnowledgeHubAdmin";
 import InterviewsAdmin from "./InterviewsAdmin";
 import EventsAdmin from "./EventsAdmin";
+import PublishedNewsAdmin from "./PublishedNewsAdmin";
 import { requestJson } from "../../services/api";
-import {
-  pendingQueue as initialQueue,
-  publishedArticles as initialPublished,
-  archivedArticles as initialArchived,
-  analyticsSummary,
-  articlesPerDay,
-  categoryBreakdown,
-} from "../data/adminContent";
-
+import { getPublishedNews } from "../../services/published-news.service";
 /**
- * Drop <AdminShell /> in behind your auth-gated /admin route.
- *
- * State here is local/mock so the panel is fully clickable out of the box.
- * Each handler below is where a real backend call belongs — the comments
- * mark the spot. Swap the `useState` initial values for data fetched from
- * your API once it exists.
+ * Admin Shell - Main admin panel container
+ * All data is loaded from backend APIs
  */
 export default function AdminShell() {
   const [page, setPage] = useState("queue");
   const [queue, setQueue] = useState([]);
-  const [published, setPublished] = useState(initialPublished);
-  const [archived, setArchived] = useState(initialArchived);
+  const [published, setPublished] = useState([]);
+  const [archived, setArchived] = useState([]);
+  const [selectedDraft, setSelectedDraft] = useState(null);
+
+  // Analytics data placeholders
+  const [analyticsSummary, setAnalyticsSummary] = useState([
+    { label: "Published (30d)", value: "0", delta: "-" },
+    { label: "Pending Review", value: "0", delta: "-" },
+    { label: "Approval Rate", value: "0%", delta: "-" },
+    { label: "Avg. Time to Publish", value: "0h", delta: "-" },
+  ]);
+  const [articlesPerDay, setArticlesPerDay] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+  const [categoryBreakdown, setCategoryBreakdown] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
+
+
   useEffect(() => {
-    // Load drafts from backend and use them as the review queue
+    // Load published news
     let cancelled = false;
 
     async function loadDrafts() {
@@ -48,13 +50,16 @@ export default function AdminShell() {
 
         // Server returns enriched drafts with `id`, `title`, `summary`, `source`, `category`, `fetchedAt`, `content`
         const mapped = (json || []).map((d) => ({
-          id: d.id,
+          id: d._id,
           title: d.title,
           summary: d.summary,
           source: d.source,
           category: d.category,
           fetchedAt: d.fetchedAt,
           content: d.content,
+          article: d.article,
+          tags: d.tags,
+          headlines: d.headlines,
         }));
 
         setQueue(mapped);
@@ -63,34 +68,43 @@ export default function AdminShell() {
       }
     }
 
+    async function loadPublished() {
+      const data = await getPublishedNews();
+      const filtered = data.filter((item) => item.status === "published");
+      setPublished(filtered);
+    }
+
+    async function loadArchived() {
+      try {
+        const json = await requestJson('/published-news');
+        if (cancelled) return;
+
+        const filtered = (json || []).filter(item => item.status === 'archived');
+        setArchived(filtered);
+      } catch (err) {
+        console.error('Could not load archived news', err);
+      }
+    }
     loadDrafts();
+    loadPublished();
+    loadArchived();
 
     return () => {
       cancelled = true;
     };
   }, []);
 
+  const handleEditDraft = (id) => {
+    const draft = queue.find(d => d.id === id || d._id === id);
+    if (draft) {
+      setSelectedDraft(draft);
+      setPage('published-news');
+    }
+  };
+
   const handleApprove = (id) => {
-    // Call backend approve endpoint
-    (async () => {
-      try {
-        const body = await requestJson('/news/approve', {
-          method: 'POST',
-          body: JSON.stringify({ id }),
-        });
-
-        const article = body.article || {};
-
-        setPublished((prev) => [
-          { id: article._id || article.id || id, title: article.title, category: article.category || 'Uncategorized', author: 'T.T. Editorial Board', publishedAt: article.publish_date ?? new Date().toISOString(), views: article.views ?? 0 },
-          ...prev,
-        ]);
-
-        setQueue((prev) => prev.filter((a) => a.id !== id));
-      } catch (err) {
-        console.error('Approve failed', err);
-      }
-    })();
+    // Navigate to published news form with draft data
+    handleEditDraft(id);
   };
 
   const handleReject = (id) => {
@@ -127,16 +141,67 @@ export default function AdminShell() {
     })();
   };
 
-  const handleArchive = (row) => {
-    // TODO: POST /api/articles/:id/archive
-    setPublished((prev) => prev.filter((a) => a.id !== row.id));
-    setArchived((prev) => [{ ...row, archivedAt: new Date().toISOString(), reason: "Manually archived" }, ...prev]);
+  const handleArchive = async (row) => {
+    try {
+      await requestJson(`/published-news/archive/${row._id || row.id}`, {
+        method: 'POST',
+      });
+
+      setPublished((prev) => prev.filter((a) => (a._id || a.id) !== (row._id || row.id)));
+
+      // Reload archived items
+      const json = await requestJson('/published-news');
+      const filtered = (json || []).filter(item => item.status === 'archived');
+      setArchived(filtered);
+    } catch (err) {
+      console.error('Archive failed', err);
+    }
   };
 
-  const handleRestore = (row) => {
-    // TODO: POST /api/articles/:id/restore
-    setArchived((prev) => prev.filter((a) => a.id !== row.id));
-    setPublished((prev) => [{ ...row, publishedAt: new Date().toISOString(), views: row.views ?? 0 }, ...prev]);
+  const handleRestore = async (row) => {
+    try {
+      await requestJson(`/published-news/${row._id || row.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: 'published' }),
+      });
+
+      setArchived((prev) => prev.filter((a) => (a._id || a.id) !== (row._id || row.id)));
+
+      // Reload published items
+      const json = await requestJson('/published-news');
+      const filtered = (json || []).filter(item => item.status === 'published');
+      setPublished(filtered);
+    } catch (err) {
+      console.error('Restore failed', err);
+    }
+  };
+
+  const handlePublishComplete = async () => {
+    // Reload published news and queue after publishing
+    try {
+      // Reload published news
+      const publishedJson = await requestJson('/published-news');
+      const filtered = (publishedJson || []).filter(item => item.status === 'published');
+      setPublished(filtered);
+
+      // Reload drafts/queue
+      const draftsJson = await requestJson('/news/drafts');
+      const mapped = (draftsJson || []).map((d) => ({
+        id: d.id || d._id,
+        title: d.title,
+        summary: d.summary,
+        source: d.source,
+        category: d.category,
+        fetchedAt: d.fetchedAt,
+        content: d.content,
+      }));
+      setQueue(mapped);
+
+      setSelectedDraft(null);
+      setPage('published');
+    } catch (err) {
+      console.error('Failed to reload after publish', err);
+    }
   };
 
   return (
@@ -178,10 +243,27 @@ export default function AdminShell() {
         )}
 
         {page === "queue" && (
-          <AIQueue queue={queue} onApprove={handleApprove} onReject={handleReject} onEditSave={handleEditSave} />
+          <AIQueue
+            queue={queue}
+            onApprove={handleApprove}
+            onReject={handleReject}
+            onEditSave={handleEditSave}
+            onEdit={handleEditDraft}
+          />
         )}
 
         {page === "published" && <Published articles={published} onArchive={handleArchive} />}
+
+        {page === "published-news" && (
+          <PublishedNewsAdmin
+            draftData={selectedDraft}
+            onPublishComplete={handlePublishComplete}
+            onCancel={() => {
+              setSelectedDraft(null);
+              setPage('queue');
+            }}
+          />
+        )}
 
         {page === "regulations" && <RegulationsAdmin />}
 

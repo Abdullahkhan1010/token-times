@@ -1,9 +1,7 @@
 /**
- * Mock data for the admin panel.
- * Replace each export with a real API call (e.g. React Query / fetch to
- * your backend) once the AI-sourcing pipeline and database are wired up.
- * Shapes are kept intentionally stable so swapping the data source
- * shouldn't require touching the components.
+ * DEPRECATED - Mock data no longer used in admin panel.
+ * All components now use empty placeholders and load data from backend APIs.
+ * This file is kept for reference only.
  */
 
 export const pendingQueue = [

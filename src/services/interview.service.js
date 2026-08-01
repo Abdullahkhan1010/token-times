@@ -3,7 +3,12 @@ import { requestJson } from './api';
 
 const INTERVIEWS_PATH = '/interviews';
 
-const mapInterview = (interview) => createInterviewInterface(interview);
+const mapInterview = (interview = {}) =>
+    createInterviewInterface({
+        ...interview,
+        id: interview._id ? String(interview._id) : interview.id || '',
+        _id: interview._id ? String(interview._id) : interview._id,
+    });
 
 export async function getInterviews() {
     const data = await requestJson(INTERVIEWS_PATH);

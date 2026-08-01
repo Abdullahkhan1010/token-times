@@ -1,9 +1,9 @@
 import React from "react";
 import Reveal from "./Reveal";
 import { ArrowRight } from "lucide-react";
-import { latestNews } from "../data/content";
 
-export default function LatestNews() {
+
+export default function LatestNews({ latestNews }) {
   return (
     <section className="mb-8 bg-surface-container-low p-6 border border-outline-variant rounded-xl">
       <div className="flex justify-between items-center section-header-border mb-6">
@@ -18,10 +18,10 @@ export default function LatestNews() {
         {latestNews.map((n, i) => (
           <Reveal key={n.title} delay={i * 60} as="article" className="flex gap-4 group cursor-pointer">
             <div className="w-24 h-24 flex-shrink-0 bg-surface-variant rounded-xl overflow-hidden">
-              <img alt={n.title} className="img-fade w-full h-full object-cover" src={n.img} />
+              <img alt={n.title} className="img-fade w-full h-full object-cover" src={n.image} />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="font-label-caps text-label-caps text-on-surface-variant mb-1">{n.cat}</span>
+              <span className="font-label-caps text-label-caps text-on-surface-variant mb-1">{n.category}</span>
               <h4
                 className="font-headline-md text-headline-md text-[#0C133D] leading-snug group-hover:text-[#D4AF37] transition-colors"
                 style={{ fontSize: 18 }}

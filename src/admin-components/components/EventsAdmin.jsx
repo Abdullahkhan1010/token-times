@@ -1,8 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Calendar, Plus, Trash2, FileText, CheckCircle2, AlertCircle } from "lucide-react";
 import { getEvents, postEvent, deleteEvent } from "../../services/event.service";
+import { uploadFileToS3, ToHref } from "../../services/file.service";
+
+const MAX_PDF_SIZE_BYTES = 5 * 1024 * 1024;
+
+
+
 
 export default function EventsAdmin() {
+  const imageInputRef = useRef(null);
+  const agendaInputRef = useRef(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -15,13 +23,19 @@ export default function EventsAdmin() {
   const [eventDescription, setEventDescription] = useState("");
   const [eventGuestsStr, setEventGuestsStr] = useState("");
   const [eventHostsStr, setEventHostsStr] = useState("");
-  const [eventAgenda, setEventAgenda] = useState("");
-  const [image, setImage] = useState("");
+  const [eventAgendaFile, setEventAgendaFile] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
   const loadData = async () => {
     setLoading(true);
     try {
       const data = await getEvents();
+      if (Array.isArray(data) && data.length > 0) {
+        for (const item of data) {
+          const link = await ToHref(item.event_agenda, "summit-agenda.pdf");
+          item.event_agenda = link;
+        }
+      }
       setItems(data);
     } catch (err) {
       console.error("Failed to load events", err);
@@ -43,7 +57,24 @@ export default function EventsAdmin() {
     const guestsArr = eventGuestsStr.split(",").map((g) => g.trim()).filter(Boolean);
     const hostsArr = eventHostsStr.split(",").map((h) => h.trim()).filter(Boolean);
 
+    if (!eventAgendaFile) {
+      setMessage({ type: "error", text: "Please select an agenda PDF." });
+      setSubmitting(false);
+      return;
+    }
+
+    if (!imageFile) {
+      setMessage({ type: "error", text: "Please select an event banner image." });
+      setSubmitting(false);
+      return;
+    }
+
     try {
+      const [agendaUpload, imageUpload] = await Promise.all([
+        uploadFileToS3(eventAgendaFile),
+        uploadFileToS3(imageFile),
+      ]);
+
       await postEvent({
         event_title: eventTitle,
         event_venue: eventVenue,
@@ -52,8 +83,8 @@ export default function EventsAdmin() {
         event_guests: guestsArr,
         event_description: eventDescription,
         event_hosts: hostsArr,
-        event_agenda: eventAgenda,
-        image,
+        event_agenda: agendaUpload.fileKey,
+        image: imageUpload.fileKey,
       });
       setMessage({ type: "success", text: "Event created successfully!" });
       setEventTitle("");
@@ -63,8 +94,14 @@ export default function EventsAdmin() {
       setEventDescription("");
       setEventGuestsStr("");
       setEventHostsStr("");
-      setEventAgenda("");
-      setImage("");
+      setEventAgendaFile(null);
+      setImageFile(null);
+      if (imageInputRef.current) {
+        imageInputRef.current.value = "";
+      }
+      if (agendaInputRef.current) {
+        agendaInputRef.current.value = "";
+      }
       await loadData();
     } catch (err) {
       setMessage({ type: "error", text: err.message || "Failed to create event." });
@@ -77,7 +114,7 @@ export default function EventsAdmin() {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
     try {
       await deleteEvent(id);
-      setItems((prev) => prev.filter((item) => item.id !== id));
+      setItems((prev) => prev.filter((item) => (item.id || item._id) !== id));
       setMessage({ type: "success", text: "Event deleted." });
     } catch (err) {
       setMessage({ type: "error", text: "Failed to delete event." });
@@ -97,11 +134,10 @@ export default function EventsAdmin() {
 
       {message && (
         <div
-          className={`p-4 rounded-lg text-xs font-semibold flex items-center gap-2 ${
-            message.type === "success"
-              ? "bg-green-500/10 text-green-700 border border-green-500/20"
-              : "bg-red-500/10 text-red-700 border border-red-500/20"
-          }`}
+          className={`p-4 rounded-lg text-xs font-semibold flex items-center gap-2 ${message.type === "success"
+            ? "bg-green-500/10 text-green-700 border border-green-500/20"
+            : "bg-red-500/10 text-red-700 border border-red-500/20"
+            }`}
         >
           {message.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
           {message.text}
@@ -161,14 +197,32 @@ export default function EventsAdmin() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Event Banner Image URL</label>
+            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Event Banner Image *</label>
             <input
-              type="text"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              placeholder="https://... or /images/summit-banner.jpg"
+              type="file"
+              accept="image/*"
+              required
+              ref={imageInputRef}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) {
+                  setImageFile(null);
+                  return;
+                }
+
+                try {
+                  setImageFile(file);
+                } catch (error) {
+                  console.error(error);
+                  setImageFile(null);
+                  setMessage({ type: "error", text: "Failed to process the selected image." });
+                }
+              }}
               className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
             />
+            <p className="mt-1 text-[11px] text-on-surface-variant">
+              Selected image will be uploaded to S3 before saving the event.
+            </p>
           </div>
 
           <div>
@@ -194,14 +248,35 @@ export default function EventsAdmin() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Agenda File URL / Text</label>
+            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Agenda PDF *</label>
             <input
-              type="text"
-              value={eventAgenda}
-              onChange={(e) => setEventAgenda(e.target.value)}
-              placeholder="https://... or /documents/summit-agenda.pdf"
+              type="file"
+              accept="application/pdf"
+              required
+              ref={agendaInputRef}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) {
+                  setEventAgendaFile(null);
+                  return;
+                }
+
+                if (file.size > MAX_PDF_SIZE_BYTES) {
+                  setEventAgendaFile(null);
+                  if (agendaInputRef.current) {
+                    agendaInputRef.current.value = "";
+                  }
+                  setMessage({ type: "error", text: "Agenda PDF must be 5MB or smaller." });
+                  return;
+                }
+
+                setEventAgendaFile(file);
+              }}
               className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
             />
+            <p className="mt-1 text-[11px] text-on-surface-variant">
+              Select a PDF up to 5MB. It will be uploaded to S3 before saving the event.
+            </p>
           </div>
 
           <div className="md:col-span-2">
@@ -251,7 +326,7 @@ export default function EventsAdmin() {
               </thead>
               <tbody className="divide-y divide-outline-variant/40">
                 {items.map((item) => (
-                  <tr key={item.id || item.event_title} className="hover:bg-surface-container-low/50">
+                  <tr key={item._id} className="hover:bg-surface-container-low/50">
                     <td className="py-3 px-3 font-semibold text-on-surface max-w-xs truncate">
                       {item.event_title}
                     </td>
@@ -268,7 +343,7 @@ export default function EventsAdmin() {
                     </td>
                     <td className="py-3 px-3 text-right">
                       <button
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => handleDelete(item.id || item._id)}
                         className="text-red-500 hover:text-red-700 p-1 rounded"
                         title="Delete"
                       >

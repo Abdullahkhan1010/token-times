@@ -1,5 +1,5 @@
 export const createResearchInterface = (overrides = {}) => ({
-    id: '',
+    _id: '',
     title: '',
     author: '',
     publish_date: '',

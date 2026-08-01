@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Mic, Plus, Trash2, FileText, CheckCircle2, AlertCircle } from "lucide-react";
 import { getInterviews, postInterview, deleteInterview } from "../../services/interview.service";
-
+import { uploadFileToS3 } from "../../services/file.service";
 export default function InterviewsAdmin() {
+  const imageInputRef = useRef(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -11,12 +12,13 @@ export default function InterviewsAdmin() {
   const [interviewTitle, setInterviewTitle] = useState("");
   const [intervieweeName, setIntervieweeName] = useState("");
   const [interviewerName, setInterviewerName] = useState("");
-  const [intervieweeImage, setIntervieweeImage] = useState("");
+  const [intervieweeImage, setIntervieweeImage] = useState(null);
   const [publishDate, setPublishDate] = useState("");
   const [questionsStr, setQuestionsStr] = useState("");
   const [answersStr, setAnswersStr] = useState("");
   const [tagsStr, setTagsStr] = useState("");
   const [categoryStr, setCategoryStr] = useState("");
+
 
   const loadData = async () => {
     setLoading(true);
@@ -36,7 +38,7 @@ export default function InterviewsAdmin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!interviewTitle || !intervieweeName) return;
+    if (!interviewTitle || !intervieweeName || !intervieweeImage) return;
     setSubmitting(true);
     setMessage(null);
 
@@ -45,12 +47,22 @@ export default function InterviewsAdmin() {
     const tagsArr = tagsStr.split(",").map((t) => t.trim()).filter(Boolean);
     const categoryArr = categoryStr.split(",").map((c) => c.trim()).filter(Boolean);
 
+    if (!intervieweeImage) {
+      setMessage({ type: "error", text: "Please select an image for the interviewee." });
+      setSubmitting(false);
+      return;
+    }
+
     try {
+
+      const [intervieweeImageUpload] = await Promise.all([
+        uploadFileToS3(intervieweeImage)]);
+
       await postInterview({
         interview_title: interviewTitle,
         interviewee_name: intervieweeName,
         interviewer_name: interviewerName,
-        interviewee_image: intervieweeImage,
+        interviewee_image: intervieweeImageUpload.fileKey,
         publish_date: publishDate || new Date().toISOString().split("T")[0],
         questions: questionsArr,
         answers: answersArr,
@@ -61,12 +73,15 @@ export default function InterviewsAdmin() {
       setInterviewTitle("");
       setIntervieweeName("");
       setInterviewerName("");
-      setIntervieweeImage("");
+      setIntervieweeImage(null);
       setPublishDate("");
       setQuestionsStr("");
       setAnswersStr("");
       setTagsStr("");
       setCategoryStr("");
+      if (imageInputRef.current) {
+        imageInputRef.current.value = "";
+      }
       await loadData();
     } catch (err) {
       setMessage({ type: "error", text: err.message || "Failed to create interview." });
@@ -79,7 +94,7 @@ export default function InterviewsAdmin() {
     if (!window.confirm("Are you sure you want to delete this interview?")) return;
     try {
       await deleteInterview(id);
-      setItems((prev) => prev.filter((item) => item.id !== id));
+      setItems((prev) => prev.filter((item) => (item.id || item._id) !== id));
       setMessage({ type: "success", text: "Interview deleted." });
     } catch (err) {
       setMessage({ type: "error", text: "Failed to delete interview." });
@@ -99,11 +114,10 @@ export default function InterviewsAdmin() {
 
       {message && (
         <div
-          className={`p-4 rounded-lg text-xs font-semibold flex items-center gap-2 ${
-            message.type === "success"
-              ? "bg-green-500/10 text-green-700 border border-green-500/20"
-              : "bg-red-500/10 text-red-700 border border-red-500/20"
-          }`}
+          className={`p-4 rounded-lg text-xs font-semibold flex items-center gap-2 ${message.type === "success"
+            ? "bg-green-500/10 text-green-700 border border-green-500/20"
+            : "bg-red-500/10 text-red-700 border border-red-500/20"
+            }`}
         >
           {message.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
           {message.text}
@@ -153,14 +167,32 @@ export default function InterviewsAdmin() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Interviewee Image URL</label>
+            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Interviewee Image *</label>
             <input
-              type="text"
-              value={intervieweeImage}
-              onChange={(e) => setIntervieweeImage(e.target.value)}
-              placeholder="https://... or /images/interviewee.jpg"
+              type="file"
+              accept="image/*"
+              required
+              ref={imageInputRef}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) {
+                  setIntervieweeImage(null);
+                  return;
+                }
+
+                try {
+                  setIntervieweeImage(file);
+                } catch (error) {
+                  console.error(error);
+                  setIntervieweeImage(null);
+                  setMessage({ type: "error", text: "Failed to process the selected image." });
+                }
+              }}
               className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
             />
+            <p className="mt-1 text-[11px] text-on-surface-variant">
+              Selected image will be converted to a base64 data URL before sending.
+            </p>
           </div>
 
           <div>
@@ -253,7 +285,7 @@ export default function InterviewsAdmin() {
               </thead>
               <tbody className="divide-y divide-outline-variant/40">
                 {items.map((item) => (
-                  <tr key={item.id || item.interview_title} className="hover:bg-surface-container-low/50">
+                  <tr key={item.id || item._id || item.interview_title} className="hover:bg-surface-container-low/50">
                     <td className="py-3 px-3 font-semibold text-on-surface max-w-xs truncate">
                       {item.interview_title || item.quote}
                     </td>
@@ -264,7 +296,7 @@ export default function InterviewsAdmin() {
                     <td className="py-3 px-3 text-on-surface-variant">{item.publish_date || "N/A"}</td>
                     <td className="py-3 px-3 text-right">
                       <button
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => handleDelete(item.id || item._id)}
                         className="text-red-500 hover:text-red-700 p-1 rounded"
                         title="Delete"
                       >

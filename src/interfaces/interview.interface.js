@@ -1,5 +1,5 @@
 export const createInterviewInterface = (overrides = {}) => ({
-    id: '',
+    _id: '',
     questions: [],
     answers: [],
     interviewee_name: '',

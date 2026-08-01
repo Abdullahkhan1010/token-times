@@ -1,5 +1,5 @@
 export const createRegulationInterface = (overrides = {}) => ({
-    id: '',
+    _id: '',
     title: '',
     authority: '',
     publish_date: '',

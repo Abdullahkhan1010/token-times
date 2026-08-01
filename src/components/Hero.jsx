@@ -1,9 +1,25 @@
 import React from "react";
 import Reveal from "./Reveal";
-import { heroLead, heroSubStories, heroLeftArticles } from "../data/content";
 
-export default function Hero() {
+export default function Hero({ featuredspotlight = [], substories = [], mainStory = null }) {
+  const safeFeaturedSpotlight = Array.isArray(featuredspotlight) ? featuredspotlight : [];
+  const safeSubStories = Array.isArray(substories) ? substories : [];
+  const safeMainStory = mainStory && typeof mainStory === "object" ? mainStory : null;
+  const hasContent = safeFeaturedSpotlight.length > 0 || safeSubStories.length > 0 || Boolean(safeMainStory);
+
+  if (!hasContent) {
+    return (
+      <section
+        aria-label="Top featured stories"
+        className="mb-8 rounded-xl border border-dashed border-outline-variant bg-surface-container-lowest p-6 text-center text-sm text-on-surface-variant"
+      >
+        No featured stories available yet.
+      </section>
+    );
+  }
+
   return (
+
     <section aria-label="Top featured stories" className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8 items-stretch">
       {/* Left Column: 2 Featured Spotlight Articles (2nd on mobile, 1st on desktop) */}
       <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col gap-4 h-full">
@@ -18,7 +34,7 @@ export default function Hero() {
         </div>
 
         <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex lg:flex-col gap-4 flex-grow">
-          {heroLeftArticles.map((art, i) => (
+          {safeFeaturedSpotlight.map((art, i) => (
             <Reveal
               key={art.title}
               as="article"
@@ -30,20 +46,20 @@ export default function Hero() {
                 <img
                   className="img-fade img-scale w-full h-full object-cover"
                   alt={art.title}
-                  src={art.img}
+                  src={art?.image || ""}
                 />
                 <span className="absolute top-2 left-2 bg-[#D4AF37] text-[#0C133D] font-label-caps px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wide shadow-sm max-w-[calc(100%-1rem)] truncate">
-                  {art.tag}
+                  {art?.tags || "Featured"}
                 </span>
               </div>
 
               {/* Compact Text Content Below Picture */}
               <div className="p-3.5 flex flex-col flex-grow justify-between">
                 <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-xs sm:text-sm font-semibold leading-snug mb-2 line-clamp-2">
-                  {art.title}
+                  {art?.title || "Featured story"}
                 </h3>
                 <div className="flex items-center justify-between text-[11px] text-on-surface-variant font-data-tabular pt-2 border-t border-outline-variant/30 mt-auto">
-                  <span>{art.read}</span>
+                  <span>{art.approx_time_to_read} mins read</span>
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#0C133D] text-[#F7F0EB] font-bold text-[11px] group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all">
                     Read →
                   </span>
@@ -68,7 +84,7 @@ export default function Hero() {
               loop
               muted
               playsInline
-              poster={heroLead.img}
+              poster={safeMainStory?.image || ""}
             >
               <source
                 src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-data-42838-large.mp4"
@@ -76,12 +92,12 @@ export default function Hero() {
               />
               <img
                 className="img-fade img-scale w-full h-full object-cover max-w-full"
-                alt={heroLead.title}
-                src={heroLead.img}
+                alt={safeMainStory?.title || "Featured story"}
+                src={safeMainStory?.image || ""}
               />
             </video>
             <div className="absolute top-3 left-3 bg-[#D4AF37] text-[#0C133D] font-label-caps px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide shadow-md max-w-[calc(100%-1.5rem)] truncate z-10">
-              LIVE • {heroLead.tag}
+              LIVE • {safeMainStory?.tags || "Featured"}
             </div>
           </div>
 
@@ -89,15 +105,15 @@ export default function Hero() {
           <div className="p-4 sm:p-5 flex flex-col flex-grow relative">
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-bl-xl bg-[#D4AF37]" />
             <h2 className="font-headline-lg text-lg sm:text-xl md:text-2xl font-bold mb-2 text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight">
-              {heroLead.title}
+              {safeMainStory?.title || "Featured story"}
             </h2>
             <p className="font-body-md text-xs sm:text-sm text-on-surface-variant mb-4 flex-grow leading-relaxed line-clamp-3">
-              {heroLead.summary}
+              {safeMainStory?.summary || "More stories will appear here soon."}
             </p>
             <div className="flex items-center gap-3 font-label-caps text-xs text-on-surface-variant pt-3 border-t border-outline-variant/50 mt-auto flex-wrap">
-              <span>By {heroLead.author}</span>
+              <span>By {safeMainStory?.author || "Token Times"}</span>
               <span>•</span>
-              <span>{heroLead.readTime}</span>
+              <span>{safeMainStory?.approx_time_to_read} mins read</span>
               <a
                 href="#"
                 className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm"
@@ -122,7 +138,7 @@ export default function Hero() {
         </div>
 
         <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex lg:flex-col gap-4 flex-grow">
-          {heroSubStories.map((s, i) => (
+          {safeSubStories.map((s, i) => (
             <Reveal
               key={s.title}
               as="article"
@@ -131,21 +147,22 @@ export default function Hero() {
             >
               <div>
                 <span className="font-label-caps text-xs font-bold text-[#D4AF37] mb-1.5 block">
-                  {s.tag}
+                  {s?.tags || "Featured"}
                 </span>
 
                 <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-xs sm:text-sm font-semibold leading-snug mb-2 line-clamp-2">
-                  {s.title}
+                  {s?.title || "Featured story"}
                 </h3>
               </div>
               <span className="font-data-tabular text-data-tabular text-on-surface-variant text-xs pt-1">
-                {s.time}
+                {s?.approx_time_to_read} mins read
               </span>
             </Reveal>
           ))}
         </div>
       </div>
     </section>
+
   );
 }
 

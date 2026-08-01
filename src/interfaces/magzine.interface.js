@@ -1,5 +1,5 @@
 export const createMagzineInterface = (overrides = {}) => ({
-    id: '',
+    _id: '',
     title: '',
     cover_img: '',
     description: '',

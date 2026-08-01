@@ -1,10 +1,11 @@
 import React from "react";
-import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar } from "lucide-react";
+import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", icon: Home },
   { key: "queue", label: "AI Queue", icon: Newspaper },
   { key: "published", label: "Published", icon: BookOpen },
+  { key: "published-news", label: "Published News", icon: FileEdit },
   { key: "regulations", label: "Regulations", icon: Gavel },
   { key: "research", label: "Research", icon: FileText },
   { key: "magazines", label: "Magazines", icon: BookOpen },
@@ -28,9 +29,8 @@ export default function AdminSideNav({ active, onNavigate, queueCount = 0, mobil
       )}
 
       <nav
-        className={`fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r border-outline-variant bg-surface-container-lowest py-stack-lg transition-transform duration-300 ease-out lg:translate-x-0 lg:flex ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed left-0 top-0 z-50 flex h-full w-64 flex-col border-r border-outline-variant bg-surface-container-lowest py-stack-lg transition-transform duration-300 ease-out lg:translate-x-0 lg:flex ${mobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex items-start justify-between gap-3 px-gutter mb-stack-lg">
           <div>
@@ -58,11 +58,10 @@ export default function AdminSideNav({ active, onNavigate, queueCount = 0, mobil
                   onClose?.();
                 }}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex items-center gap-3 px-3 py-2 rounded font-label-caps text-label-caps transition-all text-left ${
-                  isActive
+                className={`flex items-center gap-3 px-3 py-2 rounded font-label-caps text-label-caps transition-all text-left ${isActive
                     ? "bg-primary-container text-on-primary-container font-bold border-l-4 border-accent"
                     : "text-on-surface-variant hover:bg-surface-container-high"
-                }`}
+                  }`}
               >
                 <Icon size={20} />
                 {label}

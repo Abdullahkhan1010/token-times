@@ -8,7 +8,6 @@ export const createDraftInterface = (overrides = {}) => ({
     approx_time_to_read: '',
     category: [],
     tags: [],
-    views: 0,
     headlines: [],
     status: '',
     ...overrides,
