@@ -2,6 +2,32 @@ import React from "react";
 import Reveal from "./Reveal";
 import { heroSubStories } from "../data/content";
 
+function getSingleCleanTag(article, fallback = "NEWS") {
+  if (!article) return fallback;
+  let rawTag = null;
+  if (Array.isArray(article.category) && article.category.length > 0) {
+    rawTag = article.category[0];
+  } else if (typeof article.category === "string" && article.category.trim()) {
+    rawTag = article.category;
+  } else if (Array.isArray(article.tags) && article.tags.length > 0) {
+    rawTag = article.tags[0];
+  } else if (typeof article.tags === "string" && article.tags.trim()) {
+    rawTag = article.tags;
+  } else if (Array.isArray(article.display_section) && article.display_section.length > 0) {
+    rawTag = article.display_section[0];
+  }
+
+  if (!rawTag) return fallback;
+
+  const cleaned = String(rawTag)
+    .split(",")[0]
+    .replace(/_/g, " ")
+    .trim();
+
+  if (!cleaned) return fallback;
+  return cleaned.toUpperCase();
+}
+
 export default function Hero({ featuredspotlight = [], substories = [], mainStory = null, onSelectArticle }) {
   const safeFeaturedSpotlight = Array.isArray(featuredspotlight) ? featuredspotlight : [];
   const safeSubStories = Array.isArray(substories) ? substories : [];
@@ -52,7 +78,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
           >
             <div>
               <span className="font-label-caps text-xs font-extrabold text-[#D4AF37] mb-1 block uppercase tracking-wide">
-                {topStory.tags || topStory.category?.[0] || "MARKETS"}
+                {getSingleCleanTag(topStory, "MARKETS")}
               </span>
               <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-sm sm:text-base font-bold leading-snug mb-2 line-clamp-3">
                 {topStory.title}
@@ -86,7 +112,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
             >
               <div>
                 <span className="font-label-caps text-[9px] font-bold text-[#D4AF37] mb-0.5 block uppercase">
-                  {s.tags || s.category?.[0] || "NEWS"}
+                  {getSingleCleanTag(s, "NEWS")}
                 </span>
 
                 <h4 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-[10px] font-semibold leading-tight line-clamp-2">
@@ -129,7 +155,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
               />
             </video>
             <div className="absolute top-3 left-3 bg-[#D4AF37] text-[#0C133D] font-label-caps px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide shadow-md max-w-[calc(100%-1.5rem)] truncate z-10">
-              LIVE • {safeMainStory?.tags || "Featured"}
+              LIVE • {getSingleCleanTag(safeMainStory, "FEATURED")}
             </div>
           </div>
 
@@ -139,40 +165,30 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
             <h2 className="font-headline-lg text-lg sm:text-xl md:text-2xl font-bold mb-2 text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight">
               {safeMainStory?.title || "Featured story"}
             </h2>
-            <p className="font-body-md text-xs sm:text-sm text-on-surface-variant mb-4 flex-grow leading-relaxed line-clamp-3">
-              {safeMainStory?.summary || "More stories will appear here soon."}
+            <p className="font-body-md text-body-md text-on-surface-variant mb-4 flex-grow line-clamp-3">
+              {safeMainStory?.summary || ""}
             </p>
-            <div className="flex items-center gap-3 font-label-caps text-xs text-on-surface-variant pt-3 border-t border-outline-variant/50 mt-auto flex-wrap">
-              <span>By {safeMainStory?.author || "Token Times"}</span>
-              <span>•</span>
-              <span>{safeMainStory?.approx_time_to_read} mins read</span>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (safeMainStory) onSelectArticle?.(safeMainStory);
-                }}
-                className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm"
-              >
+            <div className="flex items-center justify-between text-xs text-on-surface-variant font-data-tabular pt-3 border-t border-outline-variant/40 mt-auto">
+              <span>By {safeMainStory?.author || "Editorial Desk"} • {safeMainStory?.approx_time_to_read || 4} mins read</span>
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[#0C133D] text-[#D4AF37] font-bold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all">
                 Read Story →
-              </button>
+              </span>
             </div>
           </div>
         </Reveal>
       </div>
 
-      {/* Right Column: 2 Featured Spotlight Articles (2nd on mobile, 3rd on desktop) */}
-      <div className="lg:col-span-3 order-2 lg:order-3 flex flex-col gap-4 h-full">
-        {/* Sleek Pill Header Container */}
-        <div className="flex items-center justify-between border-b border-outline-variant/60 pb-2.5">
+      {/* Right Column: Featured Spotlight */}
+      <div className="lg:col-span-3 order-2 lg:order-3 flex flex-col gap-2.5 h-full">
+        {/* Section Header with Pill */}
+        <div className="flex items-center justify-between border-b border-outline-variant/60 pb-1.5">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 rounded-full max-w-full shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse flex-shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-[#D4AF37] flex-shrink-0 animate-pulse" />
             <span className="font-label-caps text-xs font-extrabold uppercase tracking-wider truncate">
               Featured Spotlight
             </span>
           </div>
         </div>
-
 
         <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex lg:flex-col gap-4 flex-grow">
           {featuredspotlight.map((art, i) => (
@@ -191,7 +207,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
                   src={art.image}
                 />
                 <span className="absolute top-2 left-2 bg-[#D4AF37] text-[#0C133D] font-label-caps px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wide shadow-sm max-w-[calc(100%-1rem)] truncate">
-                  {art.tags}
+                  {getSingleCleanTag(art, "SPOTLIGHT")}
                 </span>
               </div>
 

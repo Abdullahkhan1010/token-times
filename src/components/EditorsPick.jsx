@@ -19,8 +19,12 @@ export default function EditorsPick({ editorsPicks = [], onSelectArticle }) {
             <div className="w-full h-48 overflow-hidden bg-surface-variant mb-4 rounded-xl">
               <img alt={p.title} className="img-fade img-scale w-full h-full object-cover" src={p.image} />
             </div>
-            <span className="font-label-caps text-label-caps text-[#D4AF37] mb-2 block">
-              {Array.isArray(p.tags) ? p.tags.join(" • ") : (p.tags || "")}
+            <span className="font-label-caps text-label-caps text-[#D4AF37] mb-2 block uppercase">
+              {Array.isArray(p.category) && p.category.length > 0
+                ? String(p.category[0]).replace(/_/g, " ").toUpperCase()
+                : Array.isArray(p.tags) && p.tags.length > 0
+                ? String(p.tags[0]).replace(/_/g, " ").toUpperCase()
+                : String(p.tags || "EDITOR'S PICK").replace(/_/g, " ").toUpperCase()}
             </span>
             <h3 className="font-headline-md text-headline-md text-on-surface mb-2 group-hover:text-[#D4AF37] transition-colors">
               {p.title}
