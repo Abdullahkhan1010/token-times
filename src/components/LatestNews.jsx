@@ -21,7 +21,7 @@ export default function LatestNews({ latestNews = [], onSelectArticle }) {
             delay={i * 60}
             as="article"
             onClick={() => onSelectArticle?.(n)}
-            className="flex gap-4 group cursor-pointer p-3 rounded-xl hover:bg-surface-container-lowest transition-colors border border-transparent hover:border-outline-variant"
+            className="hover-lift flex gap-4 group cursor-pointer p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant hover:border-[#D4AF37] transition-all shadow-xs"
           >
             <div className="w-24 h-24 flex-shrink-0 bg-surface-variant rounded-xl overflow-hidden">
               <img alt={n.title} className="img-fade w-full h-full object-cover" src={n.image} />

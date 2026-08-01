@@ -47,28 +47,39 @@ export default function ResearchPapers() {
   }, []);
 
   return (
-    <section>
-      <h3 className="font-headline-md text-headline-md text-[#0C133D] mb-6 flex items-center gap-2">
-        <BookOpen size={20} className="text-[#D4AF37]" /> Research
-      </h3>
+    <section className="flex flex-col h-full">
+      <div className="flex items-center justify-between border-b-2 border-[#0C133D] pb-2.5 mb-5 min-h-[42px]">
+        <h3 className="font-headline-md text-base font-bold text-[#0C133D] flex items-center gap-2 uppercase tracking-wider">
+          <BookOpen size={18} className="text-[#D4AF37]" /> Research
+        </h3>
+        <span className="px-2.5 py-0.5 rounded-full bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 font-extrabold text-[10px] uppercase tracking-wider shadow-sm">
+          PAPERS
+        </span>
+      </div>
 
       {loading ? (
-        <p className="text-sm text-on-surface-variant">Loading research papers...</p>
+        <p className="text-xs text-on-surface-variant">Loading research papers...</p>
       ) : papers.length > 0 ? (
-        <ul className="space-y-4">
+        <div className="space-y-4">
           {papers.map((r, i) => (
-            <li key={r.id || `${r.title}-${i}`} className={i < papers.length - 1 ? "border-b border-outline-variant pb-4" : ""}>
-              <a className="group block" href={r.file || "#"} target={r.file ? "_blank" : "_self"} rel="noreferrer" style={{ textDecoration: "none" }}>
-                <h4 className="font-body-md text-body-md font-semibold text-on-surface group-hover:text-[#D4AF37] transition-colors mb-1">
+            <article key={r.id || `${r.title}-${i}`} className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex gap-3 items-center hover:border-[#D4AF37] transition-all cursor-pointer group h-[76px]">
+              <div className="w-11 h-11 rounded-lg bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 flex items-center justify-center font-extrabold text-xs shrink-0 shadow-sm">
+                PDF
+              </div>
+              <a className="group block min-w-0 flex-1" href={r.file || "#"} target={r.file ? "_blank" : "_self"} rel="noreferrer" style={{ textDecoration: "none" }}>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37] block mb-0.5 truncate">
+                  RESEARCH PUBLICATION
+                </span>
+                <h4 className="font-headline-md text-xs font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug line-clamp-2 mb-0.5">
                   {r.title}
                 </h4>
-                <span className="font-data-tabular text-data-tabular text-on-surface-variant text-xs uppercase">{r.meta}</span>
+                <span className="font-data-tabular text-[10px] text-on-surface-variant block truncate">{r.meta}</span>
               </a>
-            </li>
+            </article>
           ))}
-        </ul>
+        </div>
       ) : (
-        <p className="text-sm text-on-surface-variant">No research papers available right now.</p>
+        <p className="text-xs text-on-surface-variant">No research papers available right now.</p>
       )}
     </section>
   );

@@ -53,27 +53,32 @@ export default function UpcomingEvents() {
   }, []);
 
   return (
-    <section>
-      <h3 className="font-headline-md text-headline-md text-[#0C133D] mb-6 flex items-center gap-2">
-        <Calendar size={20} className="text-[#D4AF37]" /> Upcoming Events
-      </h3>
+    <section className="flex flex-col h-full">
+      <div className="flex items-center justify-between border-b-2 border-[#0C133D] pb-2.5 mb-5 min-h-[42px]">
+        <h3 className="font-headline-md text-base font-bold text-[#0C133D] flex items-center gap-2 uppercase tracking-wider">
+          <Calendar size={18} className="text-[#D4AF37]" /> Upcoming Events
+        </h3>
+        <span className="px-2.5 py-0.5 rounded-full bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 font-extrabold text-[10px] uppercase tracking-wider shadow-sm">
+          CALENDAR
+        </span>
+      </div>
+
       {statusMessage ? (
-        <p className="text-sm text-on-surface-variant">{statusMessage}</p>
+        <p className="text-xs text-on-surface-variant">{statusMessage}</p>
       ) : (
         <div className="space-y-4">
           {events.map((ev, i) => (
-            <div key={ev._id || ev.title + i} className="hover-lift flex gap-4 bg-surface-container-low p-3 border border-outline-variant">
+            <div key={ev._id || ev.title + i} className="hover-lift flex gap-3 items-center bg-surface-container-lowest p-3 border border-outline-variant rounded-xl hover:border-[#D4AF37] transition-all cursor-pointer group h-[76px]">
               <div
-                className={`flex flex-col items-center justify-center p-2 ${ev.filled ? "bg-[#D4AF37] text-[#0C133D]" : "border border-[#D4AF37] text-[#D4AF37]"
+                className={`w-11 h-11 flex flex-col items-center justify-center rounded-lg shrink-0 ${ev.filled ? "bg-[#D4AF37] text-[#0C133D]" : "border border-[#D4AF37] text-[#D4AF37]"
                   }`}
-                style={{ minWidth: 60 }}
               >
-                <span className="font-label-caps text-xs">{ev.month}</span>
-                <span className="font-headline-md text-headline-md">{ev.day}</span>
+                <span className="font-label-caps text-[9px] font-extrabold uppercase leading-none">{ev.month}</span>
+                <span className="font-headline-md text-sm font-extrabold leading-none mt-0.5">{ev.day}</span>
               </div>
-              <div>
-                <h4 className="font-body-md text-body-md font-semibold text-on-surface mb-1">{ev.title}</h4>
-                <span className="font-data-tabular text-data-tabular text-on-surface-variant text-sm block">{ev.meta}</span>
+              <div className="min-w-0 flex-1">
+                <h4 className="font-headline-md text-xs font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug line-clamp-2 mb-0.5">{ev.title}</h4>
+                <span className="font-data-tabular text-[10px] text-on-surface-variant block truncate">{ev.meta}</span>
               </div>
             </div>
           ))}
