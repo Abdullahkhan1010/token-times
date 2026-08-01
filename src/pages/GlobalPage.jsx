@@ -102,7 +102,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
     }
   ];
 
-  const feedArticles = articles.slice(8).length > 0 ? articles.slice(8) : articles;
+  const feedArticles = activeList.slice(8, 13).length > 0 ? activeList.slice(8, 13) : activeList.slice(0, 4);
 
   return (
     <div className="space-y-8">
