@@ -42,34 +42,61 @@ export default function Interviews() {
 
   return (
     <section>
-      <h3 className="font-headline-md text-headline-md text-[#0C133D] mb-6 flex items-center gap-2">
-        <Mic size={20} className="text-[#D4AF37]" /> Interviews
-      </h3>
+      <div className="flex items-center justify-between border-b-2 border-[#0C133D] pb-2 mb-4">
+        <h3 className="font-headline-md text-base font-bold text-[#0C133D] flex items-center gap-2 uppercase tracking-wider">
+          <Mic size={18} className="text-[#D4AF37]" /> Opinion & Analysis
+        </h3>
+        <span className="px-2 py-0.5 rounded bg-[#0C133D] text-[#D4AF37] font-extrabold text-[10px] uppercase">
+          Columnists
+        </span>
+      </div>
+
       <div className="space-y-4">
         {loading ? (
-          <p className="text-sm text-on-surface-variant">Loading interviews...</p>
+          <p className="text-xs text-on-surface-variant">Loading columnists & interviews...</p>
         ) : interviewList.length > 0 ? (
-          interviewList.map((iv, i) => (
-            <article key={iv._id} className="flex gap-4 items-center">
+          interviewList.map((iv) => (
+            <article key={iv._id} className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex gap-3.5 items-center hover:border-[#D4AF37] transition-all cursor-pointer group">
               {iv.interviewee_image ? (
-                <img
-                  alt={iv.interviewee_name || "Interviewee"}
-                  className="w-16 h-16 rounded-full object-cover border border-outline-variant"
-                  src={iv.interviewee_image}
-                />
-              ) : null}
-              <div>
-                <h4 className="font-body-md text-body-md font-semibold text-on-surface leading-tight mb-1">
-                  <a className="hover:text-[#D4AF37] hover:underline transition-colors" href="#">
-                    {iv.interview_title}
-                  </a>
+                <div className="relative shrink-0">
+                  <img
+                    alt={iv.interviewee_name || "Columnist"}
+                    className="w-14 h-14 rounded-full object-cover border-2 border-[#D4AF37] shadow-sm"
+                    src={iv.interviewee_image}
+                  />
+                  <span className="absolute -bottom-1 -right-1 bg-[#0C133D] text-[#D4AF37] text-[9px] font-extrabold px-1 rounded">
+                    OP-ED
+                  </span>
+                </div>
+              ) : (
+                <div className="w-14 h-14 rounded-full bg-[#0C133D] text-[#D4AF37] border-2 border-[#D4AF37] flex items-center justify-center font-bold text-xs shrink-0">
+                  COLUMN
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37] block mb-0.5">
+                  {iv.interviewee_name || "Guest Columnist"}
+                </span>
+                <h4 className="font-headline-md text-xs font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug line-clamp-2 italic">
+                  "{iv.interview_title}"
                 </h4>
-                <span className="font-label-caps text-label-caps text-on-surface-variant">{iv.interviewee_name}</span>
               </div>
             </article>
           ))
         ) : (
-          <p className="text-sm text-on-surface-variant">failed to fetch interviews</p>
+          <div className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex gap-3.5 items-center">
+            <div className="w-12 h-12 rounded-full bg-[#0C133D] text-[#D4AF37] flex items-center justify-center font-bold text-xs shrink-0 border border-[#D4AF37]/50">
+              TT
+            </div>
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37] block">
+                Editorial Board
+              </span>
+              <h4 className="font-headline-md text-xs font-bold text-[#0C133D] leading-snug italic">
+                "Institutional custody and sovereign digital asset frameworks in emerging markets"
+              </h4>
+            </div>
+          </div>
         )}
       </div>
     </section>

@@ -135,26 +135,27 @@ export default function Header({ activePage = "Home", setActivePage }) {
       )}
 
       {/* ---------------- DESKTOP HEADER (hidden md:flex) ---------------- */}
-      <div className="hidden md:flex justify-between items-center w-full px-4 md:px-12 py-4">
+      <div className="hidden md:flex justify-between items-center w-full px-4 md:px-12 py-5 border-b border-outline-variant/40">
         {/* Logo + date */}
-        <div className="flex flex-col min-w-0 gap-2">
-          <div
+        <div className="flex items-center gap-4 min-w-0">
+          <img
+            alt="Token Times logo"
+            className="w-14 h-14 md:w-16 md:h-16 shrink-0 cursor-pointer hover:scale-105 transition-transform"
+            src={logo}
             onClick={() => handleSelectPage("Home")}
-            className="flex items-center gap-4 min-w-0 cursor-pointer group"
-          >
-            <img alt="Token Times logo" className="w-14 h-14 md:w-16 md:h-16 shrink-0 group-hover:scale-105 transition-transform" src={logo} />
-            <div className="flex flex-col min-w-0">
-              <h1 className="font-display-lg text-display-lg text-[#0C133D] tracking-tighter leading-none truncate group-hover:text-[#0C133D] transition-colors">
-                Token Times
-              </h1>
-              <span className="font-label-caps text-label-caps text-on-surface-variant truncate">
-                Gateway to the Digital Asset Economy
-              </span>
-            </div>
+          />
+          <div className="flex flex-col min-w-0 cursor-pointer" onClick={() => handleSelectPage("Home")}>
+            <h1 className="font-display-lg text-3xl md:text-5xl font-extrabold text-[#0C133D] tracking-tight leading-none truncate uppercase font-serif">
+              Token Times
+            </h1>
+            <span className="font-label-caps text-xs text-on-surface-variant tracking-widest truncate uppercase mt-1 font-bold">
+              Gateway to the Digital Asset Economy
+            </span>
+            <span className="font-data-tabular text-xs font-bold text-[#0C133D] tracking-wider uppercase mt-0.5 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+              {dateStr}
+            </span>
           </div>
-          <span className="font-data-tabular text-data-tabular text-on-surface-variant pl-[4.25rem] md:pl-[5rem]">
-            {dateStr}
-          </span>
         </div>
 
         {/* Search and social */}

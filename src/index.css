@@ -70,7 +70,7 @@ header {
 }
 .ticker__item {
   display: inline-flex;
-  padding: 0 2rem;
+  padding: 0 0.75rem;
 }
 
 .section-header-border {

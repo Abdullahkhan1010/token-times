@@ -43,13 +43,20 @@ export default function App() {
           />
         );
       case "News":
+      case "Global":
+      case "Features":
+      case "Opinion":
         return <NewsPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
-      case "Magazine":
-        return <MagazinePage onNavigate={changePage} />;
-      case "Knowledge Hub":
-        return <KnowledgeHubPage onNavigate={changePage} />;
+      case "Policy & Regulation":
       case "Regulations":
         return <RegulationsPage onNavigate={changePage} />;
+      case "Learn":
+      case "Knowledge Hub":
+        return <KnowledgeHubPage onNavigate={changePage} />;
+      case "Markets":
+        return <HomePage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+      case "Magazine":
+        return <MagazinePage onNavigate={changePage} />;
       case "Research":
         return <ResearchPage onNavigate={changePage} />;
       case "Resources":

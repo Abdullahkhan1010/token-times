@@ -1,11 +1,21 @@
 import React from "react";
 import Reveal from "./Reveal";
+import { heroSubStories } from "../data/content";
 
 export default function Hero({ featuredspotlight = [], substories = [], mainStory = null, onSelectArticle }) {
   const safeFeaturedSpotlight = Array.isArray(featuredspotlight) ? featuredspotlight : [];
   const safeSubStories = Array.isArray(substories) ? substories : [];
   const safeMainStory = mainStory && typeof mainStory === "object" ? mainStory : null;
-  const hasContent = safeFeaturedSpotlight.length > 0 || safeSubStories.length > 0 || Boolean(safeMainStory);
+
+  // Ensure 1 Top Story + 4 Sub Stories = 5 Total Articles in Left Column
+  const displaySubStories = safeSubStories.length >= 5
+    ? safeSubStories
+    : [...safeSubStories, ...heroSubStories].slice(0, 5);
+
+  const topStory = displaySubStories[0];
+  const subStoriesList = displaySubStories.slice(1, 5);
+
+  const hasContent = safeFeaturedSpotlight.length > 0 || displaySubStories.length > 0 || Boolean(safeMainStory);
 
   if (!hasContent) {
     return (
@@ -21,38 +31,70 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
   return (
 
     <section aria-label="Top featured stories" className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8 items-stretch">
-      {/* Left Column: 4 Featured Sub-Stories (3rd on mobile, 1st on desktop) */}
-      <div className="lg:col-span-3 order-3 lg:order-1 flex flex-col gap-4 h-full">
-        {/* Sleek Pill Header Container */}
-        <div className="flex items-center justify-between border-b border-outline-variant/60 pb-2.5">
+      {/* Left Column: Top Story + 4 Sub-Stories */}
+      <div className="lg:col-span-3 order-3 lg:order-1 flex flex-col gap-2.5 h-full">
+        {/* Top Story Header */}
+        <div className="flex items-center justify-between border-b border-outline-variant/60 pb-1.5">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 rounded-full max-w-full shadow-sm">
             <span className="w-2 h-2 rounded-full bg-[#D4AF37] flex-shrink-0" />
             <span className="font-label-caps text-xs font-extrabold uppercase tracking-wider truncate">
+              Top Story
+            </span>
+          </div>
+        </div>
+
+        {/* Top Story Card (Bigger & Prominent) */}
+        {topStory && (
+          <Reveal
+            as="article"
+            onClick={() => onSelectArticle?.(topStory)}
+            className="hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] p-3.5 sm:p-4 rounded-xl cursor-pointer shadow-md hover:border-[#D4AF37] transition-all relative flex flex-col justify-between"
+          >
+            <div>
+              <span className="font-label-caps text-xs font-extrabold text-[#D4AF37] mb-1 block uppercase tracking-wide">
+                {topStory.tags || topStory.category?.[0] || "MARKETS"}
+              </span>
+              <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-sm sm:text-base font-bold leading-snug mb-2 line-clamp-3">
+                {topStory.title}
+              </h3>
+            </div>
+            <span className="font-data-tabular text-xs text-on-surface-variant block pt-1.5 border-t border-outline-variant/40 mt-1">
+              {topStory.time || `${topStory.approx_time_to_read || 4} mins read`}
+            </span>
+          </Reveal>
+        )}
+
+        {/* Sub Stories Header */}
+        <div className="flex items-center justify-between border-b border-outline-variant/60 pb-1 pt-0.5">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 rounded-full max-w-full shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] flex-shrink-0" />
+            <span className="font-label-caps text-[10px] font-extrabold uppercase tracking-wider truncate">
               Sub Stories
             </span>
           </div>
         </div>
 
-        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex lg:flex-col gap-4 flex-grow">
-          {substories.map((s, i) => (
+        {/* 4 Compact Sub Stories (Smaller & Compact) */}
+        <div className="flex flex-col gap-1.5 flex-grow justify-between">
+          {subStoriesList.map((s, i) => (
             <Reveal
-              key={s.title}
+              key={s.title || i}
               as="article"
-              delay={100 + i * 80}
+              delay={100 + i * 60}
               onClick={() => onSelectArticle?.(s)}
-              className="hover-lift group bg-surface-container-lowest border border-outline-variant p-4 flex-1 flex flex-col justify-between rounded-xl cursor-pointer shadow-sm hover:border-[#D4AF37]"
+              className="hover-lift group bg-surface-container-lowest border border-outline-variant p-2 flex-1 flex flex-col justify-between rounded-lg cursor-pointer shadow-sm hover:border-[#D4AF37] transition-all"
             >
               <div>
-                <span className="font-label-caps text-xs font-bold text-[#D4AF37] mb-1.5 block">
-                  {s.tags}
+                <span className="font-label-caps text-[9px] font-bold text-[#D4AF37] mb-0.5 block uppercase">
+                  {s.tags || s.category?.[0] || "NEWS"}
                 </span>
 
-                <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-xs sm:text-sm font-semibold leading-snug mb-2 line-clamp-2">
+                <h4 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-[10px] font-semibold leading-tight line-clamp-2">
                   {s.title}
-                </h3>
+                </h4>
               </div>
-              <span className="font-data-tabular text-data-tabular text-on-surface-variant text-xs pt-1">
-                {s.approx_time_to_read} mins read
+              <span className="font-data-tabular text-[9px] text-on-surface-variant pt-0.5">
+                {s.time || `${s.approx_time_to_read || 3} mins read`}
               </span>
             </Reveal>
           ))}

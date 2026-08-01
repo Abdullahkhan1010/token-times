@@ -1,13 +1,13 @@
 export const navLinks = [
   "Home",
   "News",
-  "Magazine",
-  "Knowledge Hub",
-  "Regulations",
+  "Global",
+  "Features",
+  "Markets",
+  "Policy & Regulation",
   "Research",
-  "Resources",
-  "Events",
-  "Technologies",
+  "Opinion",
+  "Learn",
 ];
 
 export const tickerItems = [

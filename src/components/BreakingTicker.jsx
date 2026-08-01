@@ -4,9 +4,9 @@ import { tickerItems } from "../data/content";
 export default function BreakingTicker() {
   const tickerLine = (prefix) =>
     tickerItems.map((item, i) => (
-      <span key={`${prefix}-${i}`} className="ticker__item text-[#D4AF37] font-semibold">
-        {item}
-        <span className="ticker__item text-[#D4AF37]/60 font-bold">•</span>
+      <span key={`${prefix}-${i}`} className="inline-flex items-center gap-3 text-[#D4AF37] font-semibold px-4">
+        <span>{item}</span>
+        <span className="text-[#D4AF37]/60 font-bold">•</span>
       </span>
     ));
 
