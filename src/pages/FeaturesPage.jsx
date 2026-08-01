@@ -43,9 +43,19 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
     return () => { active = false; };
   }, []);
 
+  // Filter to only feature-relevant articles
+  const featureKeywords = ["feature", "analysis", "research", "deep dive", "investigative", "special report", "technology", "zkp", "rwa", "defi"];
+  const featureArticles = articles.filter((a) => {
+    const secs = Array.isArray(a.display_section) ? a.display_section : [];
+    const cats = Array.isArray(a.category) ? a.category : [a.category || ""];
+    const tags = Array.isArray(a.tags) ? a.tags : [a.tags || ""];
+    const allText = [...secs, ...cats, ...tags].map((t) => String(t).toLowerCase().replace(/_/g, " ")).join(" ");
+    return secs.includes("featured_spotlight") || secs.includes("featured_analysis") || secs.includes("editor_picks") || featureKeywords.some((kw) => allText.includes(kw));
+  });
+
   const filteredArticles = selectedCat === "All Features"
-    ? articles
-    : articles.filter((a) => {
+    ? featureArticles
+    : featureArticles.filter((a) => {
         const catArray = Array.isArray(a.category) ? a.category : [a.category || ""];
         const secArray = Array.isArray(a.display_section) ? a.display_section : [];
         const allTags = [...catArray, ...secArray].map((t) => String(t).toLowerCase().replace(/_/g, " "));
@@ -53,7 +63,7 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
         return allTags.some((t) => t.includes(target) || target.includes(t));
       });
 
-  const activeList = filteredArticles.length > 0 ? filteredArticles : articles;
+  const activeList = filteredArticles.length > 0 ? filteredArticles : (featureArticles.length > 0 ? featureArticles : articles);
 
   const leadFeature = activeList[0] || {
     title: "Tokenization of Real Estate: Evaluating Sovereign Asset Digitization",

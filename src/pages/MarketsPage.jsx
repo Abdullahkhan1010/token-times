@@ -52,9 +52,25 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
     return () => { active = false; };
   }, []);
 
+  // Filter to only market-relevant articles
+  const marketArticles = articles.filter((a) => {
+    const secs = Array.isArray(a.display_section) ? a.display_section : [];
+    const cats = Array.isArray(a.category) ? a.category : [a.category || ""];
+    const tags = Array.isArray(a.tags) ? a.tags : [a.tags || ""];
+    const catText = cats.map((t) => String(t).toLowerCase().replace(/_/g, " "));
+    // Match if display_section is latest_news, OR category includes "markets", "defi", or "trading"
+    const isMarketSection = secs.includes("latest_news");
+    const isMarketCategory = catText.some((c) => ["markets", "defi", "trading"].includes(c));
+    // Also match tags like ETF, Bitcoin, Staking, Yield
+    const marketTags = ["etf", "bitcoin", "trading", "volume", "liquidity", "staking", "yield", "psx"];
+    const tagText = tags.map((t) => String(t).toLowerCase());
+    const hasMarketTag = tagText.some((t) => marketTags.includes(t));
+    return isMarketSection || isMarketCategory || hasMarketTag;
+  });
+
   const filteredArticles = selectedTab === "All Markets"
-    ? articles
-    : articles.filter((a) => {
+    ? marketArticles
+    : marketArticles.filter((a) => {
         const catArray = Array.isArray(a.category) ? a.category : [a.category || ""];
         const secArray = Array.isArray(a.display_section) ? a.display_section : [];
         const allTags = [...catArray, ...secArray].map((t) => String(t).toLowerCase().replace(/_/g, " "));
@@ -62,7 +78,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
         return allTags.some((t) => t.includes(target) || target.includes(t));
       });
 
-  const activeList = filteredArticles.length > 0 ? filteredArticles : articles;
+  const activeList = filteredArticles.length > 0 ? filteredArticles : (marketArticles.length > 0 ? marketArticles : articles);
 
   const leadMarket = activeList[0] || {
     title: "Institutional Inflows Surge Across Digital Asset Derivative Desks",

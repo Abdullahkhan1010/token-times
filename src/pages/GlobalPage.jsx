@@ -53,9 +53,21 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
     };
   }, []);
 
+  // Filter to only global-relevant articles (strict: by display_section or category only)
+  const globalArticles = articles.filter((a) => {
+    const secs = Array.isArray(a.display_section) ? a.display_section : [];
+    const cats = Array.isArray(a.category) ? a.category : [a.category || ""];
+    const catText = cats.map((t) => String(t).toLowerCase().replace(/_/g, " "));
+    // Match display_section Global_Highlight, or category is explicitly global/international/middle east/asia pacific/europe
+    const isGlobalSection = secs.includes("Global_Highlight") || secs.includes("global_highlights");
+    const globalCategories = ["global", "international", "middle east", "asia pacific", "europe"];
+    const isGlobalCategory = catText.some((c) => globalCategories.includes(c));
+    return isGlobalSection || isGlobalCategory;
+  });
+
   const filteredArticles = selectedRegion === "All Regions"
-    ? articles
-    : articles.filter((a) => {
+    ? globalArticles
+    : globalArticles.filter((a) => {
         const catArray = Array.isArray(a.category) ? a.category : [a.category || ""];
         const secArray = Array.isArray(a.display_section) ? a.display_section : [];
         const allTags = [...catArray, ...secArray].map((t) => String(t).toLowerCase().replace(/_/g, " "));
@@ -63,9 +75,9 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
         return allTags.some((t) => t.includes(target) || target.includes(t));
       });
 
-  const activeList = filteredArticles.length > 0 ? filteredArticles : articles;
+  const activeList = filteredArticles.length > 0 ? filteredArticles : (globalArticles.length > 0 ? globalArticles : articles);
 
-  const leadStory = articles[0] || {
+  const leadStory = activeList[0] || {
     title: "Global Central Bank Pilots Accelerate Cross-Border CBDC Settlements",
     summary: "International monetary institutions unveil unified protocols for instantaneous multi-currency clearing using distributed ledgers.",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCxHAfKQIlbkeBH4COanKu5slG1hkEbL1gLWaLI8SifMnv_aqxqej0uJwRZVfWJRac3sy4y3wlg1MMfb1QgDhgeq87ahhysq5eSGGbq0kouV5NA5QAjeWUD-G7T9uWdFw9ZV4wFe6pqNcurbZRSKDzx1LPM4WB5H4-RRxXxUhbbV17Q1bfvH2MuPsG4LJfMK15rIBBe6C3rk5W-e7XDLGuoBfCQkH_6IFY_A5PLiudxMEjeXNvjU9tSCc16bfUpStdT6ihFwCSakPk",
@@ -74,14 +86,14 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
     publish_date: "Recent"
   };
 
-  const secondaryHeadlines = articles.slice(1, 5).length > 0 ? articles.slice(1, 5) : [
+  const secondaryHeadlines = activeList.slice(1, 5).length > 0 ? activeList.slice(1, 5) : [
     { title: "Dubai VARA Approves New Asset-Backed Token Framework", approx_time_to_read: 3 },
     { title: "EU MiCA Compliance Checks Drive Stablecoin Market Restructuring", approx_time_to_read: 4 },
     { title: "Japan Financial Services Agency Signals Fresh Support for Tokenized Securities", approx_time_to_read: 5 },
     { title: "U.S. Spot Bitcoin ETFs Record 4th Consecutive Week of Positive Net Inflows", approx_time_to_read: 3 },
   ];
 
-  const gridCards = articles.slice(5, 8).length > 0 ? articles.slice(5, 8) : [
+  const gridCards = activeList.slice(5, 8).length > 0 ? activeList.slice(5, 8) : [
     {
       title: "Cross-Border Settlement via DLT Networks Gains Regulatory Traction",
       summary: "Monetary Authorities test automated compliance engines across Asia-Pacific corridors.",
