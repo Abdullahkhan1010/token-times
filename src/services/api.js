@@ -1,9 +1,20 @@
-const API_BASE_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000').replace(/\/$/, '');
+const API_BASE_URL = (
+    import.meta.env.VITE_BACKEND_URL ||
+    (import.meta.env.DEV ? 'http://localhost:3000' : '')
+).replace(/\/$/, '');
 
-const buildUrl = (path) => `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+const buildUrl = (path) => {
+    if (!API_BASE_URL) return '';
+    return `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+};
 
 export async function requestJson(path, options = {}) {
-    const response = await fetch(buildUrl(path), {
+    const url = buildUrl(path);
+    if (!url) {
+        throw new Error('API backend URL is not configured (VITE_BACKEND_URL missing)');
+    }
+
+    const response = await fetch(url, {
         headers: {
             'Content-Type': 'application/json',
             ...(options.headers || {}),

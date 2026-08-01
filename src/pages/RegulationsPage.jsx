@@ -36,7 +36,7 @@ export default function RegulationsPage({ onNavigate }) {
           setTrackers(mappedTrackers);
         }
       })
-      .catch((err) => console.error("Failed to load regulations", err));
+      .catch((err) => console.warn("Using static fallback for regulations:", err.message));
 
     return () => {
       active = false;

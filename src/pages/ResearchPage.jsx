@@ -27,7 +27,7 @@ export default function ResearchPage({ onNavigate }) {
           setPapers(mapped);
         }
       })
-      .catch((err) => console.error("Failed to fetch research papers", err));
+      .catch((err) => console.warn("Using static fallback for research papers:", err.message));
 
     return () => {
       active = false;

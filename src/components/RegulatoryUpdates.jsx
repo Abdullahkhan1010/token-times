@@ -100,14 +100,17 @@ export function RegulatoryTracker() {
       try {
         const data = await getRegulations();
         if (!active) return;
-        setTracker(normalizeRegulations(data));
-      } catch (err) {
-        console.error("Error loading regulatory tracker", err);
-        if (active) setTracker([]);
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((r) => ({
+            auth: r.authority || "Government Agency",
+            framework: r.title,
+            update: r.publish_date || "2026",
+            status: "Active",
+          }));
+          setTracker(mapped);
+        }
+      })
+      .catch((err) => console.error("Error loading regulatory tracker", err));
 
     return () => {
       active = false;
