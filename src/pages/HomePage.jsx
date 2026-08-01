@@ -33,9 +33,13 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
     (async () => {
       try {
         const data = await getPublishedNews();
-        const publishedArticles = data.filter(
-          (item) => item.status === "published"
-        );
+        const publishedArticles = data
+          .filter((item) => item.status === "published")
+          .sort((a, b) => {
+            const dateA = new Date(a.publish_date || a.createdAt || 0);
+            const dateB = new Date(b.publish_date || b.createdAt || 0);
+            return dateB - dateA;
+          });
 
         const resolvedArticles = await Promise.all(
           publishedArticles.map(async (article) => {
@@ -61,12 +65,17 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
 
         setMainStoryData(sections.main_story?.[0] ?? null);
         setSubStoriesData(sections.sub_stories || sections.substories || []);
-        setFeaturedSpotlightData(sections.featured_spotlight ?? []);
-        setEditorsPickData(sections.editor_picks || sections.editors_pick || []);
-        setLatestNewsData(sections.latest_news ?? []);
-        setPakistanFocusData(sections.Pakistan_Focus || sections.pakistan_focus || []);
-        setGlobalHighlightsData(sections.Global_Highlight || sections.global_highlights || []);
-        setFeaturedAnalysisData(sections.featured_analysis ?? []);
+        // Only 2 featured spotlight
+        setFeaturedSpotlightData((sections.featured_spotlight ?? []).slice(0, 2));
+        // Only 3 editors picks
+        setEditorsPickData((sections.editor_picks || sections.editors_pick || []).slice(0, 3));
+        // Only 4 latest news
+        setLatestNewsData((sections.latest_news ?? []).slice(0, 4));
+        // Only 2 pakistan focus
+        setPakistanFocusData((sections.Pakistan_Focus || sections.pakistan_focus || []).slice(0, 2));
+        // Only 2 global highlights
+        setGlobalHighlightsData((sections.Global_Highlight || sections.global_highlights || []).slice(0, 2));
+        setFeaturedAnalysisData((sections.featured_analysis ?? []).slice(0, 1));
 
       } catch (err) {
         console.error("Failed to load published news for HomePage", err);

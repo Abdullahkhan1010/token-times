@@ -15,13 +15,21 @@ export default function Interviews() {
         const data = await getInterviews();
         if (!active) return;
         if (Array.isArray(data) && data.length > 0) {
-          for (const interview of data) {
+          const sorted = [...data]
+            .sort((a, b) => {
+              const dateA = new Date(a.createdAt || a.publish_date || 0);
+              const dateB = new Date(b.createdAt || b.publish_date || 0);
+              return dateB - dateA;
+            })
+            .slice(0, 2);
+
+          for (const interview of sorted) {
             if (interview.interviewee_image) {
               const link = await ToHref(interview.interviewee_image, "interviewee.jpg");
               interview.interviewee_image = link;
             }
           }
-          setInterviewList(data);
+          setInterviewList(sorted);
         } else {
           setInterviewList([]);
         }

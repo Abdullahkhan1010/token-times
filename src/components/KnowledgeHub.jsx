@@ -12,7 +12,15 @@ export default function KnowledgeHub() {
       .then((data) => {
         if (!active) return;
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.map((item) => ({
+          const sorted = [...data]
+            .sort((a, b) => {
+              const dateA = new Date(a.createdAt || a.publish_date || 0);
+              const dateB = new Date(b.createdAt || b.publish_date || 0);
+              return dateB - dateA;
+            })
+            .slice(0, 3);
+
+          const mapped = sorted.map((item) => ({
             _id: item._id,
             eyebrow: Array.isArray(item.category) && item.category.length > 0 ? item.category[0].toUpperCase() : "EXPLAINER",
             title: item.question,

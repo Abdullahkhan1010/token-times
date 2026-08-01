@@ -15,15 +15,22 @@ const STATUS_STYLES = {
 function normalizeRegulations(data) {
   if (!Array.isArray(data)) return [];
 
-  return data.map((regulation) => ({
-    _id: regulation._id || regulation.id || "",
-    title: regulation.title || "Untitled regulation",
-    authority: regulation.authority || "Regulatory Desk",
-    publish_date: regulation.publish_date || "Recent",
-    summary: regulation.summary || `Authority: ${regulation.authority || "Regulatory Desk"} • Date: ${regulation.publish_date || "Recent"}`,
-    icon: regulation.icon || "gavel",
-    status: regulation.status || "Active",
-  }));
+  return [...data]
+    .sort((a, b) => {
+      const dateA = new Date(a.publish_date || a.createdAt || 0);
+      const dateB = new Date(b.publish_date || b.createdAt || 0);
+      return dateB - dateA;
+    })
+    .slice(0, 3)
+    .map((regulation) => ({
+      _id: regulation._id || regulation.id || "",
+      title: regulation.title || "Untitled regulation",
+      authority: regulation.authority || "Regulatory Desk",
+      publish_date: regulation.publish_date || "Recent",
+      summary: regulation.summary || `Authority: ${regulation.authority || "Regulatory Desk"} • Date: ${regulation.publish_date || "Recent"}`,
+      icon: regulation.icon || "gavel",
+      status: regulation.status || "Active",
+    }));
 }
 
 export function RegulatoryBriefings() {

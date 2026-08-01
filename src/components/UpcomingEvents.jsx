@@ -12,7 +12,15 @@ export default function UpcomingEvents() {
       .then((data) => {
         if (!active) return;
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.map((ev) => {
+          const sorted = [...data]
+            .sort((a, b) => {
+              const dateA = new Date(a.createdAt || a.event_date || 0);
+              const dateB = new Date(b.createdAt || b.event_date || 0);
+              return dateB - dateA;
+            })
+            .slice(0, 2);
+
+          const mapped = sorted.map((ev) => {
             const dateObj = ev.event_date ? new Date(ev.event_date) : null;
             const month = dateObj && !isNaN(dateObj) ? dateObj.toLocaleString("en-US", { month: "short" }).toUpperCase() : "2026";
             const day = dateObj && !isNaN(dateObj) ? dateObj.getDate() : "15";

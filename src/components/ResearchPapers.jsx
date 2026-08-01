@@ -15,7 +15,15 @@ export default function ResearchPapers() {
         if (!active) return;
 
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.map((r) => ({
+          const sorted = [...data]
+            .sort((a, b) => {
+              const dateA = new Date(a.publish_date || a.createdAt || 0);
+              const dateB = new Date(b.publish_date || b.createdAt || 0);
+              return dateB - dateA;
+            })
+            .slice(0, 2);
+
+          const mapped = sorted.map((r) => ({
             id: r.id || r._id || "",
             title: r.title || "Untitled research paper",
             meta: `By ${r.author || "Research Desk"} • ${r.publish_date || "Recent"}`,
