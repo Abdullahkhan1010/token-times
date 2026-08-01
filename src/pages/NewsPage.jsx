@@ -5,7 +5,7 @@ import Reveal from "../components/Reveal";
 import { newsPageData } from "../data/pagesData";
 import { BASE_URL } from "../data/seoData";
 
-export default function NewsPage({ onNavigate }) {
+export default function NewsPage({ onNavigate, onSelectArticle }) {
   const [selectedCat, setSelectedCat] = useState("All");
 
   const filteredArticles =
@@ -90,6 +90,15 @@ export default function NewsPage({ onNavigate }) {
           {/* Featured Breaking Lead Story */}
           <Reveal
             as="article"
+            onClick={() => onSelectArticle?.({
+              title: newsPageData.leadStory.title,
+              summary: newsPageData.leadStory.summary,
+              image: newsPageData.leadStory.img,
+              author: newsPageData.leadStory.author,
+              approx_time_to_read: 5,
+              category: [newsPageData.leadStory.tag],
+              article: `${newsPageData.leadStory.summary}\n\nThe digital asset landscape in Pakistan and broader Asian financial corridors continues to experience structural transformations. Regulatory clarity provided by central monetary authorities and securities commissions has laid the foundation for institutional participation.\n\nMarket participants continue to monitor digital asset policies, tax frameworks, and central bank digital currency (CBDC) pilot programs closely.`
+            })}
             className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden cursor-pointer shadow-sm hover:border-[#D4AF37]"
           >
             <div className="relative w-full h-64 sm:h-80 md:h-96 overflow-hidden">
@@ -132,6 +141,15 @@ export default function NewsPage({ onNavigate }) {
                 key={art.id}
                 as="article"
                 delay={i * 60}
+                onClick={() => onSelectArticle?.({
+                  title: art.title,
+                  summary: art.summary,
+                  image: art.img,
+                  author: art.author,
+                  approx_time_to_read: 4,
+                  category: [art.tag || "News"],
+                  article: `${art.summary}\n\nInstitutional reporting and market analysis provided by Token Times Editorial Desk. Detailed market data shows increasing liquidity and institutional engagement across digital asset derivative channels.`
+                })}
                 className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row gap-5 cursor-pointer shadow-sm hover:border-[#D4AF37]"
               >
                 <div className="w-full sm:w-48 sm:h-32 h-44 shrink-0 overflow-hidden rounded-lg bg-surface-variant relative border border-outline-variant/60">

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Gavel, Plus, Trash2, FileText, CheckCircle2, AlertCircle } from "lucide-react";
 import { getRegulations, postRegulation, deleteRegulation } from "../../services/regulation.service";
 import { uploadFileToS3, ToHref } from "../../services/file.service";
+import PageHeader from "./PageHeader";
 
 export default function RegulationsAdmin() {
   const fileInputRef = React.useRef(null);
@@ -65,7 +66,7 @@ export default function RegulationsAdmin() {
       setFile(null);
       await loadData();
     } catch (err) {
-      setMessage({ type: "error", text: err.message || "Failed to create regulation." });
+      setMessage({ type: "error", text: err.message || "Failed to add regulation." });
     } finally {
       setSubmitting(false);
     }
@@ -84,26 +85,12 @@ export default function RegulationsAdmin() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between border-b border-outline-variant pb-4">
-        <div>
-          <h2 className="font-headline-md text-2xl font-bold text-primary flex items-center gap-2">
-            <Gavel size={24} className="text-accent" /> Regulations Management
-          </h2>
-          <p className="text-xs text-on-surface-variant">Add and manage compliance frameworks and directives.</p>
-        </div>
-      </div>
-
-      {message && (
-        <div
-          className={`p-4 rounded-lg text-xs font-semibold flex items-center gap-2 ${message.type === "success"
-            ? "bg-green-500/10 text-green-700 border border-green-500/20"
-            : "bg-red-500/10 text-red-700 border border-red-500/20"
-            }`}
-        >
-          {message.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-          {message.text}
-        </div>
-      )}
+      <PageHeader
+        title="Regulations Management"
+        subtitle="Add and manage compliance frameworks and directives."
+        message={message}
+        onDismissMessage={() => setMessage(null)}
+      />
 
       {/* Add New Form */}
       <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-4 shadow-sm">
@@ -146,20 +133,39 @@ export default function RegulationsAdmin() {
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1">File URL / Attachment</label>
-            <input
-              type="file"
-              accept=".pdf"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (!file) {
-                  setFile(null);
-                }
-                setFile(file);
-              }}
-              className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
-            />
+          <div className="md:col-span-2">
+            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
+              Directive PDF Attachment <span className="text-rose-500">*</span>
+            </label>
+
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-outline-variant rounded-xl p-4 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
+            >
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept=".pdf"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                className="hidden"
+              />
+              {file ? (
+                <div className="py-2 flex items-center justify-center gap-3 text-xs font-bold text-[#0C133D]">
+                  <FileText size={22} className="text-[#D4AF37]" />
+                  <span>{file.name}</span>
+                  <span className="text-[11px] font-normal text-on-surface-variant">
+                    ({(file.size / (1024 * 1024)).toFixed(2)} MB)
+                  </span>
+                  <span className="text-[10px] uppercase font-bold text-[#D4AF37] ml-2">Change File</span>
+                </div>
+              ) : (
+                <div className="py-3 flex flex-col items-center gap-1.5">
+                  <FileText size={24} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold text-[#0C133D]">Click to upload official Directive PDF</span>
+                  <span className="text-[11px] text-on-surface-variant">PDF Document up to 10MB</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 import React from "react";
 import Reveal from "./Reveal";
 
-export default function Hero({ featuredspotlight = [], substories = [], mainStory = null }) {
+export default function Hero({ featuredspotlight = [], substories = [], mainStory = null, onSelectArticle }) {
   const safeFeaturedSpotlight = Array.isArray(featuredspotlight) ? featuredspotlight : [];
   const safeSubStories = Array.isArray(substories) ? substories : [];
   const safeMainStory = mainStory && typeof mainStory === "object" ? mainStory : null;
@@ -39,6 +39,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
               key={s.title}
               as="article"
               delay={100 + i * 80}
+              onClick={() => onSelectArticle?.(s)}
               className="hover-lift group bg-surface-container-lowest border border-outline-variant p-4 flex-1 flex flex-col justify-between rounded-xl cursor-pointer shadow-sm hover:border-[#D4AF37]"
             >
               <div>
@@ -62,7 +63,8 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
       <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col h-full max-w-full">
         <Reveal
           as="article"
-          className="hover-lift group bg-surface-container-lowest border border-outline-variant relative flex flex-col h-full rounded-xl overflow-hidden max-w-full shadow-sm hover:border-[#D4AF37]"
+          onClick={() => safeMainStory && onSelectArticle?.(safeMainStory)}
+          className="hover-lift group bg-surface-container-lowest border border-outline-variant relative flex flex-col h-full rounded-xl overflow-hidden max-w-full shadow-sm hover:border-[#D4AF37] cursor-pointer"
         >
           {/* Main Video on TOP */}
           <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[440px] overflow-hidden border-b border-outline-variant bg-black max-w-full">
@@ -102,12 +104,16 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
               <span>By {safeMainStory?.author || "Token Times"}</span>
               <span>•</span>
               <span>{safeMainStory?.approx_time_to_read} mins read</span>
-              <a
-                href="#"
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (safeMainStory) onSelectArticle?.(safeMainStory);
+                }}
                 className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm"
               >
                 Read Story →
-              </a>
+              </button>
             </div>
           </div>
         </Reveal>
@@ -132,6 +138,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
               key={art.title}
               as="article"
               delay={i * 90}
+              onClick={() => onSelectArticle?.(art)}
               className="hover-lift group bg-surface-container-lowest border border-outline-variant flex-1 flex flex-col justify-between rounded-xl overflow-hidden cursor-pointer shadow-sm hover:border-[#D4AF37]"
             >
               {/* Picture on Top */}

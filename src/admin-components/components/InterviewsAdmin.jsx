@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { Mic, Plus, Trash2, FileText, CheckCircle2, AlertCircle } from "lucide-react";
 import { getInterviews, postInterview, deleteInterview } from "../../services/interview.service";
 import { uploadFileToS3 } from "../../services/file.service";
+import PageHeader from "./PageHeader";
+
 export default function InterviewsAdmin() {
   const imageInputRef = useRef(null);
   const [items, setItems] = useState([]);
@@ -103,26 +105,12 @@ export default function InterviewsAdmin() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between border-b border-outline-variant pb-4">
-        <div>
-          <h2 className="font-headline-md text-2xl font-bold text-primary flex items-center gap-2">
-            <Mic size={24} className="text-accent" /> Interviews Management
-          </h2>
-          <p className="text-xs text-on-surface-variant">Publish executive Q&A interviews with regulators, founders, and leaders.</p>
-        </div>
-      </div>
-
-      {message && (
-        <div
-          className={`p-4 rounded-lg text-xs font-semibold flex items-center gap-2 ${message.type === "success"
-            ? "bg-green-500/10 text-green-700 border border-green-500/20"
-            : "bg-red-500/10 text-red-700 border border-red-500/20"
-            }`}
-        >
-          {message.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-          {message.text}
-        </div>
-      )}
+      <PageHeader
+        title="Interviews Management"
+        subtitle="Publish executive Q&A interviews with regulators, founders, and leaders."
+        message={message}
+        onDismissMessage={() => setMessage(null)}
+      />
 
       {/* Add New Form */}
       <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-4 shadow-sm">
@@ -130,8 +118,8 @@ export default function InterviewsAdmin() {
           <Plus size={18} className="text-accent" /> Add Interview
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
             <label className="block text-xs font-semibold text-on-surface-variant mb-1">Interview Title *</label>
             <input
               type="text"
@@ -167,35 +155,6 @@ export default function InterviewsAdmin() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Interviewee Image *</label>
-            <input
-              type="file"
-              accept="image/*"
-              required
-              ref={imageInputRef}
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) {
-                  setIntervieweeImage(null);
-                  return;
-                }
-
-                try {
-                  setIntervieweeImage(file);
-                } catch (error) {
-                  console.error(error);
-                  setIntervieweeImage(null);
-                  setMessage({ type: "error", text: "Failed to process the selected image." });
-                }
-              }}
-              className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
-            />
-            <p className="mt-1 text-[11px] text-on-surface-variant">
-              Selected image will be converted to a base64 data URL before sending.
-            </p>
-          </div>
-
-          <div>
             <label className="block text-xs font-semibold text-on-surface-variant mb-1">Publish Date</label>
             <input
               type="date"
@@ -208,7 +167,7 @@ export default function InterviewsAdmin() {
           <div>
             <label className="block text-xs font-semibold text-on-surface-variant mb-1">Questions (one per line)</label>
             <textarea
-              rows={3}
+              rows={2}
               value={questionsStr}
               onChange={(e) => setQuestionsStr(e.target.value)}
               placeholder="Question 1&#10;Question 2"
@@ -219,14 +178,49 @@ export default function InterviewsAdmin() {
           <div>
             <label className="block text-xs font-semibold text-on-surface-variant mb-1">Answers (one per line)</label>
             <textarea
-              rows={3}
+              rows={2}
               value={answersStr}
               onChange={(e) => setAnswersStr(e.target.value)}
               placeholder="Answer 1&#10;Answer 2"
               className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
             />
           </div>
+        </div>
 
+        {/* Upload Row */}
+        <div className="pt-3 border-t border-outline-variant/60">
+          <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
+            Interviewee Portrait Image <span className="text-rose-500">*</span>
+          </label>
+          <div
+            onClick={() => imageInputRef.current?.click()}
+            className="border border-dashed border-outline-variant rounded-xl p-3 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
+          >
+            <input
+              type="file"
+              ref={imageInputRef}
+              accept="image/*"
+              required
+              onChange={(e) => setIntervieweeImage(e.target.files?.[0] || null)}
+              className="hidden"
+            />
+            {intervieweeImage ? (
+              <div className="py-1 flex items-center justify-center gap-2 text-xs font-bold text-[#0C133D]">
+                <FileText size={16} className="text-[#D4AF37]" />
+                <span className="truncate max-w-[300px]">{intervieweeImage.name}</span>
+                <span className="text-[10px] uppercase font-bold text-[#D4AF37]">Change</span>
+              </div>
+            ) : (
+              <div className="py-2 flex items-center justify-center gap-2">
+                <Mic size={18} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
+                <span className="text-xs font-bold text-[#0C133D]">Upload Interviewee Portrait</span>
+                <span className="text-[10px] text-on-surface-variant">(PNG, JPG, WebP up to 5MB)</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-semibold text-on-surface-variant mb-1">Categories (comma-separated)</label>
             <input

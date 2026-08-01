@@ -13,14 +13,48 @@ import KnowledgeHubAdmin from "./KnowledgeHubAdmin";
 import InterviewsAdmin from "./InterviewsAdmin";
 import EventsAdmin from "./EventsAdmin";
 import PublishedNewsAdmin from "./PublishedNewsAdmin";
+import CreateArticleAdmin from "./CreateArticleAdmin";
 import { requestJson } from "../../services/api";
 import { getPublishedNews } from "../../services/published-news.service";
+const getInitialPage = () => {
+  if (typeof window !== "undefined") {
+    const hash = window.location.hash.replace(/^#\/?/, "");
+    if (hash) return hash;
+    const stored = localStorage.getItem("token_times_admin_active_page");
+    if (stored) return stored;
+  }
+  return "queue";
+};
+
 /**
  * Admin Shell - Main admin panel container
  * All data is loaded from backend APIs
  */
 export default function AdminShell() {
-  const [page, setPage] = useState("queue");
+  const [page, setPageState] = useState(getInitialPage);
+
+  const setPage = (newPage) => {
+    setPageState(newPage);
+    try {
+      localStorage.setItem("token_times_admin_active_page", newPage);
+      if (typeof window !== "undefined") {
+        window.location.hash = newPage;
+      }
+    } catch (e) {
+      // ignore
+    }
+  };
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace(/^#\/?/, "");
+      if (hash) {
+        setPageState(hash);
+      }
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
   const [queue, setQueue] = useState([]);
   const [published, setPublished] = useState([]);
   const [archived, setArchived] = useState([]);
@@ -239,6 +273,22 @@ export default function AdminShell() {
             publishedCount={published.length}
             archivedCount={archived.length}
             onNavigate={setPage}
+          />
+        )}
+
+        {page === "create-article" && (
+          <CreateArticleAdmin
+            onArticleCreated={() => {
+              // Reload published news and navigate to published list
+              (async () => {
+                try {
+                  const data = await getPublishedNews();
+                  setPublished(data.filter((i) => i.status === "published"));
+                } catch (e) {
+                  // ignore
+                }
+              })();
+            }}
           />
         )}
 

@@ -18,7 +18,7 @@ import Partners from "../components/Partners";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToHref } from "../services/file.service";
 
-export default function HomePage({ onNavigate }) {
+export default function HomePage({ onNavigate, onSelectArticle }) {
 
   const [mainStoryData, setMainStoryData] = React.useState(null);
   const [subStoriesData, setSubStoriesData] = React.useState([]);
@@ -60,12 +60,12 @@ export default function HomePage({ onNavigate }) {
         }, {});
 
         setMainStoryData(sections.main_story?.[0] ?? null);
-        setSubStoriesData(sections.sub_stories ?? []);
+        setSubStoriesData(sections.sub_stories || sections.substories || []);
         setFeaturedSpotlightData(sections.featured_spotlight ?? []);
-        setEditorsPickData(sections.editor_picks ?? []);
+        setEditorsPickData(sections.editor_picks || sections.editors_pick || []);
         setLatestNewsData(sections.latest_news ?? []);
-        setPakistanFocusData(sections.Pakistan_Focus ?? []);
-        setGlobalHighlightsData(sections.Global_Highlight ?? []);
+        setPakistanFocusData(sections.Pakistan_Focus || sections.pakistan_focus || []);
+        setGlobalHighlightsData(sections.Global_Highlight || sections.global_highlights || []);
         setFeaturedAnalysisData(sections.featured_analysis ?? []);
 
       } catch (err) {
@@ -83,19 +83,20 @@ export default function HomePage({ onNavigate }) {
         featuredspotlight={featuredSpotlightData}
         mainStory={mainStoryData}
         substories={subStoriesData}
+        onSelectArticle={onSelectArticle}
       />
 
       {/* Editor's Pick */}
-      <EditorsPick editorsPicks={editorsPickData} />
+      <EditorsPick editorsPicks={editorsPickData} onSelectArticle={onSelectArticle} />
 
 
       {/* Latest News */}
-      <LatestNews latestNews={latestNewsData} />
+      <LatestNews latestNews={latestNewsData} onSelectArticle={onSelectArticle} />
 
       {/* Pakistan Focus & Global Highlights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <PakistanFocus pakistanFocus={pakistanFocusData} />
-        <GlobalHighlights globalHighlights={globalHighlightsData} />
+        <PakistanFocus pakistanFocus={pakistanFocusData} onSelectArticle={onSelectArticle} />
+        <GlobalHighlights globalHighlights={globalHighlightsData} onSelectArticle={onSelectArticle} />
       </div>
 
       {/* Regulatory Updates & Market Dashboards */}
@@ -123,7 +124,7 @@ export default function HomePage({ onNavigate }) {
 
       {/* Featured Analysis & Knowledge Hub */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <FeaturedAnalysis fa={featuredAnalysisData[0]} />
+        <FeaturedAnalysis fa={featuredAnalysisData[0]} onSelectArticle={onSelectArticle} />
         <KnowledgeHub />
       </div>
 

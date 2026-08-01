@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { BookOpen, Plus, Trash2, FileText, CheckCircle2, AlertCircle } from "lucide-react";
 import { getMagzines, postMagzine, deleteMagzine } from "../../services/magzine.service";
 import { uploadFileToS3, ToHref } from "../../services/file.service";
+import PageHeader from "./PageHeader";
 
 export default function MagazinesAdmin() {
   const coverImgInputRef = useRef(null);
@@ -111,26 +112,12 @@ export default function MagazinesAdmin() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between border-b border-outline-variant pb-4">
-        <div>
-          <h2 className="font-headline-md text-2xl font-bold text-primary flex items-center gap-2">
-            <BookOpen size={24} className="text-accent" /> Magazine Management
-          </h2>
-          <p className="text-xs text-on-surface-variant">Publish quarterly print and digital magazine issues.</p>
-        </div>
-      </div>
-
-      {message && (
-        <div
-          className={`p-4 rounded-lg text-xs font-semibold flex items-center gap-2 ${message.type === "success"
-            ? "bg-green-500/10 text-green-700 border border-green-500/20"
-            : "bg-red-500/10 text-red-700 border border-red-500/20"
-            }`}
-        >
-          {message.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-          {message.text}
-        </div>
-      )}
+      <PageHeader
+        title="Magazine Management"
+        subtitle="Publish quarterly print and digital magazine issues."
+        message={message}
+        onDismissMessage={() => setMessage(null)}
+      />
 
       {/* Add New Form */}
       <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-4 shadow-sm">
@@ -138,7 +125,7 @@ export default function MagazinesAdmin() {
           <Plus size={18} className="text-accent" /> Add Magazine Issue
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-xs font-semibold text-on-surface-variant mb-1">Title *</label>
             <input
@@ -159,32 +146,6 @@ export default function MagazinesAdmin() {
               value={issueName}
               onChange={(e) => setIssueName(e.target.value)}
               placeholder="e.g. Issue #14 - Q4 2026 Edition"
-              className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Cover Image URL</label>
-            <input
-              type="file"
-              accept="image/*"
-              required
-              ref={coverImgInputRef}
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) {
-                  setCoverImg(null);
-                  return;
-                }
-
-                try {
-                  setCoverImg(file);
-                } catch (error) {
-                  console.error(error);
-                  setCoverImg(null);
-                  setMessage({ type: "error", text: "Failed to process the selected image." });
-                }
-              }}
               className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
             />
           </div>
@@ -211,34 +172,82 @@ export default function MagazinesAdmin() {
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Digital Edition PDF File URL</label>
-            <input
-              type="file"
-              accept="application/pdf"
-              required
-              ref={fileInputRef}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (!file) {
-                  setFile(null);
-                  return;
-                }
-                setFile(file);
-              }}
-              className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
-            />
-          </div>
-
           <div className="md:col-span-2">
             <label className="block text-xs font-semibold text-on-surface-variant mb-1">Description / Editorial Summary</label>
             <textarea
-              rows={3}
+              rows={2}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Executive summary of articles and featured interviews in this issue..."
+              placeholder="Brief summary of the magazine issue..."
               className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
             />
+          </div>
+        </div>
+
+        {/* Uploads Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-outline-variant/60">
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
+              Cover Image Asset <span className="text-rose-500">*</span>
+            </label>
+            <div
+              onClick={() => coverImgInputRef.current?.click()}
+              className="border border-dashed border-outline-variant rounded-xl p-3 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
+            >
+              <input
+                type="file"
+                ref={coverImgInputRef}
+                accept="image/*"
+                required
+                onChange={(e) => setCoverImg(e.target.files?.[0] || null)}
+                className="hidden"
+              />
+              {coverImg ? (
+                <div className="py-1 flex items-center justify-center gap-2 text-xs font-bold text-[#0C133D]">
+                  <FileText size={16} className="text-[#D4AF37]" />
+                  <span className="truncate max-w-[200px]">{coverImg.name}</span>
+                  <span className="text-[10px] uppercase font-bold text-[#D4AF37]">Change</span>
+                </div>
+              ) : (
+                <div className="py-2 flex items-center justify-center gap-2">
+                  <BookOpen size={18} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold text-[#0C133D]">Upload Cover Image</span>
+                  <span className="text-[10px] text-on-surface-variant">(PNG, JPG, WebP)</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
+              Digital Edition PDF <span className="text-rose-500">*</span>
+            </label>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="border border-dashed border-outline-variant rounded-xl p-3 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
+            >
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="application/pdf"
+                required
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                className="hidden"
+              />
+              {file ? (
+                <div className="py-1 flex items-center justify-center gap-2 text-xs font-bold text-[#0C133D]">
+                  <FileText size={16} className="text-[#D4AF37]" />
+                  <span className="truncate max-w-[200px]">{file.name}</span>
+                  <span className="text-[10px] uppercase font-bold text-[#D4AF37]">Change</span>
+                </div>
+              ) : (
+                <div className="py-2 flex items-center justify-center gap-2">
+                  <FileText size={18} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-bold text-[#0C133D]">Upload Digital PDF</span>
+                  <span className="text-[10px] text-on-surface-variant">(PDF up to 20MB)</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

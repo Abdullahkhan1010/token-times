@@ -20,15 +20,30 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
+import ArticleDetailPage from "./pages/ArticleDetailPage";
 
 export default function App() {
   const [activePage, setActivePage] = useState("Home");
+  const [selectedArticle, setSelectedArticle] = useState(null);
   const changePage = useRouteSync(activePage, setActivePage);
+
+  const handleSelectArticle = (article) => {
+    setSelectedArticle(article);
+    changePage("ArticleDetail");
+  };
 
   const renderCurrentPage = () => {
     switch (activePage) {
+      case "ArticleDetail":
+        return (
+          <ArticleDetailPage
+            article={selectedArticle}
+            onNavigate={changePage}
+            onSelectArticle={handleSelectArticle}
+          />
+        );
       case "News":
-        return <NewsPage onNavigate={changePage} />;
+        return <NewsPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
       case "Magazine":
         return <MagazinePage onNavigate={changePage} />;
       case "Knowledge Hub":
@@ -53,7 +68,7 @@ export default function App() {
         return <TermsPage onNavigate={changePage} />;
       case "Home":
       default:
-        return <HomePage onNavigate={changePage} />;
+        return <HomePage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
     }
   };
 

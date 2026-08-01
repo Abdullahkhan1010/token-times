@@ -1,7 +1,7 @@
 import React from "react";
 import Reveal from "./Reveal";
 
-export default function GlobalHighlights({ globalHighlights }) {
+export default function GlobalHighlights({ globalHighlights = [], onSelectArticle }) {
   return (
     <section>
       <Reveal as="h2" className="font-headline-lg text-headline-lg text-[#0C133D] section-header-border">
@@ -13,10 +13,13 @@ export default function GlobalHighlights({ globalHighlights }) {
             key={item.title}
             delay={i * 80}
             as="article"
-            className="border-l-4 border-l-[#D4AF37] border-y border-r border-outline-variant p-4 bg-surface-container-lowest hover:bg-surface-container-low transition-colors"
+            onClick={() => onSelectArticle?.(item)}
+            className="border-l-4 border-l-[#D4AF37] border-y border-r border-outline-variant p-4 bg-surface-container-lowest hover:bg-surface-container-low transition-colors cursor-pointer rounded-r-xl"
           >
             <div className="flex justify-between items-start mb-2">
-              <span className="font-label-caps text-label-caps text-[#D4AF37]">{item.tags}</span>
+              <span className="font-label-caps text-label-caps text-[#D4AF37]">
+                {Array.isArray(item.tags) ? item.tags.join(" • ") : (item.tags || "GLOBAL HIGHLIGHT")}
+              </span>
               <span className="font-data-tabular text-data-tabular text-on-surface-variant">{item.date}</span>
             </div>
             <h3 className="font-headline-md text-headline-md text-[#0C133D] mb-2" style={{ fontSize: 20 }}>

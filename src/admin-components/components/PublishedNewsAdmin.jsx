@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Newspaper, Plus, Trash2, FileText, CheckCircle2, AlertCircle, Archive, X } from "lucide-react";
+import { Newspaper, Plus, Trash2, FileText, CheckCircle2, AlertCircle, Archive, X, Upload, Sparkles, Pin, Star, Zap, Building2, Globe, BookOpen } from "lucide-react";
 import { getPublishedNews, postPublishedNews, putPublishedNews, deletePublishedNews, archivePublishedNews } from "../../services/published-news.service";
 import { uploadFileToS3 } from "../../services/file.service";
 import { requestJson } from "../../services/api";
+import PageHeader from "./PageHeader";
 
 const DISPLAY_SECTIONS = [
-    { value: "featured_spotlight", label: "Featured Spotlight" },
-    { value: "main_story", label: "Main Story" },
-    { value: "sub_stories", label: "Sub Stories" },
-    { value: "editor_picks", label: "Editor's Picks" },
-    { value: "latest_news", label: "Latest News" },
-    { value: "Pakistan_Focus", label: "Pakistan Focus" },
-    { value: "Global_Highlight", label: "Global Highlight" },
-    { value: "featured_analysis", label: "Featured Analysis" },
+    { value: "main_story", label: "Main Story", desc: "Hero top headline banner on homepage", icon: Newspaper },
+    { value: "featured_spotlight", label: "Featured Spotlight", desc: "Highlighted center spotlight story", icon: Sparkles },
+    { value: "sub_stories", label: "Substories", desc: "Supporting side stories grid", icon: Pin },
+    { value: "editor_picks", label: "Editor's Pick", desc: "Curated executive editorial picks", icon: Star },
+    { value: "latest_news", label: "Latest News", desc: "Real-time ticker and latest feed", icon: Zap },
+    { value: "Pakistan_Focus", label: "Pakistan Focus", desc: "SBP, SECP & local regulatory intelligence", icon: Building2 },
+    { value: "Global_Highlight", label: "Global Highlights", desc: "Macro Web3 & international market reports", icon: Globe },
+    { value: "featured_analysis", label: "Featured Analysis", desc: "Deep-dive econometric research & whitepapers", icon: BookOpen },
 ];
 
 export default function PublishedNewsAdmin({ draftData = null, onPublishComplete = null, onCancel = null }) {
@@ -188,26 +189,12 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
 
     return (
         <div className="space-y-8">
-            <div className="flex items-center justify-between border-b border-outline-variant pb-4">
-                <div>
-                    <h2 className="font-headline-md text-2xl font-bold text-primary flex items-center gap-2">
-                        <Newspaper size={24} className="text-accent" /> Published News Management
-                    </h2>
-                    <p className="text-xs text-on-surface-variant">Create and manage published news articles for the platform.</p>
-                </div>
-            </div>
-
-            {message && (
-                <div
-                    className={`p-4 rounded-lg text-xs font-semibold flex items-center gap-2 ${message.type === "success"
-                        ? "bg-green-500/10 text-green-700 border border-green-500/20"
-                        : "bg-red-500/10 text-red-700 border border-red-500/20"
-                        }`}
-                >
-                    {message.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-                    {message.text}
-                </div>
-            )}
+            <PageHeader
+                title="Published News Management"
+                subtitle="Create and manage published news articles for the platform."
+                message={message}
+                onDismissMessage={() => setMessage(null)}
+            />
 
             {/* Add New Form */}
             <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-4 shadow-sm">
@@ -288,25 +275,36 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
 
                     {/* Image Upload */}
                     <div className="md:col-span-2">
-                        <label className="block text-xs font-semibold text-on-surface-variant mb-1">Image *</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            required
-                            ref={imageInputRef}
-                            onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (!file) {
-                                    setImageFile(null);
-                                    return;
-                                }
-                                setImageFile(file);
-                            }}
-                            className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
-                        />
-                        <p className="mt-1 text-[11px] text-on-surface-variant">
-                            Selected image will be uploaded to S3 before saving.
-                        </p>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
+                            Article Cover Image <span className="text-rose-500">*</span>
+                        </label>
+
+                        <div
+                            onClick={() => imageInputRef.current?.click()}
+                            className="border-2 border-dashed border-outline-variant rounded-xl p-4 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
+                        >
+                            <input
+                                type="file"
+                                ref={imageInputRef}
+                                accept="image/*"
+                                required
+                                onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+                                className="hidden"
+                            />
+                            {imageFile ? (
+                                <div className="py-2 flex items-center justify-center gap-3 text-xs font-bold text-[#0C133D]">
+                                    <FileText size={20} className="text-[#D4AF37]" />
+                                    <span>{imageFile.name}</span>
+                                    <span className="text-[10px] uppercase font-bold text-[#D4AF37] ml-2">Change Image</span>
+                                </div>
+                            ) : (
+                                <div className="py-3 flex flex-col items-center gap-1.5">
+                                    <Upload size={24} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
+                                    <span className="text-xs font-bold text-[#0C133D]">Click to upload Article Cover Image</span>
+                                    <span className="text-[11px] text-on-surface-variant">PNG, JPG, WebP up to 5MB</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Category */}
@@ -345,28 +343,56 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                         />
                     </div>
 
-                    {/* Display Sections - Checkboxes */}
-                    <div className="md:col-span-2">
-                        <label className="block text-xs font-semibold text-on-surface-variant mb-2">Display Section</label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {DISPLAY_SECTIONS.map((section) => (
-                                <label
-                                    key={section.value}
-                                    className="flex items-center gap-2 cursor-pointer text-xs text-on-surface hover:text-accent transition-colors"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={displaySections.includes(section.value)}
-                                        onChange={() => handleDisplaySectionChange(section.value)}
-                                        className="w-4 h-4 text-accent bg-surface-container-low border-outline-variant rounded focus:ring-accent focus:ring-2"
-                                    />
-                                    <span>{section.label}</span>
-                                </label>
-                            ))}
+                    {/* Display Section Selection Grid - Matching Create Article Studio */}
+                    <div className="md:col-span-2 space-y-3">
+                        <div className="flex items-center justify-between border-b border-outline-variant pb-2">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                                Section Tag Categories (Select Placement)
+                            </label>
+                            <span className="text-xs font-semibold text-[#D4AF37] bg-[#0C133D] px-2.5 py-0.5 rounded-full border border-[#D4AF37]/30">
+                                {displaySections.length} Selected
+                            </span>
                         </div>
-                        <p className="mt-2 text-[11px] text-on-surface-variant">
-                            Select one or more sections where this news should be displayed.
-                        </p>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+                            {DISPLAY_SECTIONS.map((section) => {
+                                const isSelected = displaySections.includes(section.value);
+                                const SectionIcon = section.icon;
+                                return (
+                                    <button
+                                        type="button"
+                                        key={section.value}
+                                        onClick={() => handleDisplaySectionChange(section.value)}
+                                        className={`p-3 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
+                                            isSelected
+                                                ? "bg-[#0C133D] text-white border-[#D4AF37] shadow-md ring-2 ring-[#D4AF37]/40"
+                                                : "bg-surface-bright text-on-surface border-outline-variant hover:border-[#D4AF37]/60 hover:bg-surface-container-low"
+                                        }`}
+                                    >
+                                        <div className="flex items-start justify-between gap-2 mb-2">
+                                            <SectionIcon size={18} className={isSelected ? "text-[#D4AF37]" : "text-[#0C133D]"} />
+                                            <span
+                                                className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
+                                                    isSelected
+                                                        ? "bg-[#D4AF37] border-[#D4AF37] text-[#0C133D]"
+                                                        : "border-outline-variant"
+                                                }`}
+                                            >
+                                                {isSelected && <CheckCircle2 size={12} strokeWidth={3} />}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <h3 className={`text-xs font-extrabold uppercase tracking-wider mb-1 ${isSelected ? "text-[#D4AF37]" : "text-[#0C133D]"}`}>
+                                                {section.label}
+                                            </h3>
+                                            <p className={`text-[10px] leading-snug line-clamp-2 ${isSelected ? "text-slate-300" : "text-on-surface-variant"}`}>
+                                                {section.desc}
+                                            </p>
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
 

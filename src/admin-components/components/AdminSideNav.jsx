@@ -1,8 +1,9 @@
 import React from "react";
-import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit } from "lucide-react";
+import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit, PenTool } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", icon: Home },
+  { key: "create-article", label: "Create Article", icon: PenTool },
   { key: "queue", label: "AI Queue", icon: Newspaper },
   { key: "published", label: "Published", icon: BookOpen },
   { key: "published-news", label: "Published News", icon: FileEdit },

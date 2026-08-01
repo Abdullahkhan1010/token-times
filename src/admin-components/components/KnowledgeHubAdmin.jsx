@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { HelpCircle, Plus, Trash2, FileText, CheckCircle2, AlertCircle } from "lucide-react";
 import { getKnowlegeHubs, postKnowlegeHub, deleteKnowlegeHub } from "../../services/knowlege-hub.service";
+import PageHeader from "./PageHeader";
 
 export default function KnowledgeHubAdmin() {
   const [items, setItems] = useState([]);
@@ -77,26 +78,12 @@ export default function KnowledgeHubAdmin() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between border-b border-outline-variant pb-4">
-        <div>
-          <h2 className="font-headline-md text-2xl font-bold text-primary flex items-center gap-2">
-            <HelpCircle size={24} className="text-accent" /> Knowledge Hub Management
-          </h2>
-          <p className="text-xs text-on-surface-variant">Create and manage educational Q&As, explainers, and curriculum guides.</p>
-        </div>
-      </div>
-
-      {message && (
-        <div
-          className={`p-4 rounded-lg text-xs font-semibold flex items-center gap-2 ${message.type === "success"
-              ? "bg-green-500/10 text-green-700 border border-green-500/20"
-              : "bg-red-500/10 text-red-700 border border-red-500/20"
-            }`}
-        >
-          {message.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-          {message.text}
-        </div>
-      )}
+      <PageHeader
+        title="Knowledge Hub Management"
+        subtitle="Create and manage educational Q&As, explainers, and curriculum guides."
+        message={message}
+        onDismissMessage={() => setMessage(null)}
+      />
 
       {/* Add New Form */}
       <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-4 shadow-sm">

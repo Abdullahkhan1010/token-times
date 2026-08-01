@@ -297,6 +297,13 @@ export const PAGE_SEO_DATA = {
     type: "website",
     schema: [SITE_ORGANIZATION_SCHEMA],
   },
+  ArticleDetail: {
+    title: "Article Details | Token Times",
+    description: "Read in-depth reporting and analysis on digital assets, virtual currency regulations, and macroeconomic shifts.",
+    path: "/article",
+    type: "article",
+    schema: [SITE_ORGANIZATION_SCHEMA],
+  },
 };
 
 /**
@@ -305,6 +312,7 @@ export const PAGE_SEO_DATA = {
 export const ROUTE_PATH_MAP = {
   Home: "/",
   News: "/news",
+  ArticleDetail: "/article",
   Magazine: "/magazine",
   "Knowledge Hub": "/knowledge-hub",
   Regulations: "/regulations",
