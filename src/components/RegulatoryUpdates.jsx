@@ -12,7 +12,7 @@ const STATUS_STYLES = {
   "Under Review": "bg-surface-container-low text-on-surface-variant border-outline-variant",
 };
 
-function normalizeRegulations(data) {
+function normalizeRegulations(data, limit = 5) {
   if (!Array.isArray(data)) return [];
 
   return [...data]
@@ -21,7 +21,7 @@ function normalizeRegulations(data) {
       const dateB = new Date(b.publish_date || b.createdAt || 0);
       return dateB - dateA;
     })
-    .slice(0, 3)
+    .slice(0, limit)
     .map((regulation) => ({
       _id: regulation._id || regulation.id || "",
       title: regulation.title || "Untitled regulation",
@@ -44,7 +44,7 @@ export function RegulatoryBriefings() {
       try {
         const data = await getRegulations();
         if (!active) return;
-        setBriefings(normalizeRegulations(data));
+        setBriefings(normalizeRegulations(data, 5));
       } catch (err) {
         console.error("Error loading regulatory briefings", err);
         if (active) setBriefings([]);
@@ -107,7 +107,7 @@ export function RegulatoryTracker() {
       try {
         const data = await getRegulations();
         if (!active) return;
-        setTracker(normalizeRegulations(data));
+        setTracker(normalizeRegulations(data, 5));
       } catch (err) {
         console.error("Error loading regulatory tracker", err);
         if (active) setTracker([]);

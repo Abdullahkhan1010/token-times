@@ -5,13 +5,28 @@ import Reveal from "../components/Reveal";
 import { newsPageData } from "../data/pagesData";
 import { BASE_URL } from "../data/seoData";
 
+function formatTag(tag) {
+  if (!tag) return "NEWS";
+  if (Array.isArray(tag)) {
+    if (tag.length === 0) return "NEWS";
+    return tag.map((t) => formatTag(t)).join(" • ");
+  }
+  return String(tag)
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export default function NewsPage({ onNavigate, onSelectArticle }) {
   const [selectedCat, setSelectedCat] = useState("All");
 
   const filteredArticles =
     selectedCat === "All"
       ? newsPageData.articles
-      : newsPageData.articles.filter((a) => a.category.toLowerCase() === selectedCat.toLowerCase());
+      : newsPageData.articles.filter((a) => {
+          const catStr = String(a.category || "").toLowerCase().replace(/_/g, " ");
+          const target = selectedCat.toLowerCase().replace(/_/g, " ");
+          return catStr.includes(target) || target.includes(catStr);
+        });
 
   // Generate NewsArticle schema for Lead Story
   const leadArticleSchema = {
@@ -110,7 +125,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
                 className="img-fade img-scale w-full h-full object-cover"
               />
               <span className="absolute top-3 left-3 bg-[#D4AF37] text-[#0C133D] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                {newsPageData.leadStory.tag}
+                {formatTag(newsPageData.leadStory.tag)}
               </span>
             </div>
             <div className="p-6">
@@ -161,7 +176,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
                     className="img-fade img-scale w-full h-full object-cover"
                   />
                   <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase shadow-sm">
-                    {art.tag}
+                    {formatTag(art.tag)}
                   </span>
                 </div>
                 <div className="flex flex-col justify-between flex-grow">

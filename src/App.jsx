@@ -9,6 +9,10 @@ import { useRouteSync } from "./hooks/useRouteSync";
 
 import HomePage from "./pages/HomePage";
 import NewsPage from "./pages/NewsPage";
+import GlobalPage from "./pages/GlobalPage";
+import FeaturesPage from "./pages/FeaturesPage";
+import MarketsPage from "./pages/MarketsPage";
+import OpinionPage from "./pages/OpinionPage";
 import MagazinePage from "./pages/MagazinePage";
 import KnowledgeHubPage from "./pages/KnowledgeHubPage";
 import RegulationsPage from "./pages/RegulationsPage";
@@ -43,18 +47,21 @@ export default function App() {
           />
         );
       case "News":
-      case "Global":
-      case "Features":
-      case "Opinion":
         return <NewsPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+      case "Global":
+        return <GlobalPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+      case "Features":
+        return <FeaturesPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+      case "Markets":
+        return <MarketsPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+      case "Opinion":
+        return <OpinionPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
       case "Policy & Regulation":
       case "Regulations":
         return <RegulationsPage onNavigate={changePage} />;
       case "Learn":
       case "Knowledge Hub":
         return <KnowledgeHubPage onNavigate={changePage} />;
-      case "Markets":
-        return <HomePage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
       case "Magazine":
         return <MagazinePage onNavigate={changePage} />;
       case "Research":
