@@ -135,7 +135,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
       )}
 
       {/* ---------------- DESKTOP HEADER (hidden md:flex) ---------------- */}
-      <div className="hidden md:flex justify-between items-center w-full px-4 md:px-12 py-5 border-b border-outline-variant/40">
+      <div className="hidden md:flex justify-between items-center w-full px-4 md:px-12 py-5">
         {/* Logo + date */}
         <div className="flex items-center gap-4 min-w-0">
           <img
