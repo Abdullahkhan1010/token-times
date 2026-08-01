@@ -1,6 +1,5 @@
 import React from "react";
 import Reveal from "./Reveal";
-import { heroSubStories } from "../data/content";
 
 function getSingleCleanTag(article, fallback = "NEWS") {
   if (!article) return fallback;
@@ -28,20 +27,13 @@ function getSingleCleanTag(article, fallback = "NEWS") {
   return cleaned.toUpperCase();
 }
 
-export default function Hero({ featuredspotlight = [], substories = [], mainStory = null, onSelectArticle }) {
+export default function Hero({ featuredspotlight = [], substories = [], mainStory = null, topStory = null, onSelectArticle }) {
   const safeFeaturedSpotlight = Array.isArray(featuredspotlight) ? featuredspotlight : [];
   const safeSubStories = Array.isArray(substories) ? substories : [];
   const safeMainStory = mainStory && typeof mainStory === "object" ? mainStory : null;
+  const safeTopStory = topStory && typeof topStory === "object" ? topStory : null;
 
-  // Ensure 1 Top Story + 3 Sub Stories = 4 Total Articles in Left Column
-  const displaySubStories = safeSubStories.length >= 4
-    ? safeSubStories
-    : [...safeSubStories, ...heroSubStories].slice(0, 4);
-
-  const topStory = displaySubStories[0];
-  const subStoriesList = displaySubStories.slice(1, 4);
-
-  const hasContent = safeFeaturedSpotlight.length > 0 || displaySubStories.length > 0 || Boolean(safeMainStory);
+  const hasContent = safeFeaturedSpotlight.length > 0 || safeSubStories.length > 0 || Boolean(safeMainStory);
 
   if (!hasContent) {
     return (
@@ -110,7 +102,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
 
         {/* 3 Compact Sub Stories */}
         <div className="flex flex-col gap-2">
-          {subStoriesList.map((s, i) => (
+          {safeSubStories.map((s, i) => (
             <Reveal
               key={s.title || i}
               as="article"

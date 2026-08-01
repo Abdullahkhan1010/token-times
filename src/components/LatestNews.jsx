@@ -30,7 +30,7 @@ export default function LatestNews({ latestNews = [], onSelectArticle }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 sm:gap-y-6">
         {latestNews.map((n, i) => (
           <Reveal
-            key={n.title || i}
+            key={n._id || i}
             delay={i * 60}
             as="article"
             onClick={() => onSelectArticle?.(n)}

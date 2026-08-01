@@ -3,40 +3,67 @@ import { Download, FileText, Gavel, CheckCircle2 } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
-import { regulationsPageData } from "../data/pagesData";
 import { getRegulations } from "../services/regulation.service";
+import { ToHref } from "../services/file.service";
 
 export default function RegulationsPage({ onNavigate }) {
-  const { hero, trackers: staticTrackers, briefings: staticBriefings } = regulationsPageData;
 
-  const [trackers, setTrackers] = useState(staticTrackers);
-  const [briefings, setBriefings] = useState(staticBriefings);
+
+  const [trackers, setTrackers] = useState([]);
+  const [briefings, setBriefings] = useState([]);
 
   useEffect(() => {
     let active = true;
-    getRegulations()
-      .then((data) => {
+
+    (async () => {
+      try {
+        const data = await getRegulations();
         if (!active) return;
+
         if (Array.isArray(data) && data.length > 0) {
-          const mappedBriefings = data.map((r) => ({
+          const sorted = [...data].sort((a, b) => {
+            const dateA = new Date(a.createdAt || a.publish_date || 0);
+            const dateB = new Date(b.createdAt || b.publish_date || 0);
+            return dateB - dateA;
+          });
+
+          for (const regulation of sorted) {
+            if (regulation.file) {
+              const link = await ToHref(regulation.file, "regulation.pdf");
+              regulation.file = link;
+            }
+          }
+
+          const mappedBriefings = sorted.map((r) => ({
             authority: r.authority || "Regulatory Body",
             title: r.title,
             desc: `Directive issued on ${r.publish_date || "Recent"}. Download legal compliance text.`,
             format: r.file ? "PDF Document" : "Official Directives",
             file: r.file,
           }));
-          const mappedTrackers = data.map((r) => ({
+
+          const mappedTrackers = sorted.map((r) => ({
             authority: r.authority || "SBP / SECP",
             framework: r.title,
             status: "Active",
             impact: "High Compliance Impact",
             lastUpdate: r.publish_date || "2026",
           }));
+
           setBriefings(mappedBriefings);
           setTrackers(mappedTrackers);
+        } else {
+          setBriefings(staticBriefings);
+          setTrackers(staticTrackers);
         }
-      })
-      .catch((err) => console.warn("Using static fallback for regulations:", err.message));
+      } catch (err) {
+        console.warn("Using static fallback for regulations:", err);
+        if (active) {
+          setBriefings(staticBriefings);
+          setTrackers(staticTrackers);
+        }
+      }
+    })();
 
     return () => {
       active = false;
@@ -55,10 +82,10 @@ export default function RegulationsPage({ onNavigate }) {
           SUPERVISORY FRAMEWORKS & COMPLIANCE INTELLIGENCE
         </span>
         <h1 className="font-display-lg text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0C133D]">
-          {hero.title}
+          Pakistan & Global Digital Asset Regulatory Tracker
         </h1>
         <p className="text-sm md:text-base text-on-surface-variant max-w-3xl leading-relaxed">
-          {hero.subtitle}
+          Real-time policy updates, supervisory frameworks, consultation papers, and compliance directives.
         </p>
       </Reveal>
 

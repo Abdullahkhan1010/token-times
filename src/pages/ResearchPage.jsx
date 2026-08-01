@@ -5,6 +5,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { researchPageData } from "../data/pagesData";
 import { getResearches } from "../services/research.service";
+import { ToHref } from "../services/file.service";
 
 export default function ResearchPage({ onNavigate }) {
   const { featuredReport, papers: staticPapers, keyMetrics } = researchPageData;
@@ -12,11 +13,26 @@ export default function ResearchPage({ onNavigate }) {
 
   useEffect(() => {
     let active = true;
-    getResearches()
-      .then((data) => {
+
+    (async () => {
+      try {
+        const data = await getResearches();
         if (!active) return;
+
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.map((p) => ({
+          const sorted = [...data].sort((a, b) => {
+            const dateA = new Date(a.createdAt || a.publish_date || 0);
+            const dateB = new Date(b.createdAt || b.publish_date || 0);
+            return dateB - dateA;
+          });
+
+          for (const paper of sorted) {
+            if (paper.file) {
+              paper.file = await ToHref(paper.file, "research-paper.pdf");
+            }
+          }
+
+          const mapped = sorted.map((p) => ({
             id: p.id,
             meta: `Published ${p.publish_date || "2026"} • Institutional PDF`,
             title: p.title,
@@ -24,10 +40,13 @@ export default function ResearchPage({ onNavigate }) {
             author: p.author || "Research Desk",
             file: p.file,
           }));
+
           setPapers(mapped);
         }
-      })
-      .catch((err) => console.warn("Using static fallback for research papers:", err.message));
+      } catch (err) {
+        console.warn("Using static fallback for research papers:", err.message);
+      }
+    })();
 
     return () => {
       active = false;

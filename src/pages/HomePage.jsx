@@ -28,6 +28,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
   const [pakistanFocusData, setPakistanFocusData] = React.useState([]);
   const [globalHighlightsData, setGlobalHighlightsData] = React.useState([]);
   const [featuredAnalysisData, setFeaturedAnalysisData] = React.useState([]);
+  const [topStoriesData, setTopStoriesData] = React.useState([]);
 
   useEffect(() => {
     (async () => {
@@ -64,7 +65,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
         }, {});
 
         setMainStoryData(sections.main_story?.[0] ?? null);
-        setSubStoriesData(sections.sub_stories || sections.substories || []);
+        setSubStoriesData(sections.sub_stories.slice(0, 3) || []);
         // Only 2 featured spotlight
         setFeaturedSpotlightData((sections.featured_spotlight ?? []).slice(0, 2));
         // Only 3 editors picks
@@ -76,12 +77,15 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
         // Only 2 global highlights
         setGlobalHighlightsData((sections.Global_Highlight || sections.global_highlights || []).slice(0, 2));
         setFeaturedAnalysisData((sections.featured_analysis ?? []).slice(0, 1));
+        setTopStoriesData((sections.top_stories ?? []).slice(0, 1));
 
       } catch (err) {
         console.error("Failed to load published news for HomePage", err);
       }
     })();
   }, []);
+
+
 
   return (
     <>
@@ -92,6 +96,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
         featuredspotlight={featuredSpotlightData}
         mainStory={mainStoryData}
         substories={subStoriesData}
+        topStory={topStoriesData[0]}
         onSelectArticle={onSelectArticle}
       />
 
