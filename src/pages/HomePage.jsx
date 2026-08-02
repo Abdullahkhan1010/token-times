@@ -103,7 +103,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
 
 
       {/* Latest News */}
-      <LatestNews latestNews={latestNewsData} onSelectArticle={onSelectArticle} />
+      <LatestNews latestNews={latestNewsData} onSelectArticle={onSelectArticle} onNavigate={onNavigate} />
 
       {/* Pakistan Focus & Global Highlights */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -116,7 +116,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
         <div className="flex flex-col h-full min-h-0">
           <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Regulatory Briefings</h2>
           <div className="flex-1 flex flex-col min-h-0">
-            <RegulatoryBriefings />
+            <RegulatoryBriefings onNavigate={onNavigate} />
           </div>
         </div>
         <div className="flex flex-col h-full min-h-0">
@@ -132,7 +132,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
           </div>
         </div>
       </div>
-      <RegulatoryTracker />
+      <RegulatoryTracker onNavigate={onNavigate} />
 
       {/* Featured Analysis & Knowledge Hub */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">

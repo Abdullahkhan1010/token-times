@@ -3,14 +3,11 @@ import { Download, FileText, Gavel, CheckCircle2 } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
-import { regulationsPageData } from "../data/pagesData";
 import { getRegulations } from "../services/regulation.service";
 
 export default function RegulationsPage({ onNavigate }) {
-  const { hero, trackers: staticTrackers, briefings: staticBriefings } = regulationsPageData;
-
-  const [trackers, setTrackers] = useState(staticTrackers);
-  const [briefings, setBriefings] = useState(staticBriefings);
+  const [trackers, setTrackers] = useState([]);
+  const [briefings, setBriefings] = useState([]);
 
   useEffect(() => {
     let active = true;
@@ -34,9 +31,18 @@ export default function RegulationsPage({ onNavigate }) {
           }));
           setBriefings(mappedBriefings);
           setTrackers(mappedTrackers);
+        } else {
+          setBriefings([]);
+          setTrackers([]);
         }
       })
-      .catch((err) => console.warn("Using static fallback for regulations:", err.message));
+      .catch((err) => {
+        console.warn("Failed to fetch regulations:", err.message);
+        if (active) {
+          setBriefings([]);
+          setTrackers([]);
+        }
+      });
 
     return () => {
       active = false;
@@ -55,10 +61,10 @@ export default function RegulationsPage({ onNavigate }) {
           SUPERVISORY FRAMEWORKS & COMPLIANCE INTELLIGENCE
         </span>
         <h1 className="font-display-lg text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0C133D]">
-          {hero.title}
+          Policy & Regulatory Frameworks
         </h1>
         <p className="text-sm md:text-base text-on-surface-variant max-w-3xl leading-relaxed">
-          {hero.subtitle}
+          Comprehensive compliance tracking, monetary policy whitepapers, and licensing frameworks for digital assets across regional regulatory bodies.
         </p>
       </Reveal>
 

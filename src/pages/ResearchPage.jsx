@@ -3,31 +3,57 @@ import { Download, BookOpen } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
-import { researchPageData } from "../data/pagesData";
 import { getResearches } from "../services/research.service";
+import { ToHref } from "../services/file.service";
 
 export default function ResearchPage({ onNavigate }) {
-  const { featuredReport, papers: staticPapers, keyMetrics } = researchPageData;
-  const [papers, setPapers] = useState(staticPapers);
+  const [papers, setPapers] = useState([]);
+  const [featuredReport, setFeaturedReport] = useState(null);
 
   useEffect(() => {
     let active = true;
     getResearches()
-      .then((data) => {
+      .then(async (data) => {
         if (!active) return;
         if (Array.isArray(data) && data.length > 0) {
-          const mapped = data.map((p) => ({
-            id: p.id,
-            meta: `Published ${p.publish_date || "2026"} • Institutional PDF`,
-            title: p.title,
-            desc: `Macro report and data analysis by ${p.author || "Research Team"}.`,
-            author: p.author || "Research Desk",
-            file: p.file,
-          }));
+          const topReport = data[0];
+          const imgHref = await ToHref(topReport.cover_img || topReport.image, "research-cover.jpg");
+          const fileHref = await ToHref(topReport.file, "research-report.pdf");
+
+          setFeaturedReport({
+            title: topReport.title,
+            summary: topReport.summary || `Institutional report by ${topReport.author || "Research Desk"}.`,
+            img: imgHref || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=800&auto=format&fit=crop",
+            edition: "2026 EDITION",
+            pages: "PDF Report",
+            format: "Institutional Document",
+            date: topReport.publish_date || "2026",
+            file: fileHref,
+          });
+
+          const mapped = await Promise.all(
+            data.map(async (p) => ({
+              id: p.id || p._id,
+              meta: `Published ${p.publish_date || "2026"} • Institutional PDF`,
+              title: p.title,
+              desc: p.summary || `Macro report and data analysis by ${p.author || "Research Team"}.`,
+              author: p.author || "Research Desk",
+              file: await ToHref(p.file, "research.pdf"),
+            }))
+          );
           setPapers(mapped);
+        } else {
+          setFeaturedReport(null);
+          setPapers([]);
         }
       })
-      .catch((err) => console.warn("Using static fallback for research papers:", err.message));
+      .catch((err) => {
+        console.warn("Failed to fetch research papers:", err.message);
+        if (active) {
+          setFeaturedReport(null);
+          setPapers([]);
+        }
+      });
 
     return () => {
       active = false;
@@ -53,55 +79,54 @@ export default function ResearchPage({ onNavigate }) {
         </p>
       </Reveal>
 
-      {/* Key Metrics Stats Banner */}
-      <Reveal as="div" className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {keyMetrics.map((m) => (
-          <div key={m.label} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 text-center space-y-1 shadow-sm">
-            <span className="font-display-lg text-2xl sm:text-3xl font-extrabold text-[#D4AF37] block">{m.value}</span>
-            <span className="text-xs text-on-surface-variant font-label-caps font-semibold uppercase">{m.label}</span>
-          </div>
-        ))}
-      </Reveal>
-
       {/* Featured Annual Report Banner */}
-      <Reveal
-        as="section"
-        className="bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-8"
-      >
-        <div className="lg:col-span-5 relative h-64 sm:h-80 lg:h-full rounded-xl overflow-hidden">
-          <img
-            src={featuredReport.img}
-            alt={featuredReport.title}
-            loading="eager"
-            decoding="async"
-            className="w-full h-full object-cover"
-          />
-          <span className="absolute top-3 left-3 bg-[#D4AF37] text-[#0C133D] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
-            {featuredReport.edition}
-          </span>
-        </div>
-
-        <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
-          <div className="space-y-3">
-            <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold tracking-wider uppercase">FLAGSHIP PUBLICATION</span>
-            <h2 className="font-headline-lg text-2xl sm:text-3xl font-bold text-[#0C133D] leading-tight">
-              {featuredReport.title}
-            </h2>
-            <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-              {featuredReport.summary}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-outline-variant/40">
-            <span className="text-xs text-on-surface-variant font-data-tabular">
-              {featuredReport.pages} • {featuredReport.format} • {featuredReport.date}
+      {featuredReport && (
+        <Reveal
+          as="section"
+          className="bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-8"
+        >
+          <div className="lg:col-span-5 relative h-64 sm:h-80 lg:h-full rounded-xl overflow-hidden">
+            <img
+              src={featuredReport.img}
+              alt={featuredReport.title}
+              loading="eager"
+              decoding="async"
+              className="w-full h-full object-cover"
+            />
+            <span className="absolute top-3 left-3 bg-[#D4AF37] text-[#0C133D] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+              {featuredReport.edition}
             </span>
-            <button className="px-5 py-2.5 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all flex items-center gap-2 shadow-sm">
-              Download Full Report <Download size={14} />
-            </button>
           </div>
-        </div>
-      </Reveal>
+
+          <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold tracking-wider uppercase">FLAGSHIP PUBLICATION</span>
+              <h2 className="font-headline-lg text-2xl sm:text-3xl font-bold text-[#0C133D] leading-tight">
+                {featuredReport.title}
+              </h2>
+              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                {featuredReport.summary}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-outline-variant/40">
+              <span className="text-xs text-on-surface-variant font-data-tabular">
+                {featuredReport.pages} • {featuredReport.format} • {featuredReport.date}
+              </span>
+              {featuredReport.file && (
+                <a
+                  href={featuredReport.file}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-5 py-2.5 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all flex items-center gap-2 shadow-sm"
+                >
+                  Download Full Report <Download size={14} />
+                </a>
+              )}
+            </div>
+          </div>
+        </Reveal>
+      )}
 
       {/* Whitepapers & Research Papers List */}
       <div className="space-y-4">

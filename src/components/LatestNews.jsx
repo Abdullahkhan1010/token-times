@@ -16,16 +16,22 @@ function getCleanCategory(item) {
   return String(item.tags || "NEWS").replace(/_/g, " ").toUpperCase();
 }
 
-export default function LatestNews({ latestNews = [], onSelectArticle }) {
+export default function LatestNews({ latestNews = [], onSelectArticle, onNavigate }) {
+  if (!latestNews || latestNews.length === 0) return null;
+
   return (
     <section className="mb-8 bg-surface-container-low p-4 sm:p-6 border border-outline-variant rounded-xl">
       <div className="flex justify-between items-center section-header-border mb-4 sm:mb-6">
         <h2 className="font-headline-lg text-headline-lg text-[#0C133D] m-0 text-lg sm:text-xl" style={{ border: 0, paddingBottom: 0 }}>
           Latest News
         </h2>
-        <a className="font-label-caps text-label-caps text-[#D4AF37] hover:text-[#B08D23] flex items-center gap-1 group" href="#">
+        <button
+          type="button"
+          onClick={() => onNavigate?.("News")}
+          className="font-label-caps text-label-caps text-[#D4AF37] hover:text-[#B08D23] flex items-center gap-1 group cursor-pointer bg-transparent border-0"
+        >
           View All <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-        </a>
+        </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 sm:gap-y-6">
         {latestNews.map((n, i) => (

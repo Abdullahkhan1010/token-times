@@ -120,7 +120,7 @@ export const PAGE_SEO_DATA = {
     ],
   },
   "Knowledge Hub": {
-    title: "Web3 & Digital Finance Knowledge Hub | Educational Guides",
+    title: "Digital Finance Knowledge Hub | Educational Guides",
     description:
       "Master virtual assets, blockchain protocols, zero-knowledge proofs, smart contract security, and compliance with curated guides by industry experts.",
     keywords:

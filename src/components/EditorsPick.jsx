@@ -2,6 +2,8 @@ import React from "react";
 import Reveal from "./Reveal";
 
 export default function EditorsPick({ editorsPicks = [], onSelectArticle }) {
+  if (!editorsPicks || editorsPicks.length === 0) return null;
+
   return (
     <section className="mb-8">
       <Reveal as="h2" className="font-headline-lg text-headline-lg text-[#0C133D] section-header-border">

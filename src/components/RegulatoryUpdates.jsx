@@ -33,7 +33,7 @@ function normalizeRegulations(data, limit = 5) {
     }));
 }
 
-export function RegulatoryBriefings() {
+export function RegulatoryBriefings({ onNavigate }) {
   const [briefings, setBriefings] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -82,9 +82,13 @@ export function RegulatoryBriefings() {
                     {b.summary}
                   </p>
                 </div>
-                <a className="font-label-caps text-[10px] md:text-[11px] text-[#D4AF37] hover:underline whitespace-nowrap shrink-0" href="#">
+                <button
+                  type="button"
+                  onClick={() => onNavigate?.("Policy & Regulation")}
+                  className="font-label-caps text-[10px] md:text-[11px] text-[#D4AF37] hover:underline whitespace-nowrap shrink-0 bg-transparent border-0 cursor-pointer"
+                >
                   Read
-                </a>
+                </button>
               </div>
             </Reveal>
           );
@@ -96,7 +100,7 @@ export function RegulatoryBriefings() {
   );
 }
 
-export function RegulatoryTracker() {
+export function RegulatoryTracker({ onNavigate }) {
   const [tracker, setTracker] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -125,9 +129,13 @@ export function RegulatoryTracker() {
     <section className="mb-8 border border-outline-variant bg-surface-container-lowest rounded-xl">
       <div className="px-6 py-4 border-b border-outline-variant bg-surface-bright flex justify-between items-center">
         <h2 className="font-headline-md text-headline-md text-on-surface">Pakistan Regulatory Tracker</h2>
-        <a className="font-label-caps text-label-caps text-[#D4AF37] hover:text-[#B08D23] flex items-center gap-1 group" href="#">
+        <button
+          type="button"
+          onClick={() => onNavigate?.("Policy & Regulation")}
+          className="font-label-caps text-label-caps text-[#D4AF37] hover:text-[#B08D23] flex items-center gap-1 group cursor-pointer bg-transparent border-0"
+        >
           View Full Dashboard <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-        </a>
+        </button>
       </div>
 
       {loading ? (

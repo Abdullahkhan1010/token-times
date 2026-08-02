@@ -3,13 +3,14 @@ import { Search } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
-import { knowledgeHubPageData } from "../data/pagesData";
 import { getKnowlegeHubs } from "../services/knowlege-hub.service";
+
+const KNOWLEDGE_CATEGORIES = ["All Guides", "Beginner", "Intermediate", "Advanced", "Regulation", "Architecture"];
 
 export default function KnowledgeHubPage({ onNavigate }) {
   const [selectedCategory, setSelectedCategory] = useState("All Guides");
   const [searchQuery, setSearchQuery] = useState("");
-  const [guides, setGuides] = useState(knowledgeHubPageData.featuredGuides);
+  const [guides, setGuides] = useState([]);
 
   useEffect(() => {
     let active = true;
@@ -18,7 +19,7 @@ export default function KnowledgeHubPage({ onNavigate }) {
         if (!active) return;
         if (Array.isArray(data) && data.length > 0) {
           const mapped = data.map((item) => ({
-            id: item.id,
+            id: item.id || item._id,
             level: Array.isArray(item.category) && item.category.length > 0 ? item.category[0] : "Guide",
             time: item.publish_date || "5 min read",
             title: item.question,
@@ -26,9 +27,14 @@ export default function KnowledgeHubPage({ onNavigate }) {
             tag: Array.isArray(item.tags) && item.tags.length > 0 ? item.tags.join(", ") : "General",
           }));
           setGuides(mapped);
+        } else {
+          setGuides([]);
         }
       })
-      .catch((err) => console.warn("Using static fallback for knowledge hub guides:", err.message));
+      .catch((err) => {
+        console.warn("Failed to fetch knowledge hub guides:", err.message);
+        if (active) setGuides([]);
+      });
 
     return () => {
       active = false;
@@ -36,8 +42,8 @@ export default function KnowledgeHubPage({ onNavigate }) {
   }, []);
 
   const filteredGuides = guides.filter((guide) => {
-    const matchesCat = selectedCategory === "All Guides" || guide.level.toLowerCase().includes(selectedCategory.toLowerCase());
-    const matchesSearch = guide.title.toLowerCase().includes(searchQuery.toLowerCase()) || guide.desc.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCat = selectedCategory === "All Guides" || (guide.level || "").toLowerCase().includes(selectedCategory.toLowerCase());
+    const matchesSearch = (guide.title || "").toLowerCase().includes(searchQuery.toLowerCase()) || (guide.desc || "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCat && matchesSearch;
   });
 
@@ -53,10 +59,10 @@ export default function KnowledgeHubPage({ onNavigate }) {
           TOKEN TIMES EDUCATIONAL PLATFORM
         </span>
         <h1 className="font-display-lg text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0C133D]">
-          {knowledgeHubPageData.hero.title}
+          Knowledge Hub & Explainer Guides
         </h1>
         <p className="text-sm md:text-base text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-          {knowledgeHubPageData.hero.subtitle}
+          Master central bank digital currencies, zero-knowledge proofs, and digital asset regulatory frameworks.
         </p>
 
         {/* Search Input */}
@@ -75,7 +81,7 @@ export default function KnowledgeHubPage({ onNavigate }) {
 
       {/* Category Pills */}
       <Reveal as="div" className="flex items-center gap-2 overflow-x-auto no-scrollbar justify-center pb-2" role="tablist">
-        {knowledgeHubPageData.categories.map((cat) => (
+        {KNOWLEDGE_CATEGORIES.map((cat) => (
           <button
             key={cat}
             role="tab"
@@ -95,57 +101,47 @@ export default function KnowledgeHubPage({ onNavigate }) {
       {/* Featured Guides Grid */}
       <div className="space-y-4">
         <h2 className="font-headline-sm text-xl font-bold text-[#0C133D] border-b border-outline-variant pb-2">
-          Explainer Guides & Curriculum
+          Explainer Guides & Curriculum ({filteredGuides.length})
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredGuides.map((guide, i) => (
-            <Reveal
-              key={guide.id || guide.title + i}
-              as="article"
-              delay={i * 70}
-              className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between cursor-pointer space-y-4 shadow-sm hover:border-[#D4AF37]"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="px-2.5 py-0.5 bg-[#0C133D] text-[#D4AF37] font-extrabold text-[10px] rounded-full uppercase tracking-wide border border-[#D4AF37]/40 shadow-sm">
-                    {guide.level}
-                  </span>
-                  <span className="text-xs font-data-tabular text-on-surface-variant">{guide.time}</span>
+        {filteredGuides.length === 0 ? (
+          <div className="p-8 text-center text-xs text-on-surface-variant bg-surface-container-lowest border border-dashed border-outline-variant rounded-xl">
+            No guides found in this category.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredGuides.map((guide, i) => (
+              <Reveal
+                key={guide.id || guide.title + i}
+                as="article"
+                delay={i * 70}
+                className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col justify-between cursor-pointer space-y-4 shadow-sm hover:border-[#D4AF37]"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-0.5 bg-[#0C133D] text-[#D4AF37] font-extrabold text-[10px] rounded-full uppercase tracking-wide border border-[#D4AF37]/40 shadow-sm">
+                      {guide.level}
+                    </span>
+                    <span className="text-xs font-data-tabular text-on-surface-variant">{guide.time}</span>
+                  </div>
+                  <h3 className="font-headline-md text-xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug">
+                    {guide.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                    {guide.desc}
+                  </p>
                 </div>
-                <h3 className="font-headline-md text-xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug">
-                  {guide.title}
-                </h3>
-                <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                  {guide.desc}
-                </p>
-              </div>
 
-              <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs">
-                <span className="text-on-surface-variant font-data-tabular">Tag: {guide.tag}</span>
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
-                  Read Guide →
-                </span>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+                <div className="pt-3 border-t border-outline-variant/30 flex items-center justify-between text-xs">
+                  <span className="text-on-surface-variant font-data-tabular">Tag: {guide.tag}</span>
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded bg-[#0C133D] text-[#F7F0EB] font-extrabold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all shadow-sm">
+                    Read Guide →
+                  </span>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        )}
       </div>
-
-      {/* Glossary & Dictionary Section */}
-      <Reveal as="section" className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-4 shadow-sm">
-        <div className="flex items-center justify-between border-b border-outline-variant pb-3">
-          <h3 className="font-headline-sm text-lg font-bold text-[#0C133D]">Web3 & Legal Glossary</h3>
-          <span className="text-xs text-on-surface-variant font-data-tabular">Quick Reference Dictionary</span>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {knowledgeHubPageData.glossary.map((item) => (
-            <div key={item.term} className="p-4 bg-surface-container-low border border-outline-variant rounded-lg space-y-1">
-              <span className="font-bold text-[#0C133D] text-sm font-data-tabular block">{item.term}</span>
-              <p className="text-xs text-on-surface-variant leading-relaxed">{item.definition}</p>
-            </div>
-          ))}
-        </div>
-      </Reveal>
     </div>
   );
 }

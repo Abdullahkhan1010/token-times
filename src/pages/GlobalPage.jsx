@@ -77,44 +77,10 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
 
   const activeList = filteredArticles.length > 0 ? filteredArticles : (globalArticles.length > 0 ? globalArticles : articles);
 
-  const leadStory = activeList[0] || {
-    title: "Global Central Bank Pilots Accelerate Cross-Border CBDC Settlements",
-    summary: "International monetary institutions unveil unified protocols for instantaneous multi-currency clearing using distributed ledgers.",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCxHAfKQIlbkeBH4COanKu5slG1hkEbL1gLWaLI8SifMnv_aqxqej0uJwRZVfWJRac3sy4y3wlg1MMfb1QgDhgeq87ahhysq5eSGGbq0kouV5NA5QAjeWUD-G7T9uWdFw9ZV4wFe6pqNcurbZRSKDzx1LPM4WB5H4-RRxXxUhbbV17Q1bfvH2MuPsG4LJfMK15rIBBe6C3rk5W-e7XDLGuoBfCQkH_6IFY_A5PLiudxMEjeXNvjU9tSCc16bfUpStdT6ihFwCSakPk",
-    author: "Global Desk",
-    category: ["GLOBAL"],
-    publish_date: "Recent"
-  };
-
-  const secondaryHeadlines = activeList.slice(1, 5).length > 0 ? activeList.slice(1, 5) : [
-    { title: "Dubai VARA Approves New Asset-Backed Token Framework", approx_time_to_read: 3 },
-    { title: "EU MiCA Compliance Checks Drive Stablecoin Market Restructuring", approx_time_to_read: 4 },
-    { title: "Japan Financial Services Agency Signals Fresh Support for Tokenized Securities", approx_time_to_read: 5 },
-    { title: "U.S. Spot Bitcoin ETFs Record 4th Consecutive Week of Positive Net Inflows", approx_time_to_read: 3 },
-  ];
-
-  const gridCards = activeList.slice(5, 8).length > 0 ? activeList.slice(5, 8) : [
-    {
-      title: "Cross-Border Settlement via DLT Networks Gains Regulatory Traction",
-      summary: "Monetary Authorities test automated compliance engines across Asia-Pacific corridors.",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA4Dz2Z5B-GkDMnrR0bKKkX-dJbfdfbgc7TvBJR_Uu2x7wZDWJiGYBKn2PmOd19Ywfj7yLruR8Bj7o0b1DqDt1geC-5WANRxJDyjou56NB2CANibH5XxWRpLGXKZ6P5z8mvMAsCWSrMqtfDdiQM7f_kPDJxPZJ1pzftbB79vTndbDgwaZ3-dRRkzquQVasw1yx8tOHkXHybuV0GCE4Q_WT7_wvpxCeqe7gauxRthU5B4dseRQnbfxBbIs1aE1t_ewYAoiIClorUnGk",
-      category: ["MIDDLE EAST"]
-    },
-    {
-      title: "Institutional Custody Standards Formalized in Singapore",
-      summary: "MAS outlines capital reserve and multi-sig requirements for licensed digital asset exchanges.",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBgyzCbG60lvIFTQKg26XntSCOHuPXN-3VME8fauPPOKXhlpbiEwff1rA-d3SE1ZFowCZAbA77CvjbrmI4m99zr5DPnXgHsoBmiXATqCh3M2-xFNsSeX_yZXS88H6IBZSAmErDP6HnACV0bBeln1nOdbf3KnbWeLIzN6fv26kDv9qFUIG2EdbdBwkFkfQkhgZC9GCxqpB2AgyTB1IWyVebeAmupft1j6R7sEXRLOraMEL5Zd52dmOwKIDp7W1x1rZt-L2cTvQGNB2A",
-      category: ["ASIA PACIFIC"]
-    },
-    {
-      title: "FATF Travel Rule Compliance Rate Reaches 65% Globally",
-      summary: "Inter-VASP communication protocols harmonize across major financial jurisdictions.",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA5WbZ_u8XLylH-dyvD7qBkhDgMGEunLP53NK59UTnEEIwI1mrKvkOGitpXMwdx1kNhXQsIRk6zOlAhzsSWc-tDGfr8zkJp6jJF7a3BvfCuMySVmhMyHGBMXU-Xu1Ha9JNE7dJ_yycuWqKLO-Q6UKPKYAQznhpUlQvWeHlod3G0RplbrDaWLRJEs0trxUpQ4MditfkxsgVNAn7AeUXrC8IsbtkCvOz8tWOOEqf1WJuq86-v7KZgP75lswuFqwmgir4AC0P2KfjJpC4",
-      category: ["EUROPE"]
-    }
-  ];
-
-  const feedArticles = activeList.slice(8, 13).length > 0 ? activeList.slice(8, 13) : activeList.slice(0, 4);
+  const leadStory = activeList[0] || null;
+  const secondaryHeadlines = activeList.slice(1, 5);
+  const gridCards = activeList.slice(5, 8);
+  const feedArticles = activeList.slice(8, 13);
 
   return (
     <div className="space-y-5 sm:space-y-8">
@@ -162,35 +128,37 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
       {/* Hero Section: Lead Story (Full Image + Headline) + Secondary Headlines List */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Lead Story */}
-        <Reveal
-          as="article"
-          onClick={() => onSelectArticle?.(leadStory)}
-          className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
-        >
-          <div className="relative w-full h-48 sm:h-80 md:h-96 overflow-hidden">
-            <img
-              src={leadStory.image || leadStory.img}
-              alt={leadStory.title}
-              className="img-fade img-scale w-full h-full object-cover"
-            />
-            <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/50 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
-              {formatTag(leadStory.category || leadStory.display_section)}
-            </span>
-          </div>
-          <div className="p-4 sm:p-6">
-            <h2 className="font-headline-lg text-xl sm:text-2xl md:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight mb-3">
-              {leadStory.title}
-            </h2>
-            <p className="text-sm md:text-base text-on-surface-variant leading-relaxed mb-4 line-clamp-3">
-              {leadStory.summary}
-            </p>
-            <div className="flex items-center gap-3 text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40">
-              <span>By {leadStory.author || "Global Editorial"}</span>
-              <span>•</span>
-              <span>{leadStory.publish_date || "Today"}</span>
+        {leadStory && (
+          <Reveal
+            as="article"
+            onClick={() => onSelectArticle?.(leadStory)}
+            className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
+          >
+            <div className="relative w-full h-48 sm:h-80 md:h-96 overflow-hidden">
+              <img
+                src={leadStory.image || leadStory.img}
+                alt={leadStory.title}
+                className="img-fade img-scale w-full h-full object-cover"
+              />
+              <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/50 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                {formatTag(leadStory.category || leadStory.display_section)}
+              </span>
             </div>
-          </div>
-        </Reveal>
+            <div className="p-4 sm:p-6">
+              <h2 className="font-headline-lg text-xl sm:text-2xl md:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight mb-3">
+                {leadStory.title}
+              </h2>
+              <p className="text-sm md:text-base text-on-surface-variant leading-relaxed mb-4 line-clamp-3">
+                {leadStory.summary}
+              </p>
+              <div className="flex items-center gap-3 text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40">
+                <span>By {leadStory.author || "Global Editorial"}</span>
+                <span>•</span>
+                <span>{leadStory.publish_date || "Today"}</span>
+              </div>
+            </div>
+          </Reveal>
+        )}
 
         {/* Secondary Headlines Rail (4-5 text-only headlines) */}
         <Reveal as="aside" className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col justify-start gap-3 shadow-sm">

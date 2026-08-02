@@ -1,6 +1,5 @@
 import React from "react";
 import Reveal from "./Reveal";
-import { heroSubStories } from "../data/content";
 
 function getSingleCleanTag(article, fallback = "NEWS") {
   if (!article) return fallback;
@@ -35,13 +34,11 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
   const safeTopStory = topStory && typeof topStory === "object" ? topStory : null;
 
   // Determine topStory to display (explicit topStory prop OR first article from substories)
-  const activeTopStory = safeTopStory || safeSubStories[0] || heroSubStories[0];
+  const activeTopStory = safeTopStory || safeSubStories[0] || null;
 
   // Determine sub-stories list (3 items)
   const remainingSubStories = safeTopStory ? safeSubStories : safeSubStories.slice(1);
-  const subStoriesList = remainingSubStories.length >= 3
-    ? remainingSubStories.slice(0, 3)
-    : [...remainingSubStories, ...heroSubStories.slice(safeTopStory ? 0 : 1)].slice(0, 3);
+  const subStoriesList = remainingSubStories.slice(0, 3);
 
   const hasContent = safeFeaturedSpotlight.length > 0 || subStoriesList.length > 0 || Boolean(safeMainStory) || Boolean(activeTopStory);
 
