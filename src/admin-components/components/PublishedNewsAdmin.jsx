@@ -209,6 +209,19 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                     status: "published"
                 },
                 {
+                    title: "Top Story: Institutional Crypto Liquidity Surges Ahead of Regulatory Approvals",
+                    summary: "Commercial banks and liquidity providers allocate record OTC capital reserves ahead of upcoming virtual asset market framework.",
+                    article: "Institutional crypto liquidity pools across regional desks recorded a 45% month-over-month increase in capital allocation. Financial institutions and family offices are positioning reserves in anticipation of finalized licensing directives.",
+                    author: "Markets Intelligence Desk",
+                    image: "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?q=80&w=800&auto=format&fit=crop",
+                    approx_time_to_read: 4,
+                    category: ["Top Story", "Markets"],
+                    tags: ["Markets", "Liquidity", "Institutional"],
+                    headlines: ["OTC Crypto Liquidity Surges", "Institutional Reserves Hit Record"],
+                    display_section: ["top_story"],
+                    status: "published"
+                },
+                {
                     title: "SECP Formulates Sandbox Guidelines for Digital Asset Exchanges",
                     summary: "Securities regulator issues comprehensive operational rules governing licensed VASP platforms, custody reserves, and investor protection safeguards.",
                     article: "The Securities and Exchange Commission of Pakistan (SECP) has released its sandbox regulatory guidelines for digital asset trading platforms.\n\nThe framework establishes strict capital adequacy requirements, mandatory cold-storage asset isolation, and real-time transaction monitoring to ensure compliance with FATF AML standards.",
