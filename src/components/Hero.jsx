@@ -28,20 +28,22 @@ function getSingleCleanTag(article, fallback = "NEWS") {
   return cleaned.toUpperCase();
 }
 
-export default function Hero({ featuredspotlight = [], substories = [], mainStory = null, onSelectArticle }) {
+export default function Hero({ featuredspotlight = [], substories = [], mainStory = null, topStory = null, onSelectArticle }) {
   const safeFeaturedSpotlight = Array.isArray(featuredspotlight) ? featuredspotlight : [];
   const safeSubStories = Array.isArray(substories) ? substories : [];
   const safeMainStory = mainStory && typeof mainStory === "object" ? mainStory : null;
+  const safeTopStory = topStory && typeof topStory === "object" ? topStory : null;
 
-  // Ensure 1 Top Story + 3 Sub Stories = 4 Total Articles in Left Column
-  const displaySubStories = safeSubStories.length >= 4
-    ? safeSubStories
-    : [...safeSubStories, ...heroSubStories].slice(0, 4);
+  // Determine topStory to display (explicit topStory prop OR first article from substories)
+  const activeTopStory = safeTopStory || safeSubStories[0] || heroSubStories[0];
 
-  const topStory = displaySubStories[0];
-  const subStoriesList = displaySubStories.slice(1, 4);
+  // Determine sub-stories list (3 items)
+  const remainingSubStories = safeTopStory ? safeSubStories : safeSubStories.slice(1);
+  const subStoriesList = remainingSubStories.length >= 3
+    ? remainingSubStories.slice(0, 3)
+    : [...remainingSubStories, ...heroSubStories.slice(safeTopStory ? 0 : 1)].slice(0, 3);
 
-  const hasContent = safeFeaturedSpotlight.length > 0 || displaySubStories.length > 0 || Boolean(safeMainStory);
+  const hasContent = safeFeaturedSpotlight.length > 0 || subStoriesList.length > 0 || Boolean(safeMainStory) || Boolean(activeTopStory);
 
   if (!hasContent) {
     return (
@@ -70,28 +72,28 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
         </div>
 
         {/* Top Story Card (Text-Only, Bigger & Prominent) */}
-        {topStory && (
+        {activeTopStory && (
           <Reveal
             as="article"
-            onClick={() => onSelectArticle?.(topStory)}
+            onClick={() => onSelectArticle?.(activeTopStory)}
             className="hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] p-4 sm:p-5 rounded-xl cursor-pointer shadow-md hover:border-[#D4AF37] transition-all relative flex flex-col justify-between flex-grow"
           >
             <div className="flex flex-col flex-grow justify-between">
               <div>
                 <span className="font-label-caps text-xs font-extrabold text-[#D4AF37] mb-2 block uppercase tracking-wide">
-                  {getSingleCleanTag(topStory, "MARKETS")}
+                  {getSingleCleanTag(activeTopStory, "MARKETS")}
                 </span>
                 <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-base sm:text-lg lg:text-xl font-bold leading-snug mb-3">
-                  {topStory.title}
+                  {activeTopStory.title}
                 </h3>
-                {topStory.summary && (
+                {activeTopStory.summary && (
                   <p className="text-xs sm:text-sm text-on-surface-variant line-clamp-4 lg:line-clamp-5 mb-4 leading-relaxed">
-                    {topStory.summary}
+                    {activeTopStory.summary}
                   </p>
                 )}
               </div>
               <div className="flex items-center justify-between font-data-tabular text-xs text-on-surface-variant pt-2.5 border-t border-outline-variant/40 mt-auto">
-                <span>By {topStory.author || "Editorial Desk"} • {topStory.time || `${topStory.approx_time_to_read || 4} mins read`}</span>
+                <span>By {activeTopStory.author || "Editorial Desk"} • {activeTopStory.time || `${activeTopStory.approx_time_to_read || 4} mins read`}</span>
                 <span className="text-[#D4AF37] font-bold text-xs shrink-0 ml-2">Read Story →</span>
               </div>
             </div>

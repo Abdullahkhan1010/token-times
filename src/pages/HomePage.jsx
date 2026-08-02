@@ -21,6 +21,7 @@ import { ToHref } from "../services/file.service";
 export default function HomePage({ onNavigate, onSelectArticle }) {
 
   const [mainStoryData, setMainStoryData] = React.useState(null);
+  const [topStoryData, setTopStoryData] = React.useState(null);
   const [subStoriesData, setSubStoriesData] = React.useState([]);
   const [featuredSpotlightData, setFeaturedSpotlightData] = React.useState([]);
   const [editorsPickData, setEditorsPickData] = React.useState([]);
@@ -64,6 +65,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
         }, {});
 
         setMainStoryData(sections.main_story?.[0] ?? null);
+        setTopStoryData(sections.top_story?.[0] || sections.top_stories?.[0] || null);
         setSubStoriesData(sections.sub_stories || sections.substories || []);
         // Only 2 featured spotlight
         setFeaturedSpotlightData((sections.featured_spotlight ?? []).slice(0, 2));
@@ -91,6 +93,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
       <Hero
         featuredspotlight={featuredSpotlightData}
         mainStory={mainStoryData}
+        topStory={topStoryData}
         substories={subStoriesData}
         onSelectArticle={onSelectArticle}
       />
