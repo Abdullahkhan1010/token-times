@@ -1,5 +1,5 @@
 # https://www.robotstxt.org/robotstxt.html
-# Robots.txt for Token Times (https://tokentimes.io)
+# Robots.txt for Token Times (https://www.tokenstimes.com)
 
 User-agent: *
 Allow: /
@@ -19,5 +19,5 @@ User-agent: Bingbot
 Allow: /
 
 # Sitemap Index Files
-Sitemap: https://tokentimes.io/sitemap.xml
-Sitemap: https://tokentimes.io/news-sitemap.xml
+Sitemap: https://www.tokenstimes.com/sitemap.xml
+Sitemap: https://www.tokenstimes.com/news-sitemap.xml
