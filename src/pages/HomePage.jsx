@@ -106,7 +106,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
       <LatestNews latestNews={latestNewsData} onSelectArticle={onSelectArticle} onNavigate={onNavigate} />
 
       {/* Pakistan Focus & Global Highlights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 items-stretch">
         <PakistanFocus pakistanFocus={pakistanFocusData} onSelectArticle={onSelectArticle} />
         <GlobalHighlights globalHighlights={globalHighlightsData} onSelectArticle={onSelectArticle} />
       </div>
