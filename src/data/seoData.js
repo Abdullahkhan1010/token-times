@@ -3,7 +3,7 @@
  * Comprehensive metadata dictionary for all pages, routes, Open Graph, Twitter Cards, and JSON-LD schemas.
  */
 
-export const BASE_URL = "https://tokentimes.io";
+export const BASE_URL = "https://www.tokenstimes.com";
 
 export const DEFAULT_SEO = {
   siteName: "Token Times",
@@ -41,7 +41,7 @@ export const SITE_ORGANIZATION_SCHEMA = {
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "Editorial Desk",
-    email: "editor@tokentimes.io",
+    email: "editor@tokenstimes.com",
     availableLanguage: ["English", "Urdu"],
   },
   publishingPrinciples: `${BASE_URL}/about`,

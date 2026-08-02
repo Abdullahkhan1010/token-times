@@ -38,13 +38,13 @@ export default function ContactPage({ onNavigate }) {
             <h3 className="text-lg font-bold text-[#0C133D] border-b border-[#D4AF37]/40 pb-2">
               Newsroom Contacts
             </h3>
-            
+
             <div className="space-y-3 text-xs md:text-sm text-on-surface-variant">
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-[#D4AF37]" />
                 <div>
                   <p className="font-semibold text-[#0C133D]">Editorial Tips</p>
-                  <p className="text-xs text-on-surface-variant">editor@tokentimes.io</p>
+                  <p className="text-xs text-on-surface-variant">editor@tokenstimes.com</p>
                 </div>
               </div>
 

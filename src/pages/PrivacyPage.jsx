@@ -38,7 +38,7 @@ export default function PrivacyPage({ onNavigate }) {
 
         <h3 className="text-base font-bold text-[#0C133D]">4. Contact Us</h3>
         <p>
-          For privacy requests or data inquiries, contact <strong className="text-[#0C133D]">privacy@tokentimes.io</strong>.
+          For privacy requests or data inquiries, contact <strong className="text-[#0C133D]">privacy@tokenstimes.com</strong>.
         </p>
       </Reveal>
     </div>
