@@ -16,6 +16,7 @@ import OpinionPage from "./pages/OpinionPage";
 import MagazinePage from "./pages/MagazinePage";
 import KnowledgeHubPage from "./pages/KnowledgeHubPage";
 import RegulationsPage from "./pages/RegulationsPage";
+import ReitPage from "./pages/ReitPage";
 import ResearchPage from "./pages/ResearchPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import EventsPage from "./pages/EventsPage";
@@ -59,6 +60,9 @@ export default function App() {
       case "Policy & Regulation":
       case "Regulations":
         return <RegulationsPage onNavigate={changePage} />;
+      case "REIT":
+      case "Reit":
+        return <ReitPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
       case "Learn":
       case "Knowledge Hub":
         return <KnowledgeHubPage onNavigate={changePage} />;

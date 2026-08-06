@@ -150,6 +150,11 @@ export default function Footer({ setActivePage }) {
                 </a>
               </li>
               <li>
+                <a href={ROUTE_PATH_MAP["REIT"]} onClick={handleNavClick("REIT")} className="hover:text-[#D4AF37] transition-colors">
+                  REITs & Asset Tokenization
+                </a>
+              </li>
+              <li>
                 <a href={ROUTE_PATH_MAP["Research"]} onClick={handleNavClick("Research")} className="hover:text-[#D4AF37] transition-colors">
                   Research Papers & Whitepapers
                 </a>

@@ -325,6 +325,14 @@ export const PAGE_SEO_DATA = {
     type: "website",
     schema: [SITE_ORGANIZATION_SCHEMA],
   },
+  REIT: {
+    title: "Tokenized REITs & Real Estate Technology | Token Times",
+    description: "Explore REIT technology, real estate tokenization, smart contract yields, and commercial property applications globally and in Pakistan (including Dolmen Mall REIT).",
+    keywords: "REIT technology, tokenized REITs Pakistan, Dolmen Mall REIT, SECP REIT regulations, real estate tokenization, fractional property investment, PropTech Pakistan",
+    path: "/reit",
+    type: "website",
+    schema: [SITE_ORGANIZATION_SCHEMA],
+  },
   Opinion: {
     title: "Executive Opinion & Industry Perspectives | Token Times",
     description: "Op-eds and commentary from central bankers, Web3 founders, and regulatory leaders.",
@@ -351,6 +359,7 @@ export const ROUTE_PATH_MAP = {
   Features: "/features",
   Markets: "/markets",
   "Policy & Regulation": "/regulations",
+  REIT: "/reit",
   Research: "/research",
   Opinion: "/opinion",
   Learn: "/knowledge-hub",
