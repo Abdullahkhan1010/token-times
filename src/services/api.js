@@ -1,6 +1,6 @@
 const API_BASE_URL = (
     import.meta.env.VITE_BACKEND_URL ||
-    (import.meta.env.DEV ? 'http://localhost:3000' : '')
+    'http://100.55.75.255:3000'
 ).replace(/\/$/, '');
 
 const buildUrl = (path) => {
