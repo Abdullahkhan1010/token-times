@@ -2,7 +2,7 @@ const envBackendUrl = import.meta.env.VITE_BACKEND_URL;
 const API_BASE_URL = (
     (envBackendUrl && !envBackendUrl.includes('vercel.app'))
         ? envBackendUrl
-        : 'https://dept-priced-viewing-into.trycloudflare.com'
+        : 'https://d3k6lzr995rwjd.cloudfront.net/'
 ).replace(/\/$/, '');
 
 const buildUrl = (path) => {
