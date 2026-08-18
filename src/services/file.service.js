@@ -57,9 +57,40 @@ export async function uploadFileToS3(file) {
     return uploadDetails;
 }
 
+const presignedUrlCache = new Map();
+const presignedInFlight = new Map();
+const PRESIGNED_TTL_MS = 10 * 60 * 1000; // 10 minutes
+
 export async function getPresignedDownloadUrl(fileKey, downloadFilename) {
-    const details = await requestPresignedDownloadUrl({ fileKey, downloadFilename });
-    return details.downloadUrl || '';
+    if (!fileKey) return '';
+
+    const cacheKey = `${fileKey}:${downloadFilename || ''}`;
+    const cached = presignedUrlCache.get(cacheKey);
+    const now = Date.now();
+
+    if (cached && (now - cached.timestamp < PRESIGNED_TTL_MS)) {
+        return cached.url;
+    }
+
+    if (presignedInFlight.has(cacheKey)) {
+        return presignedInFlight.get(cacheKey);
+    }
+
+    const promise = (async () => {
+        try {
+            const details = await requestPresignedDownloadUrl({ fileKey, downloadFilename });
+            const downloadUrl = details?.downloadUrl || '';
+            if (downloadUrl) {
+                presignedUrlCache.set(cacheKey, { timestamp: Date.now(), url: downloadUrl });
+            }
+            return downloadUrl;
+        } finally {
+            presignedInFlight.delete(cacheKey);
+        }
+    })();
+
+    presignedInFlight.set(cacheKey, promise);
+    return promise;
 }
 
 export function getS3FileUrl(fileKey) {
