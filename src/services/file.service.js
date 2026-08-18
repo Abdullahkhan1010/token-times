@@ -61,17 +61,47 @@ const presignedUrlCache = new Map();
 const presignedInFlight = new Map();
 const PRESIGNED_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
+function getStoredS3Url(cacheKey) {
+    try {
+        const raw = sessionStorage.getItem(`s3_cache_${cacheKey}`);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (Date.now() - parsed.timestamp < PRESIGNED_TTL_MS) {
+            return parsed.url;
+        }
+    } catch (e) {}
+    return null;
+}
+
+function setStoredS3Url(cacheKey, url) {
+    try {
+        sessionStorage.setItem(`s3_cache_${cacheKey}`, JSON.stringify({
+            timestamp: Date.now(),
+            url,
+        }));
+    } catch (e) {}
+}
+
 export async function getPresignedDownloadUrl(fileKey, downloadFilename) {
     if (!fileKey) return '';
 
     const cacheKey = `${fileKey}:${downloadFilename || ''}`;
-    const cached = presignedUrlCache.get(cacheKey);
     const now = Date.now();
 
+    // 1. Check memory cache
+    const cached = presignedUrlCache.get(cacheKey);
     if (cached && (now - cached.timestamp < PRESIGNED_TTL_MS)) {
         return cached.url;
     }
 
+    // 2. Check sessionStorage
+    const stored = getStoredS3Url(cacheKey);
+    if (stored) {
+        presignedUrlCache.set(cacheKey, { timestamp: now, url: stored });
+        return stored;
+    }
+
+    // 3. Check in-flight requests
     if (presignedInFlight.has(cacheKey)) {
         return presignedInFlight.get(cacheKey);
     }
@@ -82,6 +112,7 @@ export async function getPresignedDownloadUrl(fileKey, downloadFilename) {
             const downloadUrl = details?.downloadUrl || '';
             if (downloadUrl) {
                 presignedUrlCache.set(cacheKey, { timestamp: Date.now(), url: downloadUrl });
+                setStoredS3Url(cacheKey, downloadUrl);
             }
             return downloadUrl;
         } finally {

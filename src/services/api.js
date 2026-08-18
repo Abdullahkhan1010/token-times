@@ -12,7 +12,34 @@ const buildUrl = (path) => {
 
 const apiCache = new Map();
 const inFlightRequests = new Map();
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+
+// Helper to get from sessionStorage
+function getStoredCache(url) {
+    try {
+        const raw = sessionStorage.getItem(`api_cache_${url}`);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (Date.now() - parsed.timestamp < CACHE_TTL_MS) {
+            return parsed.data;
+        }
+    } catch (e) {
+        // Ignore storage errors
+    }
+    return null;
+}
+
+// Helper to save to sessionStorage
+function setStoredCache(url, data) {
+    try {
+        sessionStorage.setItem(`api_cache_${url}`, JSON.stringify({
+            timestamp: Date.now(),
+            data,
+        }));
+    } catch (e) {
+        // Ignore storage errors
+    }
+}
 
 async function fetchAndParse(url, options) {
     const response = await fetch(url, {
@@ -50,22 +77,37 @@ export async function requestJson(path, options = {}) {
     const isCacheable = method === 'GET' && !options.body;
 
     if (isCacheable) {
-        const cached = apiCache.get(url);
+        // 1. Check memory cache
         const now = Date.now();
-
+        const cached = apiCache.get(url);
         if (cached && (now - cached.timestamp < CACHE_TTL_MS)) {
-            // Silently revalidate in background if older than 30s
             if (now - cached.timestamp > 30000 && !inFlightRequests.has(url)) {
                 fetchAndParse(url, options)
                     .then((freshData) => {
                         apiCache.set(url, { timestamp: Date.now(), data: freshData });
+                        setStoredCache(url, freshData);
                     })
                     .catch(() => {});
             }
             return cached.data;
         }
 
-        // Deduplicate simultaneous requests for the exact same URL
+        // 2. Check sessionStorage cache for instant reload (0ms)
+        const stored = getStoredCache(url);
+        if (stored) {
+            apiCache.set(url, { timestamp: now, data: stored });
+            if (!inFlightRequests.has(url)) {
+                fetchAndParse(url, options)
+                    .then((freshData) => {
+                        apiCache.set(url, { timestamp: Date.now(), data: freshData });
+                        setStoredCache(url, freshData);
+                    })
+                    .catch(() => {});
+            }
+            return stored;
+        }
+
+        // 3. Deduplicate in-flight network requests
         if (inFlightRequests.has(url)) {
             return inFlightRequests.get(url);
         }
@@ -73,6 +115,7 @@ export async function requestJson(path, options = {}) {
         const fetchPromise = fetchAndParse(url, options)
             .then((data) => {
                 apiCache.set(url, { timestamp: Date.now(), data });
+                setStoredCache(url, data);
                 inFlightRequests.delete(url);
                 return data;
             })

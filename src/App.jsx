@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Header from "./components/Header";
 import Navigation from "./components/Navigation";
@@ -6,6 +6,14 @@ import BreakingTicker from "./components/BreakingTicker";
 import Footer from "./components/Footer";
 import SEOHead from "./components/SEOHead";
 import { useRouteSync } from "./hooks/useRouteSync";
+
+import { getPublishedNews } from "./services/published-news.service";
+import { getRegulations } from "./services/regulation.service";
+import { getKnowlegeHubs } from "./services/knowlege-hub.service";
+import { getEvents } from "./services/event.service";
+import { getResearches } from "./services/research.service";
+import { getInterviews } from "./services/interview.service";
+import { getMagzines } from "./services/magzine.service";
 
 import HomePage from "./pages/HomePage";
 import NewsPage from "./pages/NewsPage";
@@ -31,6 +39,17 @@ export default function App() {
   const [activePage, setActivePage] = useState("Home");
   const [selectedArticle, setSelectedArticle] = useState(null);
   const changePage = useRouteSync(activePage, setActivePage);
+
+  useEffect(() => {
+    // Pre-warm data cache asynchronously on initial site mount
+    getPublishedNews().catch(() => {});
+    getRegulations().catch(() => {});
+    getKnowlegeHubs().catch(() => {});
+    getEvents().catch(() => {});
+    getResearches().catch(() => {});
+    getInterviews().catch(() => {});
+    getMagzines().catch(() => {});
+  }, []);
 
   const handleSelectArticle = (article) => {
     setSelectedArticle(article);
