@@ -1,6 +1,8 @@
+const envBackendUrl = import.meta.env.VITE_BACKEND_URL;
 const API_BASE_URL = (
-    import.meta.env.VITE_BACKEND_URL ||
-    'http://100.55.75.255:3000'
+    (envBackendUrl && !envBackendUrl.includes('vercel.app'))
+        ? envBackendUrl
+        : 'http://100.55.75.255:3000'
 ).replace(/\/$/, '');
 
 const buildUrl = (path) => {
