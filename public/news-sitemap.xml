@@ -3,7 +3,7 @@
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   
   <url>
-    <loc>https://tokentimes.io/news#sbp-virtual-assets-framework-2026</loc>
+    <loc>https://www.tokenstimes.com/news#sbp-virtual-assets-framework-2026</loc>
     <news:news>
       <news:publication>
         <news:name>Token Times</news:name>
@@ -15,7 +15,7 @@
   </url>
 
   <url>
-    <loc>https://tokentimes.io/news#secp-[#D4AF37]-tokenization-guidelines</loc>
+    <loc>https://www.tokenstimes.com/news#secp-[#D4AF37]-tokenization-guidelines</loc>
     <news:news>
       <news:publication>
         <news:name>Token Times</news:name>
@@ -27,7 +27,7 @@
   </url>
 
   <url>
-    <loc>https://tokentimes.io/news#global-cbdc-settlement-trial</loc>
+    <loc>https://www.tokenstimes.com/news#global-cbdc-settlement-trial</loc>
     <news:news>
       <news:publication>
         <news:name>Token Times</news:name>

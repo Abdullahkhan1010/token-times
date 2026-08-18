@@ -28,12 +28,24 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
       try {
         const data = await getPublishedNews();
         if (!active) return;
-        const published = data.filter((a) => a.status === "published");
+        const published = (Array.isArray(data) ? data : []).filter((a) => a.status === "published");
+        
+        // Render text and categories INSTANTLY
+        if (active) setBackendNews(published);
+
+        // Resolve images in background without blocking initial text render
         const resolved = await Promise.all(
-          published.map(async (art) => ({
-            ...art,
-            image: await ToHref(art.image, "news.jpg"),
-          }))
+          published.map(async (art) => {
+            if (!art.image || typeof art.image !== "string" || art.image.startsWith("http://") || art.image.startsWith("https://") || art.image.startsWith("data:")) {
+              return art;
+            }
+            try {
+              const resolvedImg = await ToHref(art.image, "news.jpg");
+              return { ...art, image: resolvedImg };
+            } catch (e) {
+              return art;
+            }
+          })
         );
         if (active) setBackendNews(resolved);
       } catch (err) {
@@ -43,7 +55,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
     return () => { active = false; };
   }, []);
 
-  const allNewsList = backendNews.length > 0 ? backendNews : newsPageData.articles;
+  const allNewsList = backendNews;
 
   const filteredArticles =
     selectedCat === "All"
@@ -57,34 +69,29 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
         });
 
   // Hero Lead Story
-  const leadStory = filteredArticles[0] || newsPageData.leadStory;
+  const leadStory = filteredArticles[0] || null;
 
   // Secondary Headlines Rail (4 items)
-  const secondaryHeadlines = filteredArticles.slice(1, 5).length > 0 ? filteredArticles.slice(1, 5) : [
-    { title: "State Bank of Pakistan Advances Digital Asset Regulatory Framework", approx_time_to_read: 4 },
-    { title: "SECP Sandbox Registrations Double Amid Institutional Crypto Demand", approx_time_to_read: 3 },
-    { title: "Dubai VARA Expands Virtual Asset Clearing Licenses for Regional Hubs", approx_time_to_read: 5 },
-    { title: "Institutional Custody Vaults Report Record Capital Allocations", approx_time_to_read: 4 },
-  ];
+  const secondaryHeadlines = filteredArticles.slice(1, 5);
 
   // 3-Across Story Cards Grid
-  const gridCards = filteredArticles.slice(5, 8).length > 0 ? filteredArticles.slice(5, 8) : newsPageData.articles.slice(0, 3);
+  const gridCards = filteredArticles.slice(5, 8);
 
   // Moderate Chronological Feed (capped at 5 items)
-  const feedArticles = filteredArticles.slice(8, 13).length > 0 ? filteredArticles.slice(8, 13) : filteredArticles.slice(0, 5);
+  const feedArticles = filteredArticles.slice(8, 13);
 
   // Generate NewsArticle schema for Lead Story
-  const leadArticleSchema = {
+  const leadArticleSchema = leadStory ? {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
-    headline: newsPageData.leadStory.title,
-    description: newsPageData.leadStory.summary,
-    image: [newsPageData.leadStory.img],
+    headline: leadStory.title,
+    description: leadStory.summary,
+    image: [leadStory.image || leadStory.img || ""],
     datePublished: "2026-07-29T14:30:00+05:00",
     dateModified: "2026-07-29T15:00:00+05:00",
     author: {
       "@type": "Person",
-      name: newsPageData.leadStory.author,
+      name: leadStory.author || "Editorial Desk",
     },
     publisher: {
       "@id": `${BASE_URL}/#organization`,
@@ -93,7 +100,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
       "@type": "WebPage",
       "@id": `${BASE_URL}/news`,
     },
-  };
+  } : undefined;
 
   return (
     <div className="space-y-8">
@@ -146,35 +153,37 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
       {/* Hero Section: Lead Story + Secondary Headlines Wire */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Lead Story */}
-        <Reveal
-          as="article"
-          onClick={() => onSelectArticle?.(leadStory)}
-          className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
-        >
-          <div className="relative w-full h-48 sm:h-80 md:h-96 overflow-hidden">
-            <img
-              src={leadStory.image || leadStory.img}
-              alt={leadStory.title}
-              className="img-fade img-scale w-full h-full object-cover"
-            />
-            <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/50 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
-              {formatTag(leadStory.category || leadStory.tag)}
-            </span>
-          </div>
-          <div className="p-4 sm:p-6">
-            <h2 className="font-headline-lg text-xl sm:text-2xl md:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight mb-3">
-              {leadStory.title}
-            </h2>
-            <p className="text-sm md:text-base text-on-surface-variant leading-relaxed mb-4 line-clamp-3">
-              {leadStory.summary}
-            </p>
-            <div className="flex items-center gap-3 text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40">
-              <span>By {leadStory.author || "News Desk"}</span>
-              <span>•</span>
-              <span>{leadStory.publish_date || leadStory.time || "Today"}</span>
+        {leadStory && (
+          <Reveal
+            as="article"
+            onClick={() => onSelectArticle?.(leadStory)}
+            className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
+          >
+            <div className="relative w-full h-48 sm:h-80 md:h-96 overflow-hidden">
+              <img
+                src={leadStory.image || leadStory.img}
+                alt={leadStory.title}
+                className="img-fade img-scale w-full h-full object-cover"
+              />
+              <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/50 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+                {formatTag(leadStory.category || leadStory.display_section)}
+              </span>
             </div>
-          </div>
-        </Reveal>
+            <div className="p-4 sm:p-6">
+              <h2 className="font-headline-lg text-xl sm:text-2xl md:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight mb-3">
+                {leadStory.title}
+              </h2>
+              <p className="text-sm md:text-base text-on-surface-variant leading-relaxed mb-4 line-clamp-3">
+                {leadStory.summary}
+              </p>
+              <div className="flex items-center gap-3 text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40">
+                <span>By {leadStory.author || "Editorial Desk"}</span>
+                <span>•</span>
+                <span>{leadStory.publish_date || "Today"}</span>
+              </div>
+            </div>
+          </Reveal>
+        )}
 
         {/* Secondary Headlines Rail (4 text-only headlines) */}
         <Reveal as="aside" className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col justify-start gap-3 shadow-sm">

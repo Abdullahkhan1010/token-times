@@ -26,9 +26,10 @@ import { postPublishedNews } from "../../services/published-news.service";
 import { uploadFileToS3 } from "../../services/file.service";
 import PageHeader from "./PageHeader";
 
-// 8 Editorial Categories acting as placement tags/destinations
+// 9 Editorial Categories acting as placement tags/destinations
 const CATEGORIES = [
   { id: "main_story", label: "Main Story", desc: "Hero top headline banner on homepage", icon: Newspaper },
+  { id: "top_story", label: "Top Story", desc: "Prominent Top Story section on homepage hero", icon: Star },
   { id: "featured_spotlight", label: "Featured Spotlight", desc: "Highlighted center spotlight story", icon: Sparkles },
   { id: "substories", label: "Substories", desc: "Supporting side stories grid", icon: Pin },
   { id: "editors_pick", label: "Editor's Pick", desc: "Curated executive editorial picks", icon: Star },
@@ -167,6 +168,7 @@ export default function CreateArticleAdmin({ onArticleCreated }) {
 
       const sectionMappings = {
         main_story: ["main_story"],
+        top_story: ["top_story", "top_stories"],
         featured_spotlight: ["featured_spotlight"],
         substories: ["substories", "sub_stories"],
         editors_pick: ["editors_pick", "editor_picks"],

@@ -58,27 +58,16 @@ export default function OpinionPage({ onNavigate, onSelectArticle }) {
   const leadOpEd = activeList[0] ? {
     title: activeList[0].interview_title,
     author: activeList[0].interviewee_name || "Guest Columnist",
-    image: activeList[0].interviewee_image || "https://lh3.googleusercontent.com/aida-public/AB6AXuAR67i1GMUUQ_oyR_5GozA4vj3C2nqaCmFIrNjEzg_A2wpiYYIDu1VC56djsNcxU9iddpbr_x1DxjaFLoZotbPzbAQJozUWrWQV6ncNQsDYVp6lKqgcHxbLRTH6mmxo9cdl4XiqpagWRNAWWT0ajH-SQtw1efhAK7HnpPoiv3ZUknZlFQt8TEc8S2uMPLwuBfq_fZuDAeHFygCKB6oqRDcBM5xsmpAuKvUvC0y3_4mSej7jkKfvPtGhZftGKCPHKjB9SpYNpfvLTzg",
-    summary: "Why enterprise-grade custody infrastructure and clear regulatory frameworks are essential for unlocking institutional digital asset capital.",
+    image: activeList[0].interviewee_image || "",
+    summary: activeList[0].summary || activeList[0].interview_title || "",
     tag: "EXECUTIVE OP-ED"
-  } : {
-    title: "Regulation is Not the Enemy of Innovation",
-    author: "Editorial Board & Guest Columnists",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAR67i1GMUUQ_oyR_5GozA4vj3C2nqaCmFIrNjEzg_A2wpiYYIDu1VC56djsNcxU9iddpbr_x1DxjaFLoZotbPzbAQJozUWrWQV6ncNQsDYVp6lKqgcHxbLRTH6mmxo9cdl4XiqpagWRNAWWT0ajH-SQtw1efhAK7HnpPoiv3ZUknZlFQt8TEc8S2uMPLwuBfq_fZuDAeHFygCKB6oqRDcBM5xsmpAuKvUvC0y3_4mSej7jkKfvPtGhZftGKCPHKjB9SpYNpfvLTzg",
-    summary: "Central banking leaders and Web3 founders analyze the path forward for digital asset governance and capital efficiency.",
-    tag: "FLAGSHIP OP-ED"
-  };
+  } : null;
 
-  const secondaryOpEds = activeList.slice(1, 5).length > 0 ? activeList.slice(1, 5).map(item => ({
+  const secondaryOpEds = activeList.slice(1, 5).map(item => ({
     title: item.interview_title,
     author: item.interviewee_name || "Guest Columnist",
     approx_time_to_read: 5
-  })) : [
-    { title: "Building Compliant Virtual Asset Corridors in South Asia", author: "Exchange CEO", approx_time_to_read: 5 },
-    { title: "Tax Treatment of Digital Assets: A Blueprint for Emerging Markets", author: "Tax Policy Director", approx_time_to_read: 6 },
-    { title: "The Sovereign CBDC Imperative: Central Bank Perspectives", author: "Monetary Economist", approx_time_to_read: 7 },
-    { title: "Zero-Knowledge Proofs as the Compliance Standard of 2026", author: "Web3 Technical Founder", approx_time_to_read: 4 }
-  ];
+  }));
 
   return (
     <div className="space-y-8">
@@ -118,35 +107,37 @@ export default function OpinionPage({ onNavigate, onSelectArticle }) {
 
       {/* Hero Section: Featured Op-Ed Lead */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <Reveal
-          as="article"
-          onClick={() => onSelectArticle?.(leadOpEd)}
-          className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
-        >
-          <div className="p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center border-b border-outline-variant/40 bg-surface-container-low">
-            <img src={leadOpEd.image} alt={leadOpEd.author} className="w-24 h-24 rounded-full object-cover border-4 border-[#D4AF37] shadow-md shrink-0" />
-            <div>
-              <span className="bg-[#0C133D] text-[#D4AF37] text-[10px] font-extrabold px-2.5 py-0.5 rounded uppercase tracking-wider mb-2 inline-block">
-                {leadOpEd.tag}
-              </span>
-              <h3 className="font-headline-lg text-lg sm:text-2xl font-bold text-[#0C133D]">
-                By {leadOpEd.author}
-              </h3>
-              <p className="text-xs text-on-surface-variant font-medium mt-1">Named Columnist & Industry Leader</p>
+        {leadOpEd && (
+          <Reveal
+            as="article"
+            onClick={() => onSelectArticle?.(leadOpEd)}
+            className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
+          >
+            <div className="p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center border-b border-outline-variant/40 bg-surface-container-low">
+              <img src={leadOpEd.image} alt={leadOpEd.author} className="w-24 h-24 rounded-full object-cover border-4 border-[#D4AF37] shadow-md shrink-0" />
+              <div>
+                <span className="bg-[#0C133D] text-[#D4AF37] text-[10px] font-extrabold px-2.5 py-0.5 rounded uppercase tracking-wider mb-2 inline-block">
+                  {leadOpEd.tag}
+                </span>
+                <h3 className="font-headline-lg text-lg sm:text-2xl font-bold text-[#0C133D]">
+                  By {leadOpEd.author}
+                </h3>
+                <p className="text-xs text-on-surface-variant font-medium mt-1">Named Columnist & Industry Leader</p>
+              </div>
             </div>
-          </div>
-          <div className="p-6">
-            <h2 className="font-headline-lg text-xl sm:text-2xl md:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight mb-3 italic">
-              "{leadOpEd.title}"
-            </h2>
-            <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
-              {leadOpEd.summary}
-            </p>
-            <span className="text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40 block">
-              Opinion & Analysis Column • Token Times
-            </span>
-          </div>
-        </Reveal>
+            <div className="p-6">
+              <h2 className="font-headline-lg text-xl sm:text-2xl md:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight mb-3 italic">
+                "{leadOpEd.title}"
+              </h2>
+              <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+                {leadOpEd.summary}
+              </p>
+              <span className="text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40 block">
+                Opinion & Analysis Column • Token Times
+              </span>
+            </div>
+          </Reveal>
+        )}
 
         {/* Secondary Op-Eds Rail */}
         <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-start gap-4 shadow-sm">

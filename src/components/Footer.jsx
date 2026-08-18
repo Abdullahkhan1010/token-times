@@ -150,6 +150,11 @@ export default function Footer({ setActivePage }) {
                 </a>
               </li>
               <li>
+                <a href={ROUTE_PATH_MAP["REIT"]} onClick={handleNavClick("REIT")} className="hover:text-[#D4AF37] transition-colors">
+                  REITs & Asset Tokenization
+                </a>
+              </li>
+              <li>
                 <a href={ROUTE_PATH_MAP["Research"]} onClick={handleNavClick("Research")} className="hover:text-[#D4AF37] transition-colors">
                   Research Papers & Whitepapers
                 </a>
@@ -243,16 +248,28 @@ export default function Footer({ setActivePage }) {
             <span className="text-white/80 font-medium">🇵🇰 Pakistan Edition</span>
           </div>
 
-          {/* Smooth Scroll Back to Top */}
-          <button
-            onClick={scrollToTop}
-            title="Back to Top"
-            aria-label="Back to Top"
-            className="flex items-center gap-1.5 bg-white/5 hover:bg-[#D4AF37] hover:text-[#0C133D] text-white/80 px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 transition-all"
-          >
-            <span>Back to Top</span>
-            <ArrowUp className="w-3.5 h-3.5" />
-          </button>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-3">
+            <a
+              href="/admin"
+              title="Admin Panel"
+              className="flex items-center gap-1.5 bg-white/5 hover:bg-[#D4AF37] hover:text-[#0C133D] text-white/80 px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 transition-all"
+            >
+              <Lock className="w-3.5 h-3.5" />
+              <span>Admin Dashboard</span>
+            </a>
+            
+            {/* Smooth Scroll Back to Top */}
+            <button
+              onClick={scrollToTop}
+              title="Back to Top"
+              aria-label="Back to Top"
+              className="flex items-center gap-1.5 bg-white/5 hover:bg-[#D4AF37] hover:text-[#0C133D] text-white/80 px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 transition-all"
+            >
+              <span>Back to Top</span>
+              <ArrowUp className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </footer>

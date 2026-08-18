@@ -23,23 +23,40 @@ export default function Interviews() {
             })
             .slice(0, 2);
 
-          for (const interview of sorted) {
-            if (interview.interviewee_image) {
-              const link = await ToHref(interview.interviewee_image, "interviewee.jpg");
-              interview.interviewee_image = link;
-            }
-          }
+          // Render text INSTANTLY
           setInterviewList(sorted);
+          setLoading(false);
+
+          // Resolve images in background
+          const resolved = await Promise.all(
+            sorted.map(async (interview) => {
+              if (
+                interview.interviewee_image &&
+                typeof interview.interviewee_image === "string" &&
+                !interview.interviewee_image.startsWith("http://") &&
+                !interview.interviewee_image.startsWith("https://") &&
+                !interview.interviewee_image.startsWith("data:")
+              ) {
+                try {
+                  const link = await ToHref(interview.interviewee_image, "interviewee.jpg");
+                  return { ...interview, interviewee_image: link };
+                } catch (e) {
+                  return interview;
+                }
+              }
+              return interview;
+            })
+          );
+
+          if (active) setInterviewList(resolved);
         } else {
           setInterviewList([]);
+          setLoading(false);
         }
-      }
-      catch (err) {
+      } catch (err) {
         console.error("Failed to fetch interviews", err);
         if (active) setInterviewList([]);
-      }
-      finally {
-        if (active) setLoading(false);
+        setLoading(false);
       }
     })();
 

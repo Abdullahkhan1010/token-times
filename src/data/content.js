@@ -5,6 +5,7 @@ export const navLinks = [
   "Features",
   "Markets",
   "Policy & Regulation",
+  "REIT",
   "Research",
   "Opinion",
   "Learn",

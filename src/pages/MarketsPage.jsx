@@ -80,21 +80,8 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
 
   const activeList = filteredArticles.length > 0 ? filteredArticles : (marketArticles.length > 0 ? marketArticles : articles);
 
-  const leadMarket = activeList[0] || {
-    title: "Institutional Inflows Surge Across Digital Asset Derivative Desks",
-    summary: "Commercial banks and asset managers allocate record capital to licensed OTC crypto liquidity pools ahead of regulatory frameworks.",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBgyzCbG60lvIFTQKg26XntSCOHuPXN-3VME8fauPPOKXhlpbiEwff1rA-d3SE1ZFowCZAbA77CvjbrmI4m99zr5DPnXgHsoBmiXATqCh3M2-xFNsSeX_yZXS88H6IBZSAmErDP6HnACV0bBeln1nOdbf3KnbWeLIzN6fv26kDv9qFUIG2EdbdBwkFkfQkhgZC9GCxqpB2AgyTB1IWyVebeAmupft1j6R7sEXRLOraMEL5Zd52dmOwKIDp7W1x1rZt-L2cTvQGNB2A",
-    author: "Markets Desk",
-    category: ["MARKETS LEAD"],
-    publish_date: "Live"
-  };
-
-  const secondaryMarketStories = activeList.slice(1, 5).length > 0 ? activeList.slice(1, 5) : [
-    { title: "Bitcoin Hashrate Touches All-Time High Following Difficulty Adjustment", approx_time_to_read: 3 },
-    { title: "Local Crypto Exchanges Integrate Layer-2 Networks for Faster Withdrawals", approx_time_to_read: 4 },
-    { title: "FBR Proposes 15% Flat Capital Gains Tax Framework for Digital Assets", approx_time_to_read: 5 },
-    { title: "State Bank CBDC Pilot Prepares Phase 2 Interbank Settlement Tests", approx_time_to_read: 4 },
-  ];
+  const leadMarket = activeList[0] || null;
+  const secondaryMarketStories = activeList.slice(1, 5);
 
   return (
     <div className="space-y-5 sm:space-y-8">
@@ -162,29 +149,31 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
 
       {/* Lead Story + Rail */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <Reveal
-          as="article"
-          onClick={() => onSelectArticle?.(leadMarket)}
-          className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
-        >
-          <div className="relative h-48 sm:h-72 md:h-96 overflow-hidden">
-            <img src={leadMarket.image || leadMarket.img} alt={leadMarket.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] text-xs font-extrabold px-3 py-1 rounded-full uppercase border border-[#D4AF37]/40">
-              MARKETS LEAD
-            </span>
-          </div>
-          <div className="p-4 sm:p-6">
-            <h2 className="font-headline-lg text-xl sm:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors mb-3">
-              {leadMarket.title}
-            </h2>
-            <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
-              {leadMarket.summary}
-            </p>
-            <span className="text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40 block">
-              By {leadMarket.author} • Live Markets
-            </span>
-          </div>
-        </Reveal>
+        {leadMarket && (
+          <Reveal
+            as="article"
+            onClick={() => onSelectArticle?.(leadMarket)}
+            className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
+          >
+            <div className="relative h-48 sm:h-72 md:h-96 overflow-hidden">
+              <img src={leadMarket.image || leadMarket.img} alt={leadMarket.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] text-xs font-extrabold px-3 py-1 rounded-full uppercase border border-[#D4AF37]/40">
+                MARKETS LEAD
+              </span>
+            </div>
+            <div className="p-4 sm:p-6">
+              <h2 className="font-headline-lg text-xl sm:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors mb-3">
+                {leadMarket.title}
+              </h2>
+              <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+                {leadMarket.summary}
+              </p>
+              <span className="text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40 block">
+                By {leadMarket.author} • Live Markets
+              </span>
+            </div>
+          </Reveal>
+        )}
 
         <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col justify-start gap-4 shadow-sm">
           <h3 className="font-headline-sm text-sm font-bold text-[#0C133D] border-b border-outline-variant pb-3 uppercase tracking-wider">

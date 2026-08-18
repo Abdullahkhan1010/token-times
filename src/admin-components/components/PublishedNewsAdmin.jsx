@@ -7,6 +7,7 @@ import PageHeader from "./PageHeader";
 
 const DISPLAY_SECTIONS = [
     { value: "main_story", label: "Main Story", desc: "Hero top headline banner on homepage", icon: Newspaper },
+    { value: "top_story", label: "Top Story", desc: "Prominent Top Story card on homepage hero", icon: Star },
     { value: "featured_spotlight", label: "Featured Spotlight", desc: "Highlighted center spotlight story", icon: Sparkles },
     { value: "sub_stories", label: "Substories", desc: "Supporting side stories grid", icon: Pin },
     { value: "editor_picks", label: "Editor's Pick", desc: "Curated executive editorial picks", icon: Star },

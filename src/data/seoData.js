@@ -3,7 +3,7 @@
  * Comprehensive metadata dictionary for all pages, routes, Open Graph, Twitter Cards, and JSON-LD schemas.
  */
 
-export const BASE_URL = "https://tokentimes.io";
+export const BASE_URL = "https://www.tokenstimes.com";
 
 export const DEFAULT_SEO = {
   siteName: "Token Times",
@@ -41,7 +41,7 @@ export const SITE_ORGANIZATION_SCHEMA = {
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "Editorial Desk",
-    email: "editor@tokentimes.io",
+    email: "editor@tokenstimes.com",
     availableLanguage: ["English", "Urdu"],
   },
   publishingPrinciples: `${BASE_URL}/about`,
@@ -120,7 +120,7 @@ export const PAGE_SEO_DATA = {
     ],
   },
   "Knowledge Hub": {
-    title: "Web3 & Digital Finance Knowledge Hub | Educational Guides",
+    title: "Digital Finance Knowledge Hub | Educational Guides",
     description:
       "Master virtual assets, blockchain protocols, zero-knowledge proofs, smart contract security, and compliance with curated guides by industry experts.",
     keywords:
@@ -325,6 +325,14 @@ export const PAGE_SEO_DATA = {
     type: "website",
     schema: [SITE_ORGANIZATION_SCHEMA],
   },
+  REIT: {
+    title: "Tokenized REITs & Real Estate Technology | Token Times",
+    description: "Explore REIT technology, real estate tokenization, smart contract yields, and commercial property applications globally and in Pakistan (including Dolmen Mall REIT).",
+    keywords: "REIT technology, tokenized REITs Pakistan, Dolmen Mall REIT, SECP REIT regulations, real estate tokenization, fractional property investment, PropTech Pakistan",
+    path: "/reit",
+    type: "website",
+    schema: [SITE_ORGANIZATION_SCHEMA],
+  },
   Opinion: {
     title: "Executive Opinion & Industry Perspectives | Token Times",
     description: "Op-eds and commentary from central bankers, Web3 founders, and regulatory leaders.",
@@ -351,6 +359,7 @@ export const ROUTE_PATH_MAP = {
   Features: "/features",
   Markets: "/markets",
   "Policy & Regulation": "/regulations",
+  REIT: "/reit",
   Research: "/research",
   Opinion: "/opinion",
   Learn: "/knowledge-hub",

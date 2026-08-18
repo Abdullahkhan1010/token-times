@@ -53,38 +53,38 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
       <div className="lg:col-span-3 order-3 lg:order-1 flex flex-col gap-3 h-full justify-between">
         {/* Top Story Header */}
         <div className="flex items-center justify-between border-b border-outline-variant/60 pb-1.5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 rounded-full max-w-full shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-[#D4AF37] flex-shrink-0" />
-            <span className="font-label-caps text-xs font-extrabold uppercase tracking-wider truncate">
-              Top Story
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#B22222] text-white border border-red-400/60 rounded-full max-w-full shadow-md">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-300 animate-pulse flex-shrink-0" />
+            <span className="font-label-caps text-xs font-black uppercase tracking-widest truncate text-white">
+              TOP STORY
             </span>
           </div>
         </div>
 
         {/* Top Story Card (Text-Only, Bigger & Prominent) */}
-        {topStory && (
+        {activeTopStory && (
           <Reveal
             as="article"
-            onClick={() => onSelectArticle?.(topStory)}
-            className="hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] p-4 sm:p-5 rounded-xl cursor-pointer shadow-md hover:border-[#D4AF37] transition-all relative flex flex-col justify-between flex-grow"
+            onClick={() => onSelectArticle?.(activeTopStory)}
+            className="hover-lift group bg-surface-container-lowest border-2 border-[#B22222] p-4 sm:p-5 rounded-xl cursor-pointer shadow-lg hover:border-[#D4AF37] transition-all relative flex flex-col justify-between flex-grow"
           >
             <div className="flex flex-col flex-grow justify-between">
               <div>
-                <span className="font-label-caps text-xs font-extrabold text-[#D4AF37] mb-2 block uppercase tracking-wide">
-                  {getSingleCleanTag(topStory, "MARKETS")}
+                <span className="font-label-caps text-xs font-black text-white bg-[#B22222] px-2.5 py-1 rounded mb-2.5 inline-block uppercase tracking-wider shadow-sm">
+                  {getSingleCleanTag(activeTopStory, "MARKETS")}
                 </span>
-                <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-base sm:text-lg lg:text-xl font-bold leading-snug mb-3">
-                  {topStory.title}
+                <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#B22222] transition-colors text-base sm:text-lg lg:text-xl font-extrabold leading-snug mb-3">
+                  {activeTopStory.title}
                 </h3>
-                {topStory.summary && (
-                  <p className="text-xs sm:text-sm text-on-surface-variant line-clamp-4 lg:line-clamp-5 mb-4 leading-relaxed">
-                    {topStory.summary}
+                {activeTopStory.summary && (
+                  <p className="text-xs sm:text-sm text-on-surface-variant line-clamp-4 lg:line-clamp-5 mb-4 leading-relaxed font-medium">
+                    {activeTopStory.summary}
                   </p>
                 )}
               </div>
               <div className="flex items-center justify-between font-data-tabular text-xs text-on-surface-variant pt-2.5 border-t border-outline-variant/40 mt-auto">
-                <span>By {topStory.author || "Editorial Desk"} • {topStory.time || `${topStory.approx_time_to_read || 4} mins read`}</span>
-                <span className="text-[#D4AF37] font-bold text-xs shrink-0 ml-2">Read Story →</span>
+                <span className="font-medium">By {activeTopStory.author || "Editorial Desk"} • {activeTopStory.time || `${activeTopStory.approx_time_to_read || 4} mins read`}</span>
+                <span className="text-[#B22222] font-black text-xs shrink-0 ml-2 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">Read Story →</span>
               </div>
             </div>
           </Reveal>

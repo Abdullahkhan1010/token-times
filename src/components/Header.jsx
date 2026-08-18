@@ -52,7 +52,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
         >
           <img alt="Token Times logo" className="w-7 h-7 shrink-0" src={logo} />
           <span className="font-display-lg text-lg font-bold tracking-tight text-[#0C133D] uppercase group-hover:text-[#0C133D] transition-colors">
-            Tokens Times
+            Token Times
           </span>
         </div>
 
@@ -82,7 +82,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
             >
               <img alt="Token Times logo" className="w-7 h-7 shrink-0" src={logo} />
               <span className="font-display-lg text-lg font-bold tracking-tight text-[#0C133D] uppercase">
-                Tokens Times
+                Token Times
               </span>
             </div>
 
@@ -124,7 +124,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
             {/* Bottom Footer Info inside Fullscreen Mobile Drawer */}
             <div className="pt-4 border-t border-outline-variant/40 text-xs text-on-surface-variant space-y-2">
               <span className="font-label-caps text-[11px] font-bold text-[#0C133D] block uppercase">
-                Tokens Times Intelligence Platform
+                Token Times Intelligence Platform
               </span>
               <p className="text-[11px] text-on-surface-variant leading-relaxed">
                 Pakistan's premiere platform for virtual asset regulations, digital currencies, and market analysis.

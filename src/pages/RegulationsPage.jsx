@@ -58,10 +58,6 @@ export default function RegulationsPage({ onNavigate }) {
         }
       } catch (err) {
         console.warn("Using static fallback for regulations:", err);
-        if (active) {
-          setBriefings(staticBriefings);
-          setTrackers(staticTrackers);
-        }
       }
     })();
 
@@ -82,10 +78,10 @@ export default function RegulationsPage({ onNavigate }) {
           SUPERVISORY FRAMEWORKS & COMPLIANCE INTELLIGENCE
         </span>
         <h1 className="font-display-lg text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0C133D]">
-          Pakistan & Global Digital Asset Regulatory Tracker
+          Policy & Regulatory Frameworks
         </h1>
         <p className="text-sm md:text-base text-on-surface-variant max-w-3xl leading-relaxed">
-          Real-time policy updates, supervisory frameworks, consultation papers, and compliance directives.
+          {hero.subtitle}
         </p>
       </Reveal>
 
