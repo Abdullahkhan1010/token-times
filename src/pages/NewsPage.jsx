@@ -28,12 +28,24 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
       try {
         const data = await getPublishedNews();
         if (!active) return;
-        const published = data.filter((a) => a.status === "published");
+        const published = (Array.isArray(data) ? data : []).filter((a) => a.status === "published");
+        
+        // Render text and categories INSTANTLY
+        if (active) setBackendNews(published);
+
+        // Resolve images in background without blocking initial text render
         const resolved = await Promise.all(
-          published.map(async (art) => ({
-            ...art,
-            image: await ToHref(art.image, "news.jpg"),
-          }))
+          published.map(async (art) => {
+            if (!art.image || typeof art.image !== "string" || art.image.startsWith("http://") || art.image.startsWith("https://") || art.image.startsWith("data:")) {
+              return art;
+            }
+            try {
+              const resolvedImg = await ToHref(art.image, "news.jpg");
+              return { ...art, image: resolvedImg };
+            } catch (e) {
+              return art;
+            }
+          })
         );
         if (active) setBackendNews(resolved);
       } catch (err) {

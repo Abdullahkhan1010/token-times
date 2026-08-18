@@ -31,10 +31,13 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
   const [featuredAnalysisData, setFeaturedAnalysisData] = React.useState([]);
 
   useEffect(() => {
+    let active = true;
     (async () => {
       try {
         const data = await getPublishedNews();
-        const publishedArticles = data
+        if (!active) return;
+
+        const publishedArticles = (Array.isArray(data) ? data : [])
           .filter((item) => item.status === "published")
           .sort((a, b) => {
             const dateA = new Date(a.publish_date || a.createdAt || 0);
@@ -42,47 +45,60 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
             return dateB - dateA;
           });
 
+        const updateSections = (articles) => {
+          if (!active) return;
+          const sections = articles.reduce((acc, article) => {
+            article.display_section?.forEach((section) => {
+              if (!acc[section]) acc[section] = [];
+              acc[section].push(article);
+            });
+            return acc;
+          }, {});
+
+          setMainStoryData(sections.main_story?.[0] ?? null);
+          setTopStoryData(sections.top_story?.[0] || sections.top_stories?.[0] || null);
+          setSubStoriesData(sections.sub_stories || sections.substories || []);
+          setFeaturedSpotlightData((sections.featured_spotlight ?? []).slice(0, 2));
+          setEditorsPickData((sections.editor_picks || sections.editors_pick || []).slice(0, 3));
+          setLatestNewsData((sections.latest_news ?? []).slice(0, 4));
+          setPakistanFocusData((sections.Pakistan_Focus || sections.pakistan_focus || []).slice(0, 2));
+          setGlobalHighlightsData((sections.Global_Highlight || sections.global_highlights || []).slice(0, 2));
+          setFeaturedAnalysisData((sections.featured_analysis ?? []).slice(0, 1));
+        };
+
+        // Render layout and text INSTANTLY
+        updateSections(publishedArticles);
+
+        // Resolve images in background without blocking initial text render
         const resolvedArticles = await Promise.all(
           publishedArticles.map(async (article) => {
-            const fileName = `${(article.title || "article")
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, "-") || "article"}.jpg`;
-
-            return {
-              ...article,
-              image: await ToHref(article.image, fileName),
-            };
+            if (!article.image || typeof article.image !== "string" || article.image.startsWith("http://") || article.image.startsWith("https://") || article.image.startsWith("data:")) {
+              return article;
+            }
+            try {
+              const fileName = `${(article.title || "article")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-") || "article"}.jpg`;
+              const resolvedImg = await ToHref(article.image, fileName);
+              return { ...article, image: resolvedImg };
+            } catch (e) {
+              return article;
+            }
           })
         );
 
-        const sections = resolvedArticles.reduce((acc, article) => {
-          article.display_section?.forEach((section) => {
-            if (!acc[section]) acc[section] = [];
-            acc[section].push(article);
-          });
-
-          return acc;
-        }, {});
-
-        setMainStoryData(sections.main_story?.[0] ?? null);
-        setTopStoryData(sections.top_story?.[0] || sections.top_stories?.[0] || null);
-        setSubStoriesData(sections.sub_stories || sections.substories || []);
-        // Only 2 featured spotlight
-        setFeaturedSpotlightData((sections.featured_spotlight ?? []).slice(0, 2));
-        // Only 3 editors picks
-        setEditorsPickData((sections.editor_picks || sections.editors_pick || []).slice(0, 3));
-        // Only 4 latest news
-        setLatestNewsData((sections.latest_news ?? []).slice(0, 4));
-        // Only 2 pakistan focus
-        setPakistanFocusData((sections.Pakistan_Focus || sections.pakistan_focus || []).slice(0, 2));
-        // Only 2 global highlights
-        setGlobalHighlightsData((sections.Global_Highlight || sections.global_highlights || []).slice(0, 2));
-        setFeaturedAnalysisData((sections.featured_analysis ?? []).slice(0, 1));
+        if (active) {
+          updateSections(resolvedArticles);
+        }
 
       } catch (err) {
         console.error("Failed to load published news for HomePage", err);
       }
     })();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (

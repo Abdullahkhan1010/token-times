@@ -17,24 +17,40 @@ export default function MagazineIssue() {
 
         if (Array.isArray(data) && data.length > 0) {
           const latest = data[0];
-          const link = await ToHref(latest.file, "magazine.pdf");
-          const imgLink = await ToHref(latest.cover_img, "magazine-cover.jpg");
 
+          // Render text INSTANTLY
           setMag({
-            cover: imgLink,
+            cover: typeof latest.cover_img === "string" && (latest.cover_img.startsWith("http://") || latest.cover_img.startsWith("https://")) ? latest.cover_img : "",
             issue: latest.issue_name || "Latest Issue",
             title: latest.title || "Token Times Magazine",
             desc: latest.description || "New magazine content will appear here soon.",
-            file: link,
+            file: typeof latest.file === "string" && (latest.file.startsWith("http://") || latest.file.startsWith("https://")) ? latest.file : "",
           });
+          setLoading(false);
+
+          // Resolve cover and file in background
+          const [link, imgLink] = await Promise.all([
+            latest.file ? ToHref(latest.file, "magazine.pdf").catch(() => "") : Promise.resolve(""),
+            latest.cover_img ? ToHref(latest.cover_img, "magazine-cover.jpg").catch(() => "") : Promise.resolve(""),
+          ]);
+
+          if (active) {
+            setMag({
+              cover: imgLink || latest.cover_img || "",
+              issue: latest.issue_name || "Latest Issue",
+              title: latest.title || "Token Times Magazine",
+              desc: latest.description || "New magazine content will appear here soon.",
+              file: link || latest.file || "",
+            });
+          }
         } else {
           setMag(null);
+          setLoading(false);
         }
       } catch (err) {
         console.error("Failed to load magazine issue", err);
         if (active) setMag(null);
-      } finally {
-        if (active) setLoading(false);
+        setLoading(false);
       }
     })();
 
