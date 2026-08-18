@@ -46,13 +46,68 @@ export async function uploadFileToPresignedUrl(uploadUrl, file) {
     return response;
 }
 
+/**
+ * Converts image files (JPEG, PNG, GIF, BMP, etc.) to WebP format in the browser before upload.
+ * Non-image files (PDFs, docs) pass through unchanged.
+ */
+export async function convertImageToWebP(file, quality = 0.85) {
+    if (!file || !(file instanceof File) || !file.type.startsWith('image/') || file.type === 'image/webp') {
+        return file;
+    }
+
+    return new Promise((resolve) => {
+        const img = new Image();
+        const objectUrl = URL.createObjectURL(file);
+
+        img.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth || img.width;
+            canvas.height = img.naturalHeight || img.height;
+
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                return resolve(file);
+            }
+
+            ctx.drawImage(img, 0, 0);
+
+            canvas.toBlob(
+                (blob) => {
+                    if (!blob) {
+                        return resolve(file);
+                    }
+                    const newFileName = file.name.replace(/\.[^/.]+$/, '') + '.webp';
+                    const webpFile = new File([blob], newFileName, {
+                        type: 'image/webp',
+                        lastModified: Date.now(),
+                    });
+                    resolve(webpFile);
+                },
+                'image/webp',
+                quality
+            );
+        };
+
+        img.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            resolve(file);
+        };
+
+        img.src = objectUrl;
+    });
+}
+
 export async function uploadFileToS3(file) {
+    // Automatically convert uploaded images (PNG, JPEG, etc.) to optimized WebP format
+    const targetFile = await convertImageToWebP(file);
+
     const uploadDetails = await requestPresignedUploadUrl({
-        filename: file.name,
-        contentType: file.type || 'application/octet-stream',
+        filename: targetFile.name,
+        contentType: targetFile.type || 'application/octet-stream',
     });
 
-    await uploadFileToPresignedUrl(uploadDetails.uploadUrl, file);
+    await uploadFileToPresignedUrl(uploadDetails.uploadUrl, targetFile);
 
     return uploadDetails;
 }
