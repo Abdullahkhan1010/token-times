@@ -33,7 +33,14 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
   const safeMainStory = mainStory && typeof mainStory === "object" ? mainStory : null;
   const safeTopStory = topStory && typeof topStory === "object" ? topStory : null;
 
-  const hasContent = safeFeaturedSpotlight.length > 0 || safeSubStories.length > 0 || Boolean(safeMainStory);
+  // Determine topStory to display (explicit topStory prop OR first article from substories)
+  const activeTopStory = safeTopStory || safeSubStories[0] || null;
+
+  // Determine sub-stories list (3 items)
+  const remainingSubStories = safeTopStory ? safeSubStories : safeSubStories.slice(1);
+  const subStoriesList = remainingSubStories.slice(0, 3);
+
+  const hasContent = safeFeaturedSpotlight.length > 0 || subStoriesList.length > 0 || Boolean(safeMainStory) || Boolean(activeTopStory);
 
   if (!hasContent) {
     return (
@@ -102,7 +109,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
 
         {/* 3 Compact Sub Stories */}
         <div className="flex flex-col gap-2">
-          {safeSubStories.map((s, i) => (
+          {subStoriesList.map((s, i) => (
             <Reveal
               key={s.title || i}
               as="article"
