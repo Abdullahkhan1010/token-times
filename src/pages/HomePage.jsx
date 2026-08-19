@@ -112,7 +112,6 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
       <Hero
         featuredspotlight={featuredSpotlightData}
         mainStory={mainStoryData}
-        topStory={topStoryData}
         substories={subStoriesData}
         topStory={topStoriesData[0]}
         onSelectArticle={onSelectArticle}

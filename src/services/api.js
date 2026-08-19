@@ -1,6 +1,6 @@
 const envBackendUrl = import.meta.env.VITE_BACKEND_URL;
 const API_BASE_URL = (
-    envBackendUrl || 'https://d3k6lzr995rwjd.cloudfront.net'
+    envBackendUrl || 'https://token-times-backend.vercel.app/'
 ).replace(/\/$/, '');
 
 const buildUrl = (path) => {
@@ -85,7 +85,7 @@ export async function requestJson(path, options = {}) {
                         apiCache.set(url, { timestamp: Date.now(), data: freshData });
                         setStoredCache(url, freshData);
                     })
-                    .catch(() => {});
+                    .catch(() => { });
             }
             return cached.data;
         }
@@ -100,7 +100,7 @@ export async function requestJson(path, options = {}) {
                         apiCache.set(url, { timestamp: Date.now(), data: freshData });
                         setStoredCache(url, freshData);
                     })
-                    .catch(() => {});
+                    .catch(() => { });
             }
             return stored;
         }
