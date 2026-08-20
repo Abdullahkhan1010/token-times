@@ -8,7 +8,7 @@ export async function getCryptoTrend(symbol = 'BTCUSDT', interval = '1h', limit 
 }
 
 export async function getCrypto24HourTickerData(symbol = 'BTCUSDT') {
-    return requestJson(`${CRYPTO_PATH}/ticker/24h?symbol=${encodeURIComponent(symbol)}`);
+    return requestJson(`${CRYPTO_PATH}/trend?symbol=${encodeURIComponent(symbol)}&interval=15m&limit=96`);
 }
 
 export async function getCryptoStats(symbol = 'BTCUSDT') {
