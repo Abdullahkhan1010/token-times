@@ -3,12 +3,22 @@ import SEOHead from "../components/SEOHead";
 import { ArrowLeft, Clock, Calendar, User, Share2, Bookmark, Check, Newspaper, Sparkles, Pin, Star, Zap, Building2, Globe, BookOpen } from "lucide-react";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToHref } from "../services/file.service";
+import { trackArticleClick } from "../services/tracker.service";
 
 export default function ArticleDetailPage({ article, onNavigate, onSelectArticle }) {
   const [copied, setCopied] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [relatedArticles, setRelatedArticles] = useState([]);
   const [resolvedImage, setResolvedImage] = useState(article?.image || "");
+
+  // Track article open click
+  useEffect(() => {
+    if (article) {
+      const artId = article._id || article.id;
+      const cat = Array.isArray(article.category) ? article.category[0] : article.category || "News";
+      trackArticleClick(artId, article.title, cat);
+    }
+  }, [article]);
 
   // Load image if path needs resolution & fetch related articles
   useEffect(() => {

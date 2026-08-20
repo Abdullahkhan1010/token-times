@@ -9,3 +9,5 @@ export * from './event.service';
 export * from './file.service';
 export * from './crypto.service';
 export * from './forex.service';
+export * from './auth.service';
+export * from './tracker.service';

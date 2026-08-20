@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Menu } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
 import AdminSideNav from "./AdminSideNav";
 import AdminHome from "./AdminHome";
 import AIQueue from "./AIQueue";
@@ -14,8 +14,12 @@ import InterviewsAdmin from "./InterviewsAdmin";
 import EventsAdmin from "./EventsAdmin";
 import PublishedNewsAdmin from "./PublishedNewsAdmin";
 import CreateArticleAdmin from "./CreateArticleAdmin";
+import ManageAdminsAdmin from "./ManageAdminsAdmin";
+import AdminLogin from "./AdminLogin";
 import { requestJson } from "../../services/api";
 import { getPublishedNews } from "../../services/published-news.service";
+import { isAuthenticated, logout, getCurrentUser } from "../../services/auth.service";
+
 const getInitialPage = () => {
   if (typeof window !== "undefined") {
     const hash = window.location.hash.replace(/^#\/?/, "");
@@ -31,7 +35,20 @@ const getInitialPage = () => {
  * All data is loaded from backend APIs
  */
 export default function AdminShell() {
+  const [isAuth, setIsAuth] = useState(isAuthenticated);
+  const [currentUser, setCurrentUser] = useState(getCurrentUser);
   const [page, setPageState] = useState(getInitialPage);
+
+  const handleLoginSuccess = (user) => {
+    setIsAuth(true);
+    setCurrentUser(user || getCurrentUser());
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsAuth(false);
+    setCurrentUser(null);
+  };
 
   const setPage = (newPage) => {
     setPageState(newPage);
@@ -59,21 +76,11 @@ export default function AdminShell() {
   const [published, setPublished] = useState([]);
   const [archived, setArchived] = useState([]);
   const [selectedDraft, setSelectedDraft] = useState(null);
-
-  // Analytics data placeholders
-  const [analyticsSummary, setAnalyticsSummary] = useState([
-    { label: "Published (30d)", value: "0", delta: "-" },
-    { label: "Pending Review", value: "0", delta: "-" },
-    { label: "Approval Rate", value: "0%", delta: "-" },
-    { label: "Avg. Time to Publish", value: "0h", delta: "-" },
-  ]);
-  const [articlesPerDay, setArticlesPerDay] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-  const [categoryBreakdown, setCategoryBreakdown] = useState([]);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
-
-
   useEffect(() => {
+    if (!isAuth) return;
+
     // Load published news
     let cancelled = false;
 
@@ -103,9 +110,14 @@ export default function AdminShell() {
     }
 
     async function loadPublished() {
-      const data = await getPublishedNews();
-      const filtered = data.filter((item) => item.status === "published");
-      setPublished(filtered);
+      try {
+        const data = await getPublishedNews();
+        if (cancelled) return;
+        const filtered = data.filter((item) => item.status === "published");
+        setPublished(filtered);
+      } catch (err) {
+        console.error('Could not load published news', err);
+      }
     }
 
     async function loadArchived() {
@@ -126,7 +138,7 @@ export default function AdminShell() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [isAuth]);
 
   const handleEditDraft = (id) => {
     const draft = queue.find(d => d.id === id || d._id === id);
@@ -238,6 +250,10 @@ export default function AdminShell() {
     }
   };
 
+  if (!isAuth) {
+    return <AdminLogin onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="bg-background text-on-background font-body-md min-h-screen flex flex-col lg:flex-row relative isolate overflow-x-hidden">
       <AdminSideNav
@@ -246,6 +262,8 @@ export default function AdminShell() {
         queueCount={queue.length}
         mobileOpen={mobileNavOpen}
         onClose={() => setMobileNavOpen(false)}
+        onLogout={handleLogout}
+        currentUser={currentUser}
       />
 
       <header className="sticky top-0 z-20 lg:hidden w-full border-b border-outline-variant bg-surface-bright/98 backdrop-blur px-margin-mobile py-3">
@@ -254,15 +272,26 @@ export default function AdminShell() {
             <p className="font-label-caps text-label-caps text-on-surface-variant">Admin Panel</p>
             <h2 className="font-headline-md text-headline-md text-primary">Token Times</h2>
           </div>
-          <button
-            type="button"
-            onClick={() => setMobileNavOpen(true)}
-            className="inline-flex items-center gap-2 rounded border border-outline-variant bg-surface-container-low px-3 py-2 font-label-caps text-label-caps text-on-surface-variant transition-colors hover:bg-surface-container-high"
-            aria-label="Open admin navigation"
-          >
-            <Menu size={18} />
-            Menu
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-1.5 rounded border border-error/30 bg-error-container/20 px-2.5 py-2 font-label-caps text-label-caps text-error transition-colors hover:bg-error hover:text-white"
+              title="Sign Out"
+              aria-label="Sign Out"
+            >
+              <LogOut size={16} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen(true)}
+              className="inline-flex items-center gap-2 rounded border border-outline-variant bg-surface-container-low px-3 py-2 font-label-caps text-label-caps text-on-surface-variant transition-colors hover:bg-surface-container-high"
+              aria-label="Open admin navigation"
+            >
+              <Menu size={18} />
+              Menu
+            </button>
+          </div>
         </div>
       </header>
 
@@ -327,10 +356,12 @@ export default function AdminShell() {
 
         {page === "events" && <EventsAdmin />}
 
+        {page === "manage-admins" && <ManageAdminsAdmin />}
+
         {page === "archived" && <Archived articles={archived} onRestore={handleRestore} />}
 
         {page === "analytics" && (
-          <Analytics summary={analyticsSummary} trend={articlesPerDay} categories={categoryBreakdown} />
+          <Analytics published={published} queue={queue} archived={archived} />
         )}
       </main>
     </div>

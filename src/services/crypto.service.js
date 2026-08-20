@@ -4,11 +4,11 @@ const CRYPTO_PATH = '/crypto';
 
 export async function getCryptoTrend(symbol = 'BTCUSDT', interval = '1h', limit = 100) {
     const query = new URLSearchParams({ symbol, interval, limit: String(limit) });
-    return requestJson(`${CRYPTO_PATH}?${query.toString()}`);
+    return requestJson(`${CRYPTO_PATH}/trend?${query.toString()}`);
 }
 
 export async function getCrypto24HourTickerData(symbol = 'BTCUSDT') {
-    return requestJson(`${CRYPTO_PATH}/ticker/24h?symbol=${encodeURIComponent(symbol)}`);
+    return requestJson(`${CRYPTO_PATH}/trend?symbol=${encodeURIComponent(symbol)}&interval=15m&limit=96`);
 }
 
 export async function getCryptoStats(symbol = 'BTCUSDT') {

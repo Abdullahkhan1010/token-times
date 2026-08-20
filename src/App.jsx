@@ -34,11 +34,25 @@ import ContactPage from "./pages/ContactPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import ArticleDetailPage from "./pages/ArticleDetailPage";
+import CryptoDetailPage from "./pages/CryptoDetailPage";
+import { trackPageVisit, trackArticleClick } from "./services/tracker.service";
 
 export default function App() {
   const [activePage, setActivePage] = useState("Home");
   const [selectedArticle, setSelectedArticle] = useState(null);
-  const changePage = useRouteSync(activePage, setActivePage);
+  const [selectedCryptoAsset, setSelectedCryptoAsset] = useState("BTC");
+  const changePage = useRouteSync(activePage, setActivePage, setSelectedCryptoAsset);
+
+  const handleNavigate = (page, options) => {
+    changePage(page, options);
+  };
+
+  // Track page visits
+  useEffect(() => {
+    if (activePage && activePage !== "ArticleDetail") {
+      trackPageVisit(activePage);
+    }
+  }, [activePage]);
 
   useEffect(() => {
     // Pre-warm data cache asynchronously on initial site mount
@@ -52,6 +66,13 @@ export default function App() {
   }, []);
 
   const handleSelectArticle = (article) => {
+    if (article) {
+      trackArticleClick(
+        article._id || article.id,
+        article.title,
+        Array.isArray(article.category) ? article.category[0] : article.category
+      );
+    }
     setSelectedArticle(article);
     changePage("ArticleDetail");
   };
@@ -62,48 +83,58 @@ export default function App() {
         return (
           <ArticleDetailPage
             article={selectedArticle}
-            onNavigate={changePage}
+            onNavigate={handleNavigate}
+            onSelectArticle={handleSelectArticle}
+          />
+        );
+      case "CryptoDetail":
+      case "Crypto Detail":
+      case "Crypto":
+        return (
+          <CryptoDetailPage
+            initialAsset={selectedCryptoAsset}
+            onNavigate={handleNavigate}
             onSelectArticle={handleSelectArticle}
           />
         );
       case "News":
-        return <NewsPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+        return <NewsPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
       case "Global":
-        return <GlobalPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+        return <GlobalPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
       case "Features":
-        return <FeaturesPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+        return <FeaturesPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
       case "Markets":
-        return <MarketsPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+        return <MarketsPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
       case "Opinion":
-        return <OpinionPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+        return <OpinionPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
       case "Policy & Regulation":
       case "Regulations":
-        return <RegulationsPage onNavigate={changePage} />;
+        return <RegulationsPage onNavigate={handleNavigate} />;
       case "REIT":
       case "Reit":
-        return <ReitPage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+        return <ReitPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
       case "Learn":
       case "Knowledge Hub":
-        return <KnowledgeHubPage onNavigate={changePage} />;
+        return <KnowledgeHubPage onNavigate={handleNavigate} />;
       case "Magazine":
-        return <MagazinePage onNavigate={changePage} />;
+        return <MagazinePage onNavigate={handleNavigate} />;
       case "Research":
-        return <ResearchPage onNavigate={changePage} />;
+        return <ResearchPage onNavigate={handleNavigate} />;
       case "Resources":
-        return <ResourcesPage onNavigate={changePage} />;
+        return <ResourcesPage onNavigate={handleNavigate} />;
       case "Events":
-        return <EventsPage onNavigate={changePage} />;
+        return <EventsPage onNavigate={handleNavigate} />;
       case "About":
-        return <AboutPage onNavigate={changePage} />;
+        return <AboutPage onNavigate={handleNavigate} />;
       case "Contact":
-        return <ContactPage onNavigate={changePage} />;
+        return <ContactPage onNavigate={handleNavigate} />;
       case "Privacy Policy":
-        return <PrivacyPage onNavigate={changePage} />;
+        return <PrivacyPage onNavigate={handleNavigate} />;
       case "Terms of Service":
-        return <TermsPage onNavigate={changePage} />;
+        return <TermsPage onNavigate={handleNavigate} />;
       case "Home":
       default:
-        return <HomePage onNavigate={changePage} onSelectArticle={handleSelectArticle} />;
+        return <HomePage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
     }
   };
 

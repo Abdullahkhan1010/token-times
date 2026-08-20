@@ -147,7 +147,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
         <div className="flex flex-col h-full min-h-0">
           <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Crypto Marketplace</h2>
           <div className="flex-1 flex flex-col min-h-0">
-            <MarketsDashboard />
+            <MarketsDashboard onNavigate={onNavigate} />
           </div>
         </div>
       </div>
