@@ -6,13 +6,16 @@ import { getPublishedNews } from "../services/published-news.service";
 import { ToHref } from "../services/file.service";
 import { getCryptoPrice, getCryptoStats } from "../services/crypto.service";
 import { TrendingUp, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react";
+import btcLogo from "../assets/logos/btc.png";
+import ethLogo from "../assets/logos/eth.png";
+import xrpLogo from "../assets/logos/xrp.png";
 
 const MARKET_TABS = ["All Markets", "Bitcoin & Majors", "CBDC Pilots", "Tokenized Assets", "DeFi & Yields"];
 
 const MARKET_COINS = [
-  { symbol: "BTCUSDT", asset: "BTC", name: "Bitcoin", pair: "BTC / USDT", logo: "/logos/btc.png" },
-  { symbol: "ETHUSDT", asset: "ETH", name: "Ethereum", pair: "ETH / USDT", logo: "/logos/eth.png" },
-  { symbol: "XRPUSDT", asset: "XRP", name: "Ripple", pair: "XRP / USDT", logo: "/logos/xrp.png" },
+  { symbol: "BTCUSDT", asset: "BTC", name: "Bitcoin", pair: "BTC / USDT", logo: btcLogo },
+  { symbol: "ETHUSDT", asset: "ETH", name: "Ethereum", pair: "ETH / USDT", logo: ethLogo },
+  { symbol: "XRPUSDT", asset: "XRP", name: "Ripple", pair: "XRP / USDT", logo: xrpLogo },
 ];
 
 export default function MarketsPage({ onNavigate, onSelectArticle }) {

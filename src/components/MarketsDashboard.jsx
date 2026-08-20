@@ -3,11 +3,14 @@ import Reveal from "./Reveal";
 import { getCrypto24HourTickerData, getCryptoPrice, getCryptoStats } from "../services/crypto.service";
 import { getForexRates } from "../services/forex.service";
 import { TrendingUp, TrendingDown, Activity, Sparkles, ArrowUpRight, ArrowDownRight, Radio } from "lucide-react";
+import btcLogo from "../assets/logos/btc.png";
+import ethLogo from "../assets/logos/eth.png";
+import xrpLogo from "../assets/logos/xrp.png";
 
 const MARKET_SYMBOLS = [
-  { symbol: "BTCUSDT", asset: "BTC", name: "Bitcoin", pair: "BTC / USDT", logo: "/logos/btc.png" },
-  { symbol: "ETHUSDT", asset: "ETH", name: "Ethereum", pair: "ETH / USDT", logo: "/logos/eth.png" },
-  { symbol: "XRPUSDT", asset: "XRP", name: "Ripple", pair: "XRP / USDT", logo: "/logos/xrp.png" },
+  { symbol: "BTCUSDT", asset: "BTC", name: "Bitcoin", pair: "BTC / USDT", logo: btcLogo },
+  { symbol: "ETHUSDT", asset: "ETH", name: "Ethereum", pair: "ETH / USDT", logo: ethLogo },
+  { symbol: "XRPUSDT", asset: "XRP", name: "Ripple", pair: "XRP / USDT", logo: xrpLogo },
 ];
 
 function normalizeChartData(trend) {
@@ -380,36 +383,42 @@ export function ForexRates() {
         ) : error && forexRates.length === 0 ? (
           <p className="px-3 py-6 text-center text-xs text-rose-600 font-medium">{error}</p>
         ) : (
-          forexRates.map((rate) => (
-            <div
-              key={rate.currency || rate.name}
-              className="grid grid-cols-12 items-center gap-2 px-2 py-2 sm:py-2.5 hover:bg-surface-container-low/60 rounded-lg transition-colors group"
-            >
-              <div className="col-span-5 flex items-center gap-1.5 min-w-0">
-                <span className="text-sm shrink-0">{rate.flag || "💱"}</span>
-                <div className="truncate">
-                  <span className="font-bold text-xs text-[#0C133D] group-hover:text-[#D4AF37] transition-colors block leading-tight truncate">
-                    {rate.currency}
+          forexRates.map((rate, idx) => {
+            const pairCode = rate.currency || (rate.base && rate.quote ? `${rate.base}/${rate.quote}` : rate.name || "FX");
+            const displayName = rate.fullName || rate.name || pairCode;
+            const buyingVal = Number(rate.buying ?? rate.rate ?? 0);
+            const sellingVal = Number(rate.selling ?? (buyingVal ? buyingVal * 1.008 : 0));
+
+            return (
+              <div
+                key={rate.currency || `${rate.base}-${rate.quote}` || idx}
+                className="grid grid-cols-12 items-center gap-2 px-2 py-2 sm:py-2.5 hover:bg-surface-container-low/60 rounded-lg transition-colors group"
+              >
+                <div className="col-span-5 flex items-center min-w-0">
+                  <div className="truncate">
+                    <span className="font-bold text-xs text-[#0C133D] group-hover:text-[#D4AF37] transition-colors block leading-tight truncate font-mono">
+                      {pairCode}
+                    </span>
+                    <span className="text-[9px] text-[#7F707A] leading-none block truncate">
+                      {displayName}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="col-span-4 text-right">
+                  <span className="font-sans font-bold text-xs sm:text-sm text-[#0C133D] tabular-nums">
+                    {buyingVal < 5 ? buyingVal.toFixed(4) : buyingVal.toFixed(2)}
                   </span>
-                  <span className="text-[9px] text-[#7F707A] leading-none block truncate">
-                    {rate.fullName || rate.name}
+                </div>
+
+                <div className="col-span-3 text-right">
+                  <span className="font-sans text-[11px] sm:text-xs font-semibold text-[#8F7418] tabular-nums">
+                    {sellingVal < 5 ? sellingVal.toFixed(4) : sellingVal.toFixed(2)}
                   </span>
                 </div>
               </div>
-
-              <div className="col-span-4 text-right">
-                <span className="font-sans font-bold text-xs sm:text-sm text-[#0C133D] tabular-nums">
-                  Rs. {Number(rate.buying || rate.rate || 0).toFixed(2)}
-                </span>
-              </div>
-
-              <div className="col-span-3 text-right">
-                <span className="font-sans text-[11px] sm:text-xs font-semibold text-[#8F7418] tabular-nums">
-                  {Number(rate.selling || (rate.buying || rate.rate || 0) * 1.008).toFixed(2)}
-                </span>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </Reveal>

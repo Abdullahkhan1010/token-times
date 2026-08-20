@@ -15,11 +15,14 @@ import {
   Zap,
   Info
 } from "lucide-react";
+import btcLogo from "../assets/logos/btc.png";
+import ethLogo from "../assets/logos/eth.png";
+import xrpLogo from "../assets/logos/xrp.png";
 
 const CRYPTO_COINS = [
-  { symbol: "BTCUSDT", asset: "BTC", name: "Bitcoin", pair: "BTC / USDT", logo: "/logos/btc.png", color: "#F7931A" },
-  { symbol: "ETHUSDT", asset: "ETH", name: "Ethereum", pair: "ETH / USDT", logo: "/logos/eth.png", color: "#627EEA" },
-  { symbol: "XRPUSDT", asset: "XRP", name: "Ripple", pair: "XRP / USDT", logo: "/logos/xrp.png", color: "#23292F" },
+  { symbol: "BTCUSDT", asset: "BTC", name: "Bitcoin", pair: "BTC / USDT", logo: btcLogo, color: "#F7931A" },
+  { symbol: "ETHUSDT", asset: "ETH", name: "Ethereum", pair: "ETH / USDT", logo: ethLogo, color: "#627EEA" },
+  { symbol: "XRPUSDT", asset: "XRP", name: "Ripple", pair: "XRP / USDT", logo: xrpLogo, color: "#23292F" },
 ];
 
 const TIMEFRAMES = [
