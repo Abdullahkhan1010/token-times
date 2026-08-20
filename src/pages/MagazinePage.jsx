@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
-import { magazinePageData } from "../data/pagesData";
+
 import { getMagzines } from "../services/magzine.service";
 import { ToHref } from "../services/file.service";
 
@@ -16,7 +16,7 @@ export default function MagazinePage({ onNavigate }) {
     description: "",
     file: "",
   });
-  const [pastIssues, setPastIssues] = useState();
+  const [pastIssues, setPastIssues] = useState([]);
   const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {

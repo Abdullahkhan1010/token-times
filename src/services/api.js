@@ -1,6 +1,6 @@
 const envBackendUrl = import.meta.env.VITE_BACKEND_URL;
 const API_BASE_URL = (
-    envBackendUrl || 'https://token-times-backend.vercel.app/'
+    envBackendUrl || ''
 ).replace(/\/$/, '');
 
 const buildUrl = (path) => {

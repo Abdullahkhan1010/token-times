@@ -29,8 +29,8 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
       try {
         const data = await getPublishedNews();
         if (!active) return;
-        const published = data.filter((a) => a.status === "published");
-        
+        const published = (Array.isArray(data) ? data : []).filter((a) => a.status === "published");
+
         const resolved = await Promise.all(
           published.map(async (art) => ({
             ...art,
@@ -68,12 +68,12 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
   const filteredArticles = selectedRegion === "All Regions"
     ? globalArticles
     : globalArticles.filter((a) => {
-        const catArray = Array.isArray(a.category) ? a.category : [a.category || ""];
-        const secArray = Array.isArray(a.display_section) ? a.display_section : [];
-        const allTags = [...catArray, ...secArray].map((t) => String(t).toLowerCase().replace(/_/g, " "));
-        const target = selectedRegion.toLowerCase();
-        return allTags.some((t) => t.includes(target) || target.includes(t));
-      });
+      const catArray = Array.isArray(a.category) ? a.category : [a.category || ""];
+      const secArray = Array.isArray(a.display_section) ? a.display_section : [];
+      const allTags = [...catArray, ...secArray].map((t) => String(t).toLowerCase().replace(/_/g, " "));
+      const target = selectedRegion.toLowerCase();
+      return allTags.some((t) => t.includes(target) || target.includes(t));
+    });
 
   const activeList = filteredArticles.length > 0 ? filteredArticles : (globalArticles.length > 0 ? globalArticles : articles);
 
@@ -114,11 +114,10 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
             role="tab"
             aria-selected={selectedRegion === reg}
             onClick={() => setSelectedRegion(reg)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap border ${
-              selectedRegion === reg
-                ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] shadow-sm font-extrabold"
-                : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37] hover:text-[#0C133D]"
-            }`}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap border ${selectedRegion === reg
+              ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] shadow-sm font-extrabold"
+              : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37] hover:text-[#0C133D]"
+              }`}
           >
             {reg}
           </button>
@@ -263,26 +262,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
 
         {/* Persistent Sidebar */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Trending Box */}
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 space-y-4 shadow-sm">
-            <h3 className="font-headline-sm text-sm font-bold text-[#0C133D] border-b border-outline-variant pb-2 uppercase tracking-wider">
-              Trending International
-            </h3>
-            <div className="space-y-3">
-              {[
-                "UAE VARA Expands Virtual Asset Licensing Cohort",
-                "European Central Bank Progresses CBDC Phase 2",
-                "Asian Banks Test Tokenized Commercial Paper",
-              ].map((item, idx) => (
-                <div key={idx} className="flex gap-3 items-start border-b border-outline-variant/40 pb-2.5 last:border-none">
-                  <span className="font-display-lg text-lg font-bold text-[#D4AF37]">0{idx + 1}</span>
-                  <h4 className="text-xs font-semibold text-[#0C133D] hover:text-[#D4AF37] transition-colors cursor-pointer">
-                    {item}
-                  </h4>
-                </div>
-              ))}
-            </div>
-          </div>
+
 
           {/* Newsletter Box */}
           <div className="bg-surface-container-lowest border border-outline-variant border-t-4 border-t-[#D4AF37] rounded-xl p-5 space-y-3 shadow-sm">

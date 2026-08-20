@@ -28,7 +28,7 @@ import ReitPage from "./pages/ReitPage";
 import ResearchPage from "./pages/ResearchPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import EventsPage from "./pages/EventsPage";
-import TechnologiesPage from "./pages/TechnologiesPage";
+
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import PrivacyPage from "./pages/PrivacyPage";
@@ -42,13 +42,13 @@ export default function App() {
 
   useEffect(() => {
     // Pre-warm data cache asynchronously on initial site mount
-    getPublishedNews().catch(() => {});
-    getRegulations().catch(() => {});
-    getKnowlegeHubs().catch(() => {});
-    getEvents().catch(() => {});
-    getResearches().catch(() => {});
-    getInterviews().catch(() => {});
-    getMagzines().catch(() => {});
+    getPublishedNews().catch(() => { });
+    getRegulations().catch(() => { });
+    getKnowlegeHubs().catch(() => { });
+    getEvents().catch(() => { });
+    getResearches().catch(() => { });
+    getInterviews().catch(() => { });
+    getMagzines().catch(() => { });
   }, []);
 
   const handleSelectArticle = (article) => {
@@ -93,8 +93,6 @@ export default function App() {
         return <ResourcesPage onNavigate={changePage} />;
       case "Events":
         return <EventsPage onNavigate={changePage} />;
-      case "Technologies":
-        return <TechnologiesPage onNavigate={changePage} />;
       case "About":
         return <AboutPage onNavigate={changePage} />;
       case "Contact":

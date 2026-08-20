@@ -3,15 +3,14 @@ import { Download, FileText, Gavel, CheckCircle2 } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
-import { regulationsPageData } from "../data/pagesData";
 import { getRegulations } from "../services/regulation.service";
 import { ToHref } from "../services/file.service";
 
 export default function RegulationsPage({ onNavigate }) {
-  const { hero, trackers: staticTrackers, briefings: staticBriefings } = regulationsPageData;
 
-  const [trackers, setTrackers] = useState(staticTrackers);
-  const [briefings, setBriefings] = useState(staticBriefings);
+
+  const [trackers, setTrackers] = useState([]);
+  const [briefings, setBriefings] = useState([]);
 
   useEffect(() => {
     let active = true;
@@ -36,7 +35,7 @@ export default function RegulationsPage({ onNavigate }) {
           }
 
           const mappedBriefings = sorted.map((r) => ({
-            authority: r.authority || "Regulatory Body",
+            authority: r.authority,
             title: r.title,
             desc: `Directive issued on ${r.publish_date || "Recent"}. Download legal compliance text.`,
             format: r.file ? "PDF Document" : "Official Directives",
@@ -44,18 +43,18 @@ export default function RegulationsPage({ onNavigate }) {
           }));
 
           const mappedTrackers = sorted.map((r) => ({
-            authority: r.authority || "SBP / SECP",
+            authority: r.authority,
             framework: r.title,
             status: "Active",
-            impact: "High Compliance Impact",
-            lastUpdate: r.publish_date || "2026",
+
+            lastUpdate: r.publish_date,
           }));
 
           setBriefings(mappedBriefings);
           setTrackers(mappedTrackers);
         } else {
-          setBriefings(staticBriefings);
-          setTrackers(staticTrackers);
+          setBriefings([]);
+          setTrackers([]);
         }
       } catch (err) {
         console.warn("Using static fallback for regulations:", err);
@@ -107,7 +106,7 @@ export default function RegulationsPage({ onNavigate }) {
                 <th className="py-3 px-4">Authority</th>
                 <th className="py-3 px-4">Regulatory Framework</th>
                 <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Impact</th>
+
                 <th className="py-3 px-4">Last Update</th>
               </tr>
             </thead>
@@ -121,7 +120,7 @@ export default function RegulationsPage({ onNavigate }) {
                       {row.status}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 font-medium text-on-surface-variant">{row.impact}</td>
+
                   <td className="py-3.5 px-4 text-on-surface-variant">{row.lastUpdate}</td>
                 </tr>
               ))}

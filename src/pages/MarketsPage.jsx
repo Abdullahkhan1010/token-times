@@ -37,7 +37,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
       try {
         const data = await getPublishedNews();
         if (!active) return;
-        const published = data.filter((a) => a.status === "published");
+        const published = (Array.isArray(data) ? data : []).filter((a) => a.status === "published");
         const resolved = await Promise.all(
           published.map(async (art) => ({
             ...art,
@@ -71,12 +71,12 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
   const filteredArticles = selectedTab === "All Markets"
     ? marketArticles
     : marketArticles.filter((a) => {
-        const catArray = Array.isArray(a.category) ? a.category : [a.category || ""];
-        const secArray = Array.isArray(a.display_section) ? a.display_section : [];
-        const allTags = [...catArray, ...secArray].map((t) => String(t).toLowerCase().replace(/_/g, " "));
-        const target = selectedTab.toLowerCase();
-        return allTags.some((t) => t.includes(target) || target.includes(t));
-      });
+      const catArray = Array.isArray(a.category) ? a.category : [a.category || ""];
+      const secArray = Array.isArray(a.display_section) ? a.display_section : [];
+      const allTags = [...catArray, ...secArray].map((t) => String(t).toLowerCase().replace(/_/g, " "));
+      const target = selectedTab.toLowerCase();
+      return allTags.some((t) => t.includes(target) || target.includes(t));
+    });
 
   const activeList = filteredArticles.length > 0 ? filteredArticles : (marketArticles.length > 0 ? marketArticles : articles);
 
@@ -136,11 +136,10 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
           <button
             key={tab}
             onClick={() => setSelectedTab(tab)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
-              selectedTab === tab
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${selectedTab === tab
                 ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] font-extrabold"
                 : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37]"
-            }`}
+              }`}
           >
             {tab}
           </button>

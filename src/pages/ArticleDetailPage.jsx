@@ -25,8 +25,8 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
 
       try {
         const allData = await getPublishedNews();
-        const published = allData.filter((a) => a.status === "published" && (a._id || a.id) !== (article?._id || article?.id));
-        
+        const published = (Array.isArray(allData) ? allData : []).filter((a) => a.status === "published" && (a._id || a.id) !== (article?._id || article?.id));
+
         const resolvedList = await Promise.all(
           published.slice(0, 3).map(async (item) => ({
             ...item,
@@ -66,10 +66,10 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
 
   const publishDateStr = article.publish_date || article.createdAt
     ? new Date(article.publish_date || article.createdAt).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric"
-      })
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    })
     : "Recently Published";
 
   const categories = Array.isArray(article.category) ? article.category : [article.category || "General News"];
@@ -104,9 +104,8 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
             </button>
             <button
               onClick={() => setBookmarked(!bookmarked)}
-              className={`p-1.5 rounded-lg border border-outline-variant transition-colors ${
-                bookmarked ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37]" : "hover:bg-surface-container-low text-on-surface-variant"
-              }`}
+              className={`p-1.5 rounded-lg border border-outline-variant transition-colors ${bookmarked ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37]" : "hover:bg-surface-container-low text-on-surface-variant"
+                }`}
               title="Bookmark Article"
             >
               <Bookmark size={15} />

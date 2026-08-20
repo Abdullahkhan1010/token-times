@@ -3,10 +3,10 @@ import { CheckSquare, Calculator, Code, FileText, ArrowRight } from "lucide-reac
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
-import { resourcesPageData } from "../data/pagesData";
+
 
 export default function ResourcesPage({ onNavigate }) {
-  const { vaspDirectory, tools } = resourcesPageData;
+
 
   const getIcon = (iconName) => {
     switch (iconName) {
