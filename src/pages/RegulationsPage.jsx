@@ -4,7 +4,7 @@ import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getRegulations } from "../services/regulation.service";
-import { ToHref } from "../services/file.service";
+import { formatShortDate } from "../components/RegulatoryUpdates";
 
 export default function RegulationsPage({ onNavigate }) {
 
@@ -34,20 +34,22 @@ export default function RegulationsPage({ onNavigate }) {
             }
           }
 
-          const mappedBriefings = sorted.map((r) => ({
-            authority: r.authority,
-            title: r.title,
-            desc: `Directive issued on ${r.publish_date || "Recent"}. Download legal compliance text.`,
-            format: r.file ? "PDF Document" : "Official Directives",
-            file: r.file,
-          }));
+          const mappedBriefings = sorted.map((r) => {
+            const shortDate = formatShortDate(r.publish_date || r.createdAt);
+            return {
+              authority: r.authority,
+              title: r.title,
+              desc: `Directive issued on ${shortDate}. Download legal compliance text.`,
+              format: r.file ? "PDF Document" : "Official Directives",
+              file: r.file,
+            };
+          });
 
           const mappedTrackers = sorted.map((r) => ({
             authority: r.authority,
             framework: r.title,
             status: "Active",
-
-            lastUpdate: r.publish_date,
+            lastUpdate: formatShortDate(r.publish_date || r.createdAt),
           }));
 
           setBriefings(mappedBriefings);

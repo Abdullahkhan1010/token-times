@@ -12,6 +12,21 @@ const STATUS_STYLES = {
   "Under Review": "bg-surface-container-low text-on-surface-variant border-outline-variant",
 };
 
+export function formatShortDate(dateStr) {
+  if (!dateStr || dateStr === "Recent") return "Recent";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+}
+
 function normalizeRegulations(data, limit = 5) {
   if (!Array.isArray(data)) return [];
 
@@ -22,15 +37,18 @@ function normalizeRegulations(data, limit = 5) {
       return dateB - dateA;
     })
     .slice(0, limit)
-    .map((regulation) => ({
-      _id: regulation._id || regulation.id || "",
-      title: regulation.title || "Untitled regulation",
-      authority: regulation.authority || "Regulatory Desk",
-      publish_date: regulation.publish_date || "Recent",
-      summary: regulation.summary || `Authority: ${regulation.authority || "Regulatory Desk"} • Date: ${regulation.publish_date || "Recent"}`,
-      icon: regulation.icon || "gavel",
-      status: regulation.status || "Active",
-    }));
+    .map((regulation) => {
+      const formattedDate = formatShortDate(regulation.publish_date || regulation.createdAt);
+      return {
+        _id: regulation._id || regulation.id || "",
+        title: regulation.title || "Untitled regulation",
+        authority: regulation.authority || "Regulatory Desk",
+        publish_date: formattedDate,
+        summary: regulation.summary || `Authority: ${regulation.authority || "Regulatory Desk"} • Date: ${formattedDate}`,
+        icon: regulation.icon || "gavel",
+        status: regulation.status || "Active",
+      };
+    });
 }
 
 export function RegulatoryBriefings({ onNavigate }) {

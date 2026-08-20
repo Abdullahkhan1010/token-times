@@ -1,6 +1,6 @@
 const envBackendUrl = import.meta.env.VITE_BACKEND_URL;
 const API_BASE_URL = (
-    envBackendUrl || 'http://localhost:3000/'
+    envBackendUrl || 'https://token-times-backend.vercel.app/'
 ).replace(/\/$/, '');
 
 const buildUrl = (path) => {
@@ -39,13 +39,27 @@ function setStoredCache(url, data) {
     }
 }
 
-async function fetchAndParse(url, options) {
+const AUTH_TOKEN_KEY = "token_times_admin_auth_token";
+
+function getStoredAuthToken() {
+    try {
+        return localStorage.getItem(AUTH_TOKEN_KEY) || sessionStorage.getItem(AUTH_TOKEN_KEY) || null;
+    } catch {
+        return null;
+    }
+}
+
+async function fetchAndParse(url, options = {}) {
+    const token = getStoredAuthToken();
+    const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        ...(options.headers || {}),
+    };
+
     const response = await fetch(url, {
-        headers: {
-            'Content-Type': 'application/json',
-            ...(options.headers || {}),
-        },
         ...options,
+        headers,
     });
 
     if (!response.ok) {
@@ -72,7 +86,7 @@ export async function requestJson(path, options = {}) {
         throw new Error('API backend URL is not configured (VITE_BACKEND_URL missing)');
     }
 
-    const isCacheable = method === 'GET' && !options.body;
+    const isCacheable = method === 'GET' && !options.body && !options.skipCache && !options.noCache;
 
     if (isCacheable) {
         // 1. Check memory cache

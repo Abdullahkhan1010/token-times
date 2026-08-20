@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit, PenTool } from "lucide-react";
+import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit, PenTool, LogOut, ExternalLink, Shield, UserCheck } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", icon: Home },
@@ -17,7 +17,7 @@ const NAV_ITEMS = [
   { key: "analytics", label: "Analytics", icon: BarChart3 },
 ];
 
-export default function AdminSideNav({ active, onNavigate, queueCount = 0, mobileOpen = false, onClose }) {
+export default function AdminSideNav({ active, onNavigate, queueCount = 0, mobileOpen = false, onClose, onLogout, currentUser }) {
   return (
     <>
       {mobileOpen && (
@@ -48,7 +48,7 @@ export default function AdminSideNav({ active, onNavigate, queueCount = 0, mobil
           </button>
         </div>
 
-        <div className="flex-1 flex flex-col gap-1 px-2">
+        <div className="flex-1 flex flex-col gap-1 px-2 overflow-y-auto">
           {NAV_ITEMS.map(({ key, label, icon: Icon }) => {
             const isActive = active === key;
             return (
@@ -76,14 +76,50 @@ export default function AdminSideNav({ active, onNavigate, queueCount = 0, mobil
           })}
         </div>
 
-        <div className="px-gutter mt-auto">
+        <div className="px-gutter mt-auto pt-3 border-t border-outline-variant/60 flex flex-col gap-2">
+          {/* Subtle Bottom Manage Admins link */}
+          <button
+            type="button"
+            onClick={() => {
+              onNavigate?.("manage-admins");
+              onClose?.();
+            }}
+            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded text-xs transition-colors text-left ${
+              active === "manage-admins"
+                ? "bg-surface-container-high text-primary font-bold border-l-2 border-accent"
+                : "text-on-surface-variant/80 hover:text-primary hover:bg-surface-container-low"
+            }`}
+          >
+            <UserCheck size={14} className="text-on-surface-variant/70 shrink-0" />
+            <span className="font-medium text-[11px] tracking-wide">Manage Admins</span>
+          </button>
+
+          {currentUser && (
+            <div className="flex items-center gap-2 px-1 py-0.5 text-xs text-on-surface-variant/90">
+              <Shield className="w-3 h-3 text-accent shrink-0" />
+              <span className="truncate font-medium text-[11px]">{currentUser.username || currentUser.email || "Admin"}</span>
+            </div>
+          )}
+
           <button
             type="button"
             onClick={() => window.location.assign("/")}
-            className="w-full bg-primary text-on-primary font-label-caps text-label-caps py-3 px-4 rounded hover:opacity-90 transition-opacity"
+            className="w-full flex items-center justify-center gap-2 bg-surface-container-high text-primary font-label-caps text-label-caps py-2.5 px-3 rounded hover:bg-surface-container-highest transition-colors border border-outline-variant"
           >
+            <ExternalLink size={14} />
             View Live Site
           </button>
+
+          {onLogout && (
+            <button
+              type="button"
+              onClick={onLogout}
+              className="w-full flex items-center justify-center gap-2 bg-error-container/40 text-error hover:bg-error hover:text-white font-label-caps text-label-caps py-2 px-3 rounded transition-colors text-xs"
+            >
+              <LogOut size={14} />
+              Sign Out
+            </button>
+          )}
         </div>
       </nav>
     </>

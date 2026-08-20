@@ -364,6 +364,7 @@ export const ROUTE_PATH_MAP = {
   Opinion: "/opinion",
   Learn: "/knowledge-hub",
   ArticleDetail: "/article",
+  CryptoDetail: "/pricing/btc",
   Magazine: "/magazine",
   "Knowledge Hub": "/knowledge-hub",
   Regulations: "/regulations",
@@ -382,4 +383,9 @@ export const ROUTE_PATH_MAP = {
 export const PATH_ROUTE_MAP = Object.entries(ROUTE_PATH_MAP).reduce((acc, [page, path]) => {
   acc[path] = page;
   return acc;
-}, {});
+}, {
+  "/pricing/btc": "CryptoDetail",
+  "/pricing/eth": "CryptoDetail",
+  "/pricing/xrp": "CryptoDetail",
+  "/pricing": "CryptoDetail",
+});
