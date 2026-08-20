@@ -3,14 +3,15 @@ import { Download, FileText, Gavel, CheckCircle2 } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
+import { regulationsPageData } from "../data/pagesData";
 import { getRegulations } from "../services/regulation.service";
 import { ToHref } from "../services/file.service";
 
 export default function RegulationsPage({ onNavigate }) {
+  const { hero, trackers: staticTrackers, briefings: staticBriefings } = regulationsPageData;
 
-
-  const [trackers, setTrackers] = useState([]);
-  const [briefings, setBriefings] = useState([]);
+  const [trackers, setTrackers] = useState(staticTrackers);
+  const [briefings, setBriefings] = useState(staticBriefings);
 
   useEffect(() => {
     let active = true;
