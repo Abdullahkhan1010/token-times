@@ -4,6 +4,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToHref } from "../services/file.service";
+import { getCryptoPrice, getCryptoStats } from "../services/crypto.service";
 import { TrendingUp, ArrowUpRight, ArrowDownRight, DollarSign } from "lucide-react";
 
 const MARKET_TABS = ["All Markets", "Bitcoin & Majors", "CBDC Pilots", "Tokenized Assets", "DeFi & Yields"];
@@ -19,17 +20,44 @@ function formatTag(tag) {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-const TICKER_DATA = [
-  { symbol: "BTC/USD", price: "$96,480.00", change: "+3.4%", up: true },
-  { symbol: "ETH/USD", price: "$3,420.50", change: "+2.1%", up: true },
-  { symbol: "SOL/USD", price: "$188.20", change: "-0.8%", up: false },
-  { symbol: "PKR/USD", price: "278.45", change: "+0.05%", up: true },
-  { symbol: "USDT/PKR", price: "282.10", change: "+0.12%", up: true },
-];
+const MARKET_SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
+
+function formatSymbol(symbol) {
+  return `${symbol.slice(0, -4)}/USD`;
+}
 
 export default function MarketsPage({ onNavigate, onSelectArticle }) {
   const [selectedTab, setSelectedTab] = useState("All Markets");
   const [articles, setArticles] = useState([]);
+  const [tickerData, setTickerData] = useState([]);
+
+  useEffect(() => {
+    let active = true;
+
+    Promise.all(MARKET_SYMBOLS.map(async (symbol) => {
+      const [stats, price] = await Promise.all([
+        getCryptoStats(symbol),
+        getCryptoPrice(symbol),
+      ]);
+      const change = Number(stats?.priceChangePercent || 0);
+
+      return {
+        symbol: formatSymbol(symbol),
+        price: Number(price?.price ?? stats?.lastPrice ?? 0),
+        change,
+        up: change >= 0,
+      };
+    }))
+      .then((data) => {
+        if (active) setTickerData(data);
+      })
+      .catch((err) => {
+        console.error("Failed to load crypto market data", err);
+        if (active) setTickerData([]);
+      });
+
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -100,14 +128,14 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
           <span className="text-[10px] text-white/60">Updated Real-Time</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          {TICKER_DATA.map((t, idx) => (
-            <div key={idx} className="bg-white/5 border border-white/10 rounded-lg p-2.5">
+          {tickerData.map((t) => (
+            <div key={t.symbol} className="bg-white/5 border border-white/10 rounded-lg p-2.5">
               <span className="text-[10px] font-bold text-white/70 block uppercase">{t.symbol}</span>
               <div className="flex items-center justify-between mt-1">
-                <span className="text-xs font-extrabold font-data-tabular text-white">{t.price}</span>
+                <span className="text-xs font-extrabold font-data-tabular text-white">${t.price.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                 <span className={`text-[10px] font-bold flex items-center ${t.up ? "text-emerald-400" : "text-rose-400"}`}>
                   {t.up ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
-                  {t.change}
+                  {t.change.toFixed(2)}%
                 </span>
               </div>
             </div>
@@ -137,8 +165,8 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
             key={tab}
             onClick={() => setSelectedTab(tab)}
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${selectedTab === tab
-                ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] font-extrabold"
-                : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37]"
+              ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] font-extrabold"
+              : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37]"
               }`}
           >
             {tab}

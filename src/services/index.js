@@ -7,3 +7,5 @@ export * from './knowlege-hub.service';
 export * from './interview.service';
 export * from './event.service';
 export * from './file.service';
+export * from './crypto.service';
+export * from './forex.service';

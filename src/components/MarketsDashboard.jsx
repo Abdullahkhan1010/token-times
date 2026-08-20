@@ -1,35 +1,71 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Reveal from "./Reveal";
-import { BarChart3 } from "lucide-react";
+import { getCrypto24HourTickerData, getCryptoPrice, getCryptoStats } from "../services/crypto.service";
+import { getForexRates } from "../services/forex.service";
+
+const MARKET_SYMBOLS = [
+  { symbol: "XRPUSDT", asset: "XRP", accent: "bg-accent/15 text-accent border border-accent/30" },
+  { symbol: "BTCUSDT", asset: "BTC", accent: "bg-primary/10 text-primary border border-primary/20" },
+  { symbol: "ETHUSDT", asset: "ETH", accent: "bg-accent/15 text-accent border border-accent/30" },
+];
+
+function normalizeChartData(trend) {
+  const candles = Array.isArray(trend) ? trend : Array.isArray(trend?.data) ? trend.data : [];
+  const closes = candles
+    .map((candle) => Number(Array.isArray(candle) ? candle[4] : candle?.close))
+    .filter((value) => Number.isFinite(value));
+
+  if (closes.length === 0) return [];
+
+  const min = Math.min(...closes);
+  const max = Math.max(...closes);
+  const range = max - min || 1;
+
+  return closes.map((value) => 10 + ((value - min) / range) * 45);
+}
 
 export default function MarketsDashboard() {
-  const marketCards = [
-    {
-      asset: "XRP",
-      value: "279.90",
-      change: "+4.2%",
-      accent: "bg-accent/15 text-accent border border-accent/30",
-      data: [28, 30, 29, 34, 37, 41, 39, 45, 49, 47, 52, 56],
-    },
-    {
-      asset: "BTC",
-      value: "26.45M",
-      change: "+2.1%",
-      accent: "bg-primary/10 text-primary border border-primary/20",
-      data: [74, 72, 75, 73, 77, 81, 79, 84, 86, 88, 92, 95],
-    },
-    {
-      asset: "ETH",
-      value: "1.62M",
-      change: "+1.0%",
-      accent: "bg-accent/15 text-accent border border-accent/30",
-      data: [41, 40, 43, 46, 45, 49, 53, 57, 55, 60, 64, 68],
-    },
-  ];
+  const [marketCards, setMarketCards] = useState([]);
+
+  useEffect(() => {
+    let active = true;
+
+    Promise.all(MARKET_SYMBOLS.map(async (market) => {
+      const [stats, price, trend] = await Promise.all([
+        getCryptoStats(market.symbol),
+        getCryptoPrice(market.symbol),
+        getCrypto24HourTickerData(market.symbol),
+      ]);
+
+      return {
+        ...market,
+        value: Number(price?.price ?? stats?.lastPrice ?? 0),
+        change: Number(stats?.priceChangePercent ?? 0),
+        data: normalizeChartData(trend),
+      };
+    }))
+      .then((data) => {
+        if (active) setMarketCards(data);
+      })
+      .catch((error) => {
+        console.error("Failed to load crypto dashboard data", error);
+        if (active) setMarketCards([]);
+      });
+
+    return () => { active = false; };
+  }, []);
 
   const buildPaths = (data) => {
     const width = 120;
     const height = 60;
+    if (data.length === 0) {
+      return {
+        line: `M0 ${height}`,
+        area: `M0 ${height} L${width} ${height} Z`,
+        points: [],
+      };
+    }
+
     const step = width / Math.max(data.length - 1, 1);
     const points = data.map((value, index) => {
       const x = index * step;
@@ -57,10 +93,10 @@ export default function MarketsDashboard() {
             <div key={coin.asset} className="rounded-xl border border-outline-variant bg-surface-container-low px-2.5 py-1.5 flex items-center justify-between gap-2">
               <div>
                 <div className="font-label-caps text-[10px] md:text-[11px] tracking-[0.14em] text-on-surface-variant font-bold">{coin.asset}</div>
-                <div className="font-body-md text-[14px] md:text-[15px] font-semibold text-on-surface leading-tight">Rs {coin.value}</div>
+                <div className="font-body-md text-[14px] md:text-[15px] font-semibold text-on-surface leading-tight">${coin.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
               </div>
               <div className={`rounded-full ${coin.accent} px-2 py-0.5 font-label-caps text-[10px] md:text-[11px] font-bold`}>
-                {coin.change}
+                {coin.change >= 0 ? "+" : ""}{coin.change.toFixed(2)}%
               </div>
             </div>
           ))}
@@ -75,7 +111,7 @@ export default function MarketsDashboard() {
                   <div className="font-body-md text-[12px] md:text-[13px] text-on-surface-variant">24H spot movement</div>
                 </div>
                 <div className={`rounded-full ${coin.accent} px-2 py-0.5 font-label-caps text-[10px] md:text-[11px] font-bold whitespace-nowrap`}>
-                  {coin.value}
+                  ${coin.value.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 </div>
               </div>
 
@@ -131,6 +167,24 @@ export default function MarketsDashboard() {
 }
 
 export function ForexRates() {
+  const [forexRates, setForexRates] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    getForexRates()
+      .then((data) => {
+        if (active) setForexRates(Array.isArray(data) ? data : []);
+      })
+      .catch((requestError) => {
+        console.error("Failed to load forex rate", requestError);
+        if (active) setError("Forex rate unavailable");
+      });
+
+    return () => { active = false; };
+  }, []);
+
   return (
     <Reveal
       as="section"
@@ -141,27 +195,25 @@ export function ForexRates() {
         <span className="font-label-caps text-[10px] md:text-[11px] tracking-[0.16em] text-on-surface-variant font-bold uppercase">Rate</span>
       </div>
       <div className="divide-y divide-outline-variant/40 overflow-y-auto flex-1 min-h-0 pr-1">
-        {[
-          { name: "USD PKR Interbank Selling", date: "Jul 24", rate: "278.07", accent: "bg-accent/15 text-accent border border-accent/30" },
-          { name: "USD PKR Interbank Buying", date: "Jul 24", rate: "277.87", accent: "bg-primary/10 text-primary border border-primary/20" },
-          { name: "USD to Japanese Yen", date: "Jul 27", rate: "163.55", accent: "bg-accent/15 text-accent border border-accent/30" },
-          { name: "USD to Swiss Franc", date: "Jul 27", rate: "0.81", accent: "bg-primary/10 text-primary border border-primary/20" },
-          { name: "Pound Sterling to USD", date: "Jul 27", rate: "1.34", accent: "bg-accent/15 text-accent border border-accent/30" },
-          { name: "Euro to USD", date: "Jul 27", rate: "1.14", accent: "bg-primary/10 text-primary border border-primary/20" },
-          { name: "SOFR %", date: "Jul 24", rate: "3.57", accent: "bg-accent/15 text-accent border border-accent/30" },
-        ].map((row) => (
-          <div key={row.name} className="flex items-center justify-between gap-3 px-4 py-2 md:py-2.5 hover:bg-surface-container-low transition-colors">
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 min-w-0">
-                <span className="font-body-md text-xs font-semibold leading-tight text-on-surface truncate">{row.name}</span>
-                <span className="font-body-md text-[11px] text-accent font-medium">/ {row.date}</span>
+        {error ? (
+          <p className="px-4 py-3 text-xs text-on-surface-variant">{error}</p>
+        ) : forexRates.length > 0 ? (
+          forexRates.map((forexRate) => (
+            <div key={`${forexRate.base}-${forexRate.quote}`} className="flex items-center justify-between gap-3 px-4 py-2 md:py-2.5 hover:bg-surface-container-low transition-colors">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 min-w-0">
+                  <span className="font-body-md text-xs font-semibold leading-tight text-on-surface truncate">{forexRate.name}</span>
+                  <span className="font-body-md text-[11px] text-accent font-medium">/ {forexRate.date}</span>
+                </div>
               </div>
+              <span className="rounded-full bg-accent/15 text-accent border border-accent/30 px-2.5 py-0.5 font-label-caps text-[10px] md:text-[11px] font-bold whitespace-nowrap shrink-0">
+                {forexRate.rate.toFixed(2)}
+              </span>
             </div>
-            <span className={`rounded-full ${row.accent} px-2.5 py-0.5 font-label-caps text-[10px] md:text-[11px] font-bold whitespace-nowrap shrink-0`}>
-              {row.rate}
-            </span>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="px-4 py-3 text-xs text-on-surface-variant">Loading forex rate...</p>
+        )}
       </div>
     </Reveal>
   );
