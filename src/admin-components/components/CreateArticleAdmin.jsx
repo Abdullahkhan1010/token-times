@@ -156,13 +156,11 @@ export default function CreateArticleAdmin({ onArticleCreated }) {
           imagePath = uploadRes.fileKey || uploadRes.url || imagePath;
         } catch (uploadErr) {
           console.warn("File upload to S3 failed, using local preview data URL fallback", uploadErr);
-          imagePath = imagePreview || "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&auto=format&fit=crop&q=80";
+          imagePath = imagePreview;
         }
       }
 
-      if (!imagePath) {
-        imagePath = "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1200&auto=format&fit=crop&q=80";
-      }
+
 
       const minutes = parseInt(readTime) || Math.max(1, Math.ceil(content.trim().split(/\s+/).length / 200));
 
@@ -286,20 +284,18 @@ export default function CreateArticleAdmin({ onArticleCreated }) {
                   type="button"
                   key={cat.id}
                   onClick={() => toggleCategory(cat.id)}
-                  className={`p-3.5 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${
-                    isSelected
+                  className={`p-3.5 rounded-xl border text-left transition-all relative flex flex-col justify-between cursor-pointer ${isSelected
                       ? "bg-[#0C133D] text-white border-[#D4AF37] shadow-md ring-2 ring-[#D4AF37]/40"
                       : "bg-surface-bright text-on-surface border-outline-variant hover:border-[#D4AF37]/60 hover:bg-surface-container-low"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <CatIcon size={20} className={isSelected ? "text-[#D4AF37]" : "text-[#0C133D]"} />
                     <span
-                      className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                        isSelected
+                      className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${isSelected
                           ? "bg-[#D4AF37] border-[#D4AF37] text-[#0C133D]"
                           : "border-outline-variant"
-                      }`}
+                        }`}
                     >
                       {isSelected && <CheckCircle2 size={12} strokeWidth={3} />}
                     </span>
@@ -495,7 +491,7 @@ export default function CreateArticleAdmin({ onArticleCreated }) {
                     setImageUrl(e.target.value);
                     if (e.target.value) setImagePreview(e.target.value);
                   }}
-                  placeholder="https://images.unsplash.com/..."
+
                   className="w-full px-3.5 py-2 rounded-xl border border-outline-variant bg-surface-bright text-on-surface text-xs focus:outline-none focus:border-[#D4AF37]"
                 />
               </div>

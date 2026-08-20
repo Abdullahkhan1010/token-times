@@ -100,7 +100,7 @@ export default function Interviews() {
               )}
               <div className="min-w-0 flex-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37] block mb-0.5 truncate">
-                  {iv.interviewee_name || "Guest Columnist"}
+                  {iv.interviewee_name}
                 </span>
                 <h4 className="font-headline-md text-xs font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug line-clamp-2 italic">
                   "{iv.interview_title}"
@@ -109,19 +109,7 @@ export default function Interviews() {
             </article>
           ))
         ) : (
-          <div className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex gap-3 items-center h-[76px]">
-            <div className="w-11 h-11 rounded-full bg-[#0C133D] text-[#D4AF37] flex items-center justify-center font-bold text-xs shrink-0 border border-[#D4AF37]/50">
-              TT
-            </div>
-            <div className="min-w-0 flex-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37] block truncate">
-                Editorial Board
-              </span>
-              <h4 className="font-headline-md text-xs font-bold text-[#0C133D] leading-snug line-clamp-2 italic">
-                "Institutional custody and sovereign digital asset frameworks in emerging markets"
-              </h4>
-            </div>
-          </div>
+          <p className="text-xs text-on-surface-variant">No interviews or columnists available at the moment.</p>
         )}
       </div>
     </section>

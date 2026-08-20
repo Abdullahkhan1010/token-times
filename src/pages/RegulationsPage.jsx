@@ -81,7 +81,7 @@ export default function RegulationsPage({ onNavigate }) {
           Policy & Regulatory Frameworks
         </h1>
         <p className="text-sm md:text-base text-on-surface-variant max-w-3xl leading-relaxed">
-          {hero.subtitle}
+          Stay informed with the latest regulatory updates, compliance directives, and institutional frameworks from local and international authorities. Our comprehensive tracker provides insights into the evolving landscape of financial regulations, ensuring you remain compliant and ahead of industry standards.
         </p>
       </Reveal>
 
