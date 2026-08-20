@@ -1,7 +1,11 @@
 const envBackendUrl = import.meta.env.VITE_BACKEND_URL;
+const isProd = import.meta.env.PROD;
+
 const API_BASE_URL = (
-    envBackendUrl || 'https://token-times-backend.vercel.app/'
-).replace(/\/$/, '');
+    (isProd && (!envBackendUrl || envBackendUrl.includes('localhost')))
+        ? 'https://token-times-backend.vercel.app'
+        : (envBackendUrl || 'https://token-times-backend.vercel.app')
+).trim().replace(/\/$/, '');
 
 const buildUrl = (path) => {
     if (!API_BASE_URL) return '';
