@@ -1,11 +1,12 @@
-const envBackendUrl = import.meta.env.VITE_BACKEND_URL;
-
-
-const API_BASE_URL = envBackendUrl;
+const rawEnvUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || '';
+const API_BASE_URL = typeof rawEnvUrl === 'string'
+    ? rawEnvUrl.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '')
+    : '';
 
 const buildUrl = (path) => {
     if (!API_BASE_URL) return '';
-    return `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+    const cleanPath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
+    return `${API_BASE_URL}${cleanPath}`;
 };
 
 const apiCache = new Map();

@@ -188,7 +188,10 @@ export function getS3FileUrl(fileKey) {
         return fileKey;
     }
 
-    const baseUrl = (import.meta.env.VITE_S3_PUBLIC_BASE_URL || 'https://d3k6lzr995rwjd.cloudfront.net').replace(/\/$/, '');
+    const rawS3Url = import.meta.env.VITE_S3_PUBLIC_BASE_URL || 'https://d3k6lzr995rwjd.cloudfront.net';
+    const baseUrl = typeof rawS3Url === 'string'
+        ? rawS3Url.trim().replace(/^["']|["']$/g, '').replace(/\/+$/, '')
+        : '';
     if (!baseUrl) {
         return '';
     }

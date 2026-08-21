@@ -4,9 +4,10 @@
  * Supports local storage aggregation + automatic backend beacon delivery.
  */
 
+import { buildUrl } from "./api";
+
 const STORAGE_PAGE_CLICKS = "token_times_page_clicks";
 const STORAGE_ARTICLE_CLICKS = "token_times_article_clicks";
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 /**
  * Dispatch a non-blocking background beacon to backend if available
@@ -15,7 +16,8 @@ function sendAnalyticsBeacon(payload) {
     if (typeof window === "undefined") return;
 
     try {
-        const url = `${API_BASE}/analytics/hit`;
+        const url = buildUrl("/analytics/hit");
+        if (!url) return;
         const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
 
         if (navigator.sendBeacon) {
