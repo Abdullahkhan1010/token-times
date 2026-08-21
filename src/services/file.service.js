@@ -166,46 +166,110 @@ export async function uploadFileToS3(file) {
 
 const presignedUrlCache = new Map();
 const presignedInFlight = new Map();
-const PRESIGNED_TTL_MS = 10 * 60 * 1000; // 10 minutes
+const PRESIGNED_TTL_MS = 10 * 60 * 1000; // Default 10 minutes fallback
+
+/**
+ * Parses the actual expiration timestamp from AWS/Supabase S3 presigned URL parameters.
+ */
+function getUrlExpiryTimestamp(url) {
+    if (!url || typeof url !== 'string') return 0;
+    try {
+        const u = new URL(url);
+        const amzDate = u.searchParams.get('X-Amz-Date') || u.searchParams.get('x-amz-date');
+        const amzExpires = parseInt(u.searchParams.get('X-Amz-Expires') || u.searchParams.get('x-amz-expires') || '900', 10);
+        if (amzDate && amzDate.length >= 15) {
+            const year = parseInt(amzDate.slice(0, 4), 10);
+            const month = parseInt(amzDate.slice(4, 6), 10) - 1;
+            const day = parseInt(amzDate.slice(6, 8), 10);
+            const hour = parseInt(amzDate.slice(9, 11), 10);
+            const min = parseInt(amzDate.slice(11, 13), 10);
+            const sec = parseInt(amzDate.slice(13, 15), 10);
+            const createdMs = Date.UTC(year, month, day, hour, min, sec);
+            if (!isNaN(createdMs)) {
+                return createdMs + (amzExpires * 1000);
+            }
+        }
+    } catch (e) {}
+    return Date.now() + PRESIGNED_TTL_MS;
+}
+
+function isCachedUrlValid(cachedObj) {
+    if (!cachedObj || !cachedObj.url) return false;
+    const now = Date.now();
+    const expiryMs = cachedObj.expiresAt || (cachedObj.timestamp + PRESIGNED_TTL_MS);
+    // Ensure at least 60 seconds are left before S3 rejects with 403
+    return (expiryMs - now) > 60000;
+}
 
 function getStoredS3Url(cacheKey) {
     try {
         const raw = sessionStorage.getItem(`s3_cache_${cacheKey}`);
         if (!raw) return null;
         const parsed = JSON.parse(raw);
-        if (Date.now() - parsed.timestamp < PRESIGNED_TTL_MS) {
+        if (isCachedUrlValid(parsed)) {
             return parsed.url;
         }
+        // Purge expired entry
+        sessionStorage.removeItem(`s3_cache_${cacheKey}`);
     } catch (e) {}
     return null;
 }
 
 function setStoredS3Url(cacheKey, url) {
     try {
+        const expiresAt = getUrlExpiryTimestamp(url);
         sessionStorage.setItem(`s3_cache_${cacheKey}`, JSON.stringify({
             timestamp: Date.now(),
+            expiresAt,
             url,
         }));
     } catch (e) {}
 }
 
-export async function getPresignedDownloadUrl(fileKey, downloadFilename) {
+export function evictS3UrlCache(fileKey) {
+    if (!fileKey) return;
+    try {
+        for (const key of presignedUrlCache.keys()) {
+            if (key.includes(fileKey)) {
+                presignedUrlCache.delete(key);
+            }
+        }
+        for (let i = sessionStorage.length - 1; i >= 0; i--) {
+            const k = sessionStorage.key(i);
+            if (k && k.includes(fileKey)) {
+                sessionStorage.removeItem(k);
+            }
+        }
+    } catch (e) {}
+}
+
+export async function refreshS3ImageUrl(fileKey) {
+    if (!fileKey) return '';
+    evictS3UrlCache(fileKey);
+    return getPresignedDownloadUrl(fileKey, undefined, { forceFresh: true });
+}
+
+export async function getPresignedDownloadUrl(fileKey, downloadFilename, options = {}) {
     if (!fileKey) return '';
 
     const cacheKey = `${fileKey}:${downloadFilename || ''}`;
     const now = Date.now();
+    const forceFresh = options.forceFresh === true;
 
-    // 1. Check memory cache
-    const cached = presignedUrlCache.get(cacheKey);
-    if (cached && (now - cached.timestamp < PRESIGNED_TTL_MS)) {
-        return cached.url;
-    }
+    if (!forceFresh) {
+        // 1. Check memory cache
+        const cached = presignedUrlCache.get(cacheKey);
+        if (cached && isCachedUrlValid(cached)) {
+            return cached.url;
+        }
 
-    // 2. Check sessionStorage
-    const stored = getStoredS3Url(cacheKey);
-    if (stored) {
-        presignedUrlCache.set(cacheKey, { timestamp: now, url: stored });
-        return stored;
+        // 2. Check sessionStorage
+        const stored = getStoredS3Url(cacheKey);
+        if (stored) {
+            const expiresAt = getUrlExpiryTimestamp(stored);
+            presignedUrlCache.set(cacheKey, { timestamp: now, expiresAt, url: stored });
+            return stored;
+        }
     }
 
     // 3. Check in-flight requests
@@ -218,7 +282,8 @@ export async function getPresignedDownloadUrl(fileKey, downloadFilename) {
             const details = await requestPresignedDownloadUrl({ fileKey, downloadFilename });
             const downloadUrl = details?.downloadUrl || '';
             if (downloadUrl) {
-                presignedUrlCache.set(cacheKey, { timestamp: Date.now(), url: downloadUrl });
+                const expiresAt = getUrlExpiryTimestamp(downloadUrl);
+                presignedUrlCache.set(cacheKey, { timestamp: Date.now(), expiresAt, url: downloadUrl });
                 setStoredS3Url(cacheKey, downloadUrl);
             }
             return downloadUrl;
