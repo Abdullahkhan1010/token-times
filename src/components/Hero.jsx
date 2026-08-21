@@ -140,26 +140,38 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
           onClick={() => safeMainStory && onSelectArticle?.(safeMainStory)}
           className="hover-lift group bg-surface-container-lowest border border-outline-variant relative flex flex-col h-full rounded-xl overflow-hidden max-w-full shadow-sm hover:border-[#D4AF37] cursor-pointer"
         >
-          {/* Main Video on TOP */}
-          <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[440px] overflow-hidden border-b border-outline-variant bg-black max-w-full">
-            <video
-              className="w-full h-full object-cover max-w-full block"
-              autoPlay
-              loop
-              muted
-              playsInline
-              poster={safeMainStory?.image || ""}
-            >
-              <source
-                src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-and-data-42838-large.mp4"
-                type="video/mp4"
-              />
+          {/* Main Story Media on TOP */}
+          <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[440px] overflow-hidden border-b border-outline-variant bg-surface-variant max-w-full">
+            {safeMainStory?.video ? (
+              <video
+                className="w-full h-full object-cover max-w-full block"
+                autoPlay
+                loop
+                muted
+                playsInline
+                poster={safeMainStory?.image || ""}
+              >
+                <source src={safeMainStory.video} type="video/mp4" />
+                {safeMainStory?.image && (
+                  <img
+                    className="img-fade img-scale w-full h-full object-cover max-w-full"
+                    alt={safeMainStory?.title || "Featured story"}
+                    src={safeMainStory.image}
+                  />
+                )}
+              </video>
+            ) : safeMainStory?.image ? (
               <img
-                className="img-fade img-scale w-full h-full object-cover max-w-full"
+                className="img-fade img-scale w-full h-full object-cover max-w-full block"
                 alt={safeMainStory?.title || "Featured story"}
-                src={safeMainStory?.image || ""}
+                src={safeMainStory.image}
+                loading="eager"
               />
-            </video>
+            ) : (
+              <div className="w-full h-full bg-[#0C133D] flex items-center justify-center text-[#D4AF37] font-headline-md text-center p-4">
+                <span>Token Times • Lead Story</span>
+              </div>
+            )}
             <div className="absolute top-3 left-3 bg-[#D4AF37] text-[#0C133D] font-label-caps px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide shadow-md max-w-[calc(100%-1.5rem)] truncate z-10">
               LIVE • {getSingleCleanTag(safeMainStory, "FEATURED")}
             </div>

@@ -31,11 +31,25 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
         if (!active) return;
         const published = (Array.isArray(data) ? data : []).filter((a) => a.status === "published");
 
+        // Render articles and text INSTANTLY
+        if (active) {
+          setArticles(published);
+          setLoading(false);
+        }
+
+        // Resolve images in background without blocking initial text render
         const resolved = await Promise.all(
-          published.map(async (art) => ({
-            ...art,
-            image: await ToImageUrl(art.image),
-          }))
+          published.map(async (art) => {
+            if (!art.image || typeof art.image !== "string" || art.image.startsWith("http://") || art.image.startsWith("https://") || art.image.startsWith("data:")) {
+              return art;
+            }
+            try {
+              const resolvedImg = await ToImageUrl(art.image);
+              return { ...art, image: resolvedImg };
+            } catch {
+              return art;
+            }
+          })
         );
 
         if (active) {
@@ -43,7 +57,6 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
         }
       } catch (err) {
         console.error("Failed to load global articles", err);
-      } finally {
         if (active) setLoading(false);
       }
     })();

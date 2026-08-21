@@ -18,16 +18,20 @@ function sendAnalyticsBeacon(payload) {
     try {
         const url = buildUrl("/analytics/hit");
         if (!url) return;
-        const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
 
-        if (navigator.sendBeacon) {
+        const jsonString = JSON.stringify(payload);
+
+        if (typeof navigator !== "undefined" && typeof navigator.sendBeacon === "function") {
+            // text/plain blob avoids complex CORS preflight checks across Firefox and Safari
+            const blob = new Blob([jsonString], { type: "text/plain;charset=UTF-8" });
             navigator.sendBeacon(url, blob);
         } else {
             fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
+                body: jsonString,
                 keepalive: true,
+                mode: "cors",
             }).catch(() => { });
         }
     } catch {

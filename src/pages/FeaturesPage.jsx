@@ -29,11 +29,20 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
         const data = await getPublishedNews();
         if (!active) return;
         const published = (Array.isArray(data) ? data : []).filter((a) => a.status === "published");
+        if (active) setArticles(published);
+
         const resolved = await Promise.all(
-          published.map(async (art) => ({
-            ...art,
-            image: await ToImageUrl(art.image),
-          }))
+          published.map(async (art) => {
+            if (!art.image || typeof art.image !== "string" || art.image.startsWith("http://") || art.image.startsWith("https://") || art.image.startsWith("data:")) {
+              return art;
+            }
+            try {
+              const resolvedImg = await ToImageUrl(art.image);
+              return { ...art, image: resolvedImg };
+            } catch {
+              return art;
+            }
+          })
         );
         if (active) setArticles(resolved);
       } catch (err) {

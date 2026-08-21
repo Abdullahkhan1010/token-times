@@ -19,47 +19,21 @@ export function getMimeTypeFromFilename(filename) {
     }
 }
 
-const blobUrlCache = new Map();
-
 /**
  * Resolves an image URL for display in UI (<img> tags, backgrounds).
- * Converts cross-origin images to safe in-memory blob URLs via CORS fetch,
- * completely eliminating any possibility of browser ORB (net::ERR_BLOCKED_BY_ORB)
- * errors or 304 text/plain header mismatches on reload.
+ * Directly returns full URLs or fetches fresh presigned S3 URLs for file keys.
+ * Presigned image URLs omit attachment headers so browsers render them natively without ORB blocking.
  */
 export async function ToImageUrl(file) {
     if (!file || typeof file !== "string") {
         return "";
     }
 
-    if (file.startsWith("data:") || file.startsWith("blob:")) {
+    if (file.startsWith("data:") || file.startsWith("blob:") || file.startsWith("http://") || file.startsWith("https://")) {
         return file;
     }
 
-    // Check in-memory blob cache
-    if (blobUrlCache.has(file)) {
-        return blobUrlCache.get(file);
-    }
-
-    const downloadUrl = (file.startsWith("http://") || file.startsWith("https://"))
-        ? file
-        : await getPresignedDownloadUrl(file);
-
-    if (!downloadUrl) return "";
-
-    try {
-        const response = await fetch(downloadUrl, { mode: 'cors' });
-        if (response.ok) {
-            const blob = await response.blob();
-            const blobUrl = URL.createObjectURL(blob);
-            blobUrlCache.set(file, blobUrl);
-            return blobUrl;
-        }
-    } catch (e) {
-        // Fallback to direct presigned URL if fetch fails
-    }
-
-    return downloadUrl;
+    return getPresignedDownloadUrl(file);
 }
 
 /**
@@ -256,12 +230,6 @@ function setStoredS3Url(cacheKey, url) {
 export function evictS3UrlCache(fileKey) {
     if (!fileKey) return;
     try {
-        if (blobUrlCache.has(fileKey)) {
-            try {
-                URL.revokeObjectURL(blobUrlCache.get(fileKey));
-            } catch (e) {}
-            blobUrlCache.delete(fileKey);
-        }
         for (const key of presignedUrlCache.keys()) {
             if (key.includes(fileKey)) {
                 presignedUrlCache.delete(key);
