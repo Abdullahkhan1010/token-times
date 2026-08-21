@@ -4,7 +4,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 
 import { getMagzines } from "../services/magzine.service";
-import { ToHref } from "../services/file.service";
+import { ToHref, ToImageUrl } from "../services/file.service";
 
 export default function MagazinePage({ onNavigate }) {
 
@@ -29,7 +29,7 @@ export default function MagazinePage({ onNavigate }) {
         if (Array.isArray(data) && data.length > 0) {
 
           const latest = data[0];
-          const coverImgHref = await ToHref(latest.cover_img, "cover.jpg");
+          const coverImgHref = await ToImageUrl(latest.cover_img);
           const fileHref = await ToHref(latest.file, "magazine.pdf");
 
           setcurrentIssue({

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Mic } from "lucide-react";
 import { getInterviews } from "../services/interview.service";
-import { ToHref } from "../services/file.service";
+import { ToImageUrl } from "../services/file.service";
 
 
 export default function Interviews() {
@@ -38,7 +38,7 @@ export default function Interviews() {
                 !interview.interviewee_image.startsWith("data:")
               ) {
                 try {
-                  const link = await ToHref(interview.interviewee_image, "interviewee.jpg");
+                  const link = await ToImageUrl(interview.interviewee_image);
                   return { ...interview, interviewee_image: link };
                 } catch (e) {
                   return interview;

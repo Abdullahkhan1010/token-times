@@ -4,7 +4,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getCryptoTrend, getCryptoStats, getCryptoPrice } from "../services/crypto.service";
 import { getPublishedNews } from "../services/published-news.service";
-import { ToHref } from "../services/file.service";
+import { ToImageUrl } from "../services/file.service";
 import {
   TrendingUp,
   TrendingDown,
@@ -171,7 +171,7 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
         const resolved = await Promise.all(
           listToDisplay.slice(0, 4).map(async (art) => ({
             ...art,
-            image: await ToHref(art.image, "news.jpg"),
+            image: await ToImageUrl(art.image),
           }))
         );
 

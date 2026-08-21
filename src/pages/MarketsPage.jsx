@@ -3,7 +3,7 @@ import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getPublishedNews } from "../services/published-news.service";
-import { ToHref } from "../services/file.service";
+import { ToImageUrl } from "../services/file.service";
 import { getCryptoPrice, getCryptoStats } from "../services/crypto.service";
 import { TrendingUp, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react";
 import btcLogo from "../assets/logos/btc.png";
@@ -83,7 +83,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
         const resolved = await Promise.all(
           published.map(async (art) => ({
             ...art,
-            image: await ToHref(art.image, "market.jpg"),
+            image: await ToImageUrl(art.image),
           }))
         );
         if (active) setArticles(resolved);

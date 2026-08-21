@@ -3,7 +3,7 @@ import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getInterviews } from "../services/interview.service";
-import { ToHref } from "../services/file.service";
+import { ToImageUrl } from "../services/file.service";
 import { Mic, UserCheck } from "lucide-react";
 
 const OPINION_CATS = ["All Columnists", "Central Bank Policy", "Founder Op-Eds", "Legal & Tax", "Macro Strategy"];
@@ -32,7 +32,7 @@ export default function OpinionPage({ onNavigate, onSelectArticle }) {
         if (Array.isArray(data) && data.length > 0) {
           for (const item of data) {
             if (item.interviewee_image) {
-              item.interviewee_image = await ToHref(item.interviewee_image, "columnist.jpg");
+              item.interviewee_image = await ToImageUrl(item.interviewee_image);
             }
           }
           if (active) setInterviews(data);

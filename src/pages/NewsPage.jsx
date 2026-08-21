@@ -4,7 +4,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { BASE_URL } from "../data/seoData";
 import { getPublishedNews } from "../services/published-news.service";
-import { ToHref } from "../services/file.service";
+import { ToImageUrl } from "../services/file.service";
 
 function formatTag(tag) {
   if (!tag) return "NEWS";
@@ -39,7 +39,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
               return art;
             }
             try {
-              const resolvedImg = await ToHref(art.image, "news.jpg");
+              const resolvedImg = await ToImageUrl(art.image);
               return { ...art, image: resolvedImg };
             } catch (e) {
               return art;

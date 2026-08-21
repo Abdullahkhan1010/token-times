@@ -16,7 +16,7 @@ import UpcomingEvents from "../components/UpcomingEvents";
 import Newsletter from "../components/Newsletter";
 import Partners from "../components/Partners";
 import { getPublishedNews } from "../services/published-news.service";
-import { ToHref } from "../services/file.service";
+import { ToImageUrl } from "../services/file.service";
 
 export default function HomePage({ onNavigate, onSelectArticle }) {
 
@@ -77,10 +77,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
               return article;
             }
             try {
-              const fileName = `${(article.title || "article")
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, "-") || "article"}.jpg`;
-              const resolvedImg = await ToHref(article.image, fileName);
+              const resolvedImg = await ToImageUrl(article.image);
               return { ...article, image: resolvedImg };
             } catch (e) {
               return article;

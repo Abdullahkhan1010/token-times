@@ -3,7 +3,7 @@ import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getPublishedNews } from "../services/published-news.service";
-import { ToHref } from "../services/file.service";
+import { ToImageUrl } from "../services/file.service";
 
 const FEATURE_CATS = ["All Features", "Deep Dives", "Investigative", "Executive Q&A", "Special Reports"];
 
@@ -32,7 +32,7 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
         const resolved = await Promise.all(
           published.map(async (art) => ({
             ...art,
-            image: await ToHref(art.image, "feature.jpg"),
+            image: await ToImageUrl(art.image),
           }))
         );
         if (active) setArticles(resolved);

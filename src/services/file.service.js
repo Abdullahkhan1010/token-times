@@ -3,8 +3,27 @@ import { requestJson } from './api';
 const FILES_PATH = '/files';
 
 
-export async function ToHref(file, filename = "download") {
+export function getMimeTypeFromFilename(filename) {
+    if (!filename || typeof filename !== 'string') return 'application/octet-stream';
+    const ext = filename.split('.').pop()?.toLowerCase();
+    switch (ext) {
+        case 'webp': return 'image/webp';
+        case 'jpg':
+        case 'jpeg': return 'image/jpeg';
+        case 'png': return 'image/png';
+        case 'gif': return 'image/gif';
+        case 'svg': return 'image/svg+xml';
+        case 'avif': return 'image/avif';
+        case 'pdf': return 'application/pdf';
+        default: return 'application/octet-stream';
+    }
+}
 
+/**
+ * Resolves an image URL for display in UI (<img> tags, backgrounds).
+ * Does NOT set attachment Content-Disposition, preventing browser ORB (net::ERR_BLOCKED_BY_ORB) errors.
+ */
+export async function ToImageUrl(file) {
     if (!file || typeof file !== "string") {
         return "";
     }
@@ -13,7 +32,23 @@ export async function ToHref(file, filename = "download") {
         return file;
     }
 
-    return getPresignedDownloadUrl(file, filename);
+    return getPresignedDownloadUrl(file);
+}
+
+/**
+ * Resolves a file URL for download or general use.
+ * If filename is provided, it triggers download attachment headers.
+ */
+export async function ToHref(file, filename) {
+    if (!file || typeof file !== "string") {
+        return "";
+    }
+
+    if (file.startsWith("data:") || file.startsWith("http://") || file.startsWith("https://")) {
+        return file;
+    }
+
+    return getPresignedDownloadUrl(file, filename || undefined);
 };
 
 export async function requestPresignedUploadUrl({ filename, contentType }) {
@@ -24,17 +59,22 @@ export async function requestPresignedUploadUrl({ filename, contentType }) {
 }
 
 export async function requestPresignedDownloadUrl({ fileKey, downloadFilename }) {
+    const payload = { fileKey };
+    if (downloadFilename) {
+        payload.downloadFilename = downloadFilename;
+    }
     return requestJson(`${FILES_PATH}/download-url`, {
         method: 'POST',
-        body: JSON.stringify({ fileKey, downloadFilename }),
+        body: JSON.stringify(payload),
     });
 }
 
-export async function uploadFileToPresignedUrl(uploadUrl, file) {
+export async function uploadFileToPresignedUrl(uploadUrl, file, contentType) {
+    const resolvedType = contentType || file.type || getMimeTypeFromFilename(file.name) || 'application/octet-stream';
     const response = await fetch(uploadUrl, {
         method: 'PUT',
         headers: {
-            'Content-Type': file.type || 'application/octet-stream',
+            'Content-Type': resolvedType,
         },
         body: file,
     });
@@ -51,7 +91,18 @@ export async function uploadFileToPresignedUrl(uploadUrl, file) {
  * Non-image files (PDFs, docs) pass through unchanged.
  */
 export async function convertImageToWebP(file, quality = 0.85) {
-    if (!file || !(file instanceof File) || !file.type.startsWith('image/') || file.type === 'image/webp') {
+    if (!file || !(file instanceof File)) {
+        return file;
+    }
+
+    const isImage = (file.type && file.type.startsWith('image/')) ||
+        /\.(jpe?g|png|gif|bmp|avif|webp)$/i.test(file.name);
+
+    if (!isImage) {
+        return file;
+    }
+
+    if (file.type === 'image/webp' && file.name.toLowerCase().endsWith('.webp')) {
         return file;
     }
 
@@ -101,13 +152,14 @@ export async function convertImageToWebP(file, quality = 0.85) {
 export async function uploadFileToS3(file) {
     // Automatically convert uploaded images (PNG, JPEG, etc.) to optimized WebP format
     const targetFile = await convertImageToWebP(file);
+    const contentType = targetFile.type || getMimeTypeFromFilename(targetFile.name) || 'application/octet-stream';
 
     const uploadDetails = await requestPresignedUploadUrl({
         filename: targetFile.name,
-        contentType: targetFile.type || 'application/octet-stream',
+        contentType: contentType,
     });
 
-    await uploadFileToPresignedUrl(uploadDetails.uploadUrl, targetFile);
+    await uploadFileToPresignedUrl(uploadDetails.uploadUrl, targetFile, contentType);
 
     return uploadDetails;
 }

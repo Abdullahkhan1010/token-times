@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Reveal from "./Reveal";
 import { getMagzines } from "../services/magzine.service";
-import { ToHref } from "../services/file.service";
+import { ToHref, ToImageUrl } from "../services/file.service";
 
 export default function MagazineIssue() {
   const [mag, setMag] = useState(null);
@@ -31,7 +31,7 @@ export default function MagazineIssue() {
           // Resolve cover and file in background
           const [link, imgLink] = await Promise.all([
             latest.file ? ToHref(latest.file, "magazine.pdf").catch(() => "") : Promise.resolve(""),
-            latest.cover_img ? ToHref(latest.cover_img, "magazine-cover.jpg").catch(() => "") : Promise.resolve(""),
+            latest.cover_img ? ToImageUrl(latest.cover_img).catch(() => "") : Promise.resolve(""),
           ]);
 
           if (active) {

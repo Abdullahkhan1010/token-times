@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import SEOHead from "../components/SEOHead";
 import { ArrowLeft, Clock, Calendar, User, Share2, Bookmark, Check, Newspaper, Sparkles, Pin, Star, Zap, Building2, Globe, BookOpen } from "lucide-react";
 import { getPublishedNews } from "../services/published-news.service";
-import { ToHref } from "../services/file.service";
+import { ToImageUrl } from "../services/file.service";
 import { trackArticleClick } from "../services/tracker.service";
 
 export default function ArticleDetailPage({ article, onNavigate, onSelectArticle }) {
@@ -26,10 +26,7 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
 
     (async () => {
       if (article?.image) {
-        const fileName = `${(article.title || "article")
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-") || "article"}.jpg`;
-        const href = await ToHref(article.image, fileName);
+        const href = await ToImageUrl(article.image);
         setResolvedImage(href);
       }
 
@@ -40,7 +37,7 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
         const resolvedList = await Promise.all(
           published.slice(0, 3).map(async (item) => ({
             ...item,
-            image: await ToHref(item.image, `${(item.title || "article").toLowerCase().replace(/[^a-z0-9]+/g, "-")}.jpg`)
+            image: await ToImageUrl(item.image)
           }))
         );
         setRelatedArticles(resolvedList);

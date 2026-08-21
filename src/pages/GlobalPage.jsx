@@ -3,7 +3,7 @@ import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getPublishedNews } from "../services/published-news.service";
-import { ToHref } from "../services/file.service";
+import { ToImageUrl } from "../services/file.service";
 
 const REGIONS = ["All Regions", "Pakistan", "Middle East & UAE", "Europe & MiCA", "North America", "Asia Pacific"];
 
@@ -34,7 +34,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
         const resolved = await Promise.all(
           published.map(async (art) => ({
             ...art,
-            image: await ToHref(art.image, "global.jpg"),
+            image: await ToImageUrl(art.image),
           }))
         );
 
