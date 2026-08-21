@@ -29,7 +29,7 @@ export default function ArticleTable({ rows, columns, actions = [], emptyLabel =
         <tbody className="font-body-md text-body-md text-on-surface">
           {rows.map((row, i) => (
             <tr
-              key={row.id}
+              key={row.id || row._id || row.title || i}
               className={`hover:bg-surface-container-low transition-colors animate-fade-up ${
                 i < rows.length - 1 ? "border-b border-outline-variant" : ""
               }`}

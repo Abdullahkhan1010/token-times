@@ -3,10 +3,15 @@ import { RotateCcw } from "lucide-react";
 import PageHeader from "./PageHeader";
 import ArticleTable from "./ArticleTable";
 
-const fmtDate = (iso) =>
-  new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+const fmtDate = (iso) => {
+  if (!iso) return "Recently";
+  const d = new Date(iso);
+  return isNaN(d.getTime())
+    ? "Recently"
+    : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+};
 
-export default function Archived({ articles, onRestore }) {
+export default function Archived({ articles = [], onRestore }) {
   const columns = [
     { key: "title", label: "Title", render: (r) => <span className="font-semibold">{r.title}</span> },
     { key: "category", label: "Category" },
@@ -14,7 +19,11 @@ export default function Archived({ articles, onRestore }) {
     {
       key: "archivedAt",
       label: "Archived",
-      render: (r) => <span className="font-data-tabular text-data-tabular">{fmtDate(r.archivedAt)}</span>,
+      render: (r) => (
+        <span className="font-data-tabular text-data-tabular">
+          {fmtDate(r.archivedAt || r.updatedAt || r.createdAt)}
+        </span>
+      ),
     },
   ];
 

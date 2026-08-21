@@ -4,10 +4,30 @@ import { TrendAreaChart, CategoryBarList } from "./AnalyticsCharts";
 import { getPageVisitStats, getArticleClickStats } from "../../services/tracker.service";
 import { BarChart3, FileText, Clock, Layers, User, BookOpen, Sparkles, CheckCircle2, Search, Globe, Eye, Compass, TrendingUp, MousePointerClick } from "lucide-react";
 
+const fmtDate = (iso) => {
+  if (!iso) return "Recently";
+  const d = new Date(iso);
+  return isNaN(d.getTime())
+    ? "Recently"
+    : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+};
+
 export default function Analytics({ published = [], queue = [], archived = [] }) {
   const [timeRange, setTimeRange] = useState(14);
   const [activeTab, setActiveTab] = useState("published"); // 'published' | 'drafts'
   const [searchArticle, setSearchArticle] = useState("");
+  const [trackerVersion, setTrackerVersion] = useState(0);
+
+  // Re-render when tracking events occur
+  React.useEffect(() => {
+    const handleUpdate = () => setTrackerVersion((v) => v + 1);
+    window.addEventListener("storage", handleUpdate);
+    window.addEventListener("token_times_tracker_update", handleUpdate);
+    return () => {
+      window.removeEventListener("storage", handleUpdate);
+      window.removeEventListener("token_times_tracker_update", handleUpdate);
+    };
+  }, []);
 
   // Compute analytics dynamically from real database articles and click tracking
   const analyticsData = useMemo(() => {
@@ -19,7 +39,11 @@ export default function Analytics({ published = [], queue = [], archived = [] })
     const pageVisits = getPageVisitStats();
     const articleClicks = getArticleClickStats();
 
-    const totalClicks = pageVisits.reduce((acc, p) => acc + (p.value || 0), 0);
+    const totalArticleClicks = Object.values(articleClicks).reduce(
+      (acc, item) => acc + (Number(item?.clicks) || 0),
+      0
+    );
+    const totalClicks = pageVisits.reduce((acc, p) => acc + (p.value || 0), 0) + totalArticleClicks;
 
     // Generate date array for selected range
     const dateLabels = [];
@@ -53,7 +77,8 @@ export default function Analytics({ published = [], queue = [], archived = [] })
       });
 
       // Date bucket
-      const artDate = (art.publish_date || art.createdAt || art.fetchedAt || "").split("T")[0];
+      const rawDate = art.publishedAt || art.publish_date || art.createdAt || art.fetchedAt || "";
+      const artDate = String(rawDate).split("T")[0];
       if (artDate && publishedCountMap[artDate] !== undefined) {
         publishedCountMap[artDate]++;
       }
@@ -61,7 +86,8 @@ export default function Analytics({ published = [], queue = [], archived = [] })
 
     // Queue date distribution
     safeQueue.forEach((draft) => {
-      const draftDate = (draft.fetchedAt || draft.createdAt || "").split("T")[0];
+      const rawDate = draft.fetchedAt || draft.createdAt || "";
+      const draftDate = String(rawDate).split("T")[0];
       if (draftDate && queueCountMap[draftDate] !== undefined) {
         queueCountMap[draftDate]++;
       }
@@ -78,11 +104,20 @@ export default function Analytics({ published = [], queue = [], archived = [] })
     const articlesWithClicks = safePublished
       .map((art) => {
         const id = art._id || art.id;
-        const clickRecord = articleClicks[id];
-        const clicks = clickRecord ? clickRecord.clicks : (art.clicks || art.views || 0);
+        const titleKey = art.title ? `title_${art.title.trim().toLowerCase()}` : null;
+        const clickRecord =
+          (id && articleClicks[id]) ||
+          (art.id && articleClicks[art.id]) ||
+          (art._id && articleClicks[art._id]) ||
+          (titleKey && articleClicks[titleKey]);
+
+        const clicks = clickRecord
+          ? Math.max(clickRecord.clicks, art.view_count || 0, art.clicks || 0, art.views || 0)
+          : (art.view_count || art.clicks || art.views || 0);
+
         return {
           ...art,
-          id,
+          id: id || art.id || art._id,
           clicks,
         };
       })
@@ -109,7 +144,7 @@ export default function Analytics({ published = [], queue = [], archived = [] })
       pageVisits,
       articlesList: articlesWithClicks,
     };
-  }, [published, queue, archived, timeRange]);
+  }, [published, queue, archived, timeRange, trackerVersion]);
 
   const filteredArticles = useMemo(() => {
     if (!searchArticle.trim()) return analyticsData.articlesList;
@@ -430,7 +465,7 @@ export default function Analytics({ published = [], queue = [], archived = [] })
                         </span>
                       </td>
                       <td className="py-3 px-3 text-right font-mono text-[#5C525A] text-[11px]">
-                        {(art.publish_date || art.createdAt || "Recent").split("T")[0]}
+                        {fmtDate(art.publishedAt || art.publish_date || art.createdAt)}
                       </td>
                     </tr>
                   );

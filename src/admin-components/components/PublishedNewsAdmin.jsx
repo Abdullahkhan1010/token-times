@@ -3,6 +3,7 @@ import { Newspaper, Plus, Trash2, FileText, CheckCircle2, AlertCircle, Archive, 
 import { getPublishedNews, postPublishedNews, putPublishedNews, deletePublishedNews, archivePublishedNews } from "../../services/published-news.service";
 import { uploadFileToS3 } from "../../services/file.service";
 import { requestJson } from "../../services/api";
+import { getArticleClickStats } from "../../services/tracker.service";
 import PageHeader from "./PageHeader";
 
 const DISPLAY_SECTIONS = [
@@ -453,7 +454,18 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                                             {item.approx_time_to_read} min
                                         </td>
                                         <td className="py-3 px-3 text-on-surface-variant font-data-tabular">
-                                            {item.view_count}
+                                            {(() => {
+                                                const id = item._id || item.id;
+                                                const titleKey = item.title ? `title_${item.title.trim().toLowerCase()}` : null;
+                                                const articleClicks = getArticleClickStats();
+                                                const tracked =
+                                                    (id && articleClicks[id]?.clicks) ||
+                                                    (item.id && articleClicks[item.id]?.clicks) ||
+                                                    (item._id && articleClicks[item._id]?.clicks) ||
+                                                    (titleKey && articleClicks[titleKey]?.clicks) ||
+                                                    0;
+                                                return Math.max(tracked, item.view_count || 0);
+                                            })()}
                                         </td>
                                         <td className="py-3 px-3">
                                             <span

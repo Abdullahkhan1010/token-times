@@ -46,6 +46,7 @@ export function trackPageVisit(pageName) {
         const counts = raw ? JSON.parse(raw) : {};
         counts[pageName] = (counts[pageName] || 0) + 1;
         localStorage.setItem(STORAGE_PAGE_CLICKS, JSON.stringify(counts));
+        window.dispatchEvent(new CustomEvent("token_times_tracker_update", { detail: { type: "page", page: pageName } }));
     } catch {
         // storage fallback
     }
@@ -58,34 +59,47 @@ export function trackPageVisit(pageName) {
  * Track when a user clicks and opens a specific article
  */
 export function trackArticleClick(articleId, title = "", category = "") {
-    if (!articleId || typeof window === "undefined") return;
+    const rawKey = articleId || (title ? `title_${title.trim().toLowerCase()}` : "");
+    if (!rawKey || typeof window === "undefined") return;
+
+    const primaryKey = String(rawKey).trim();
+    const titleKey = title ? `title_${title.trim().toLowerCase()}` : null;
 
     try {
         const raw = localStorage.getItem(STORAGE_ARTICLE_CLICKS);
         const data = raw ? JSON.parse(raw) : {};
 
-        if (!data[articleId]) {
-            data[articleId] = {
-                id: articleId,
-                title: title || "Untitled Article",
-                category: category || "News",
-                clicks: 0,
-                lastClicked: new Date().toISOString(),
-            };
+        const existingRecord = data[primaryKey] || (titleKey && data[titleKey]) || {
+            id: primaryKey,
+            title: title || "Untitled Article",
+            category: category || "News",
+            clicks: 0,
+            lastClicked: new Date().toISOString(),
+        };
+
+        const updatedClicks = (existingRecord.clicks || 0) + 1;
+        const record = {
+            ...existingRecord,
+            id: primaryKey,
+            title: title || existingRecord.title || "Untitled Article",
+            category: category || existingRecord.category || "News",
+            clicks: updatedClicks,
+            lastClicked: new Date().toISOString(),
+        };
+
+        data[primaryKey] = record;
+        if (titleKey && titleKey !== primaryKey) {
+            data[titleKey] = record;
         }
 
-        data[articleId].clicks += 1;
-        data[articleId].lastClicked = new Date().toISOString();
-        if (title) data[articleId].title = title;
-        if (category) data[articleId].category = category;
-
         localStorage.setItem(STORAGE_ARTICLE_CLICKS, JSON.stringify(data));
+        window.dispatchEvent(new CustomEvent("token_times_tracker_update", { detail: { type: "article", id: primaryKey, clicks: updatedClicks } }));
     } catch {
         // storage fallback
     }
 
     // Forward non-blocking hit to backend
-    sendAnalyticsBeacon({ type: "article", id: articleId });
+    sendAnalyticsBeacon({ type: "article", id: primaryKey, title, category });
 }
 
 /**
