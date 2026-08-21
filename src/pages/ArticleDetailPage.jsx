@@ -158,7 +158,14 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
             </div>
             <div className="flex items-center gap-2">
               <Clock size={14} className="text-[#D4AF37]" />
-              <span>{article.approx_time_to_read || 5} min read</span>
+              <span>
+                {(() => {
+                  const text = article.article || article.content || article.summary || "";
+                  const words = text.trim().split(/\s+/).filter(Boolean).length;
+                  if (words > 30) return Math.max(1, Math.ceil(words / 200));
+                  return Number(article.approx_time_to_read) || 3;
+                })()} min read
+              </span>
             </div>
           </div>
         </header>

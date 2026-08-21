@@ -12,6 +12,19 @@ const fmtDate = (iso) => {
     : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 };
 
+const calculateReadTime = (art) => {
+  const content = art.article || art.content || art.summary || "";
+  const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
+  if (wordCount > 30) {
+    return Math.max(1, Math.ceil(wordCount / 200));
+  }
+  const rawNum = Number(art.approx_time_to_read);
+  if (!isNaN(rawNum) && rawNum > 0) {
+    return rawNum;
+  }
+  return 3;
+};
+
 export default function Analytics({ published = [], queue = [], archived = [] }) {
   const [timeRange, setTimeRange] = useState(14);
   const [activeTab, setActiveTab] = useState("published"); // 'published' | 'drafts'
@@ -351,7 +364,7 @@ export default function Analytics({ published = [], queue = [], archived = [] })
             ) : (
               analyticsData.articlesList.slice(0, 6).map((art, idx) => {
                 const cat = Array.isArray(art.category) ? art.category[0] : art.category || "News";
-                const readTime = art.approx_time_to_read || 4;
+                const readTime = calculateReadTime(art);
 
                 return (
                   <div
@@ -461,7 +474,7 @@ export default function Analytics({ published = [], queue = [], archived = [] })
                       <td className="py-3 px-3 text-[#5C525A] font-medium">
                         <span className="inline-flex items-center gap-1">
                           <Clock size={12} className="text-[#D4AF37]" />
-                          {art.approx_time_to_read || 3} min read
+                          {calculateReadTime(art)} min read
                         </span>
                       </td>
                       <td className="py-3 px-3 text-right font-mono text-[#5C525A] text-[11px]">

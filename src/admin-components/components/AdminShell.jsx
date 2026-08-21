@@ -90,22 +90,27 @@ export default function AdminShell() {
         if (cancelled) return;
 
         // Server returns enriched drafts with `id`, `title`, `summary`, `source`, `category`, `fetchedAt`, `content`
-        const mapped = (json || []).map((d) => ({
-          id: d._id,
-          title: d.title,
-          summary: d.summary,
-          source: d.source,
-          category: d.category,
-          fetchedAt: d.fetchedAt,
-          content: d.content,
-          article: d.article,
-          tags: d.tags,
-          headlines: d.headlines,
-        }));
+        const mapped = (json || []).map((d) => {
+          const id = d.id || d._id || '';
+          return {
+            id,
+            _id: id,
+            title: d.title || 'Untitled Draft',
+            summary: d.summary || '',
+            source: d.source || 'AI Feed',
+            category: d.category || [],
+            fetchedAt: d.fetchedAt || d.createdAt || new Date().toISOString(),
+            content: d.content || d.article || '',
+            article: d.article || d.content || '',
+            tags: d.tags || [],
+            headlines: d.headlines || [],
+          };
+        });
 
         setQueue(mapped);
       } catch (err) {
-        console.error('Could not load drafts', err);
+        console.warn('Could not load drafts from backend:', err.message);
+        setQueue([]);
       }
     }
 
