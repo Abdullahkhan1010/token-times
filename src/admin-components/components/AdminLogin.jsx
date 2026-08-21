@@ -34,14 +34,20 @@ export default function AdminLogin({ onLoginSuccess }) {
         password,
         rememberMe,
       });
+      if (result.success) {
+        console.log("Login successful:", result);
+        setSuccessMsg("Credentials authenticated. Launching workspace...");
 
-      setSuccessMsg("Credentials authenticated. Launching workspace...");
-
-      setTimeout(() => {
-        if (onLoginSuccess) {
-          onLoginSuccess(result.user);
-        }
-      }, 400);
+        setTimeout(() => {
+          if (onLoginSuccess) {
+            onLoginSuccess(result.user);
+          }
+        }, 400);
+      } else {
+        console.log("Login failed:", result);
+        setError("Authentication failed. Please verify your credentials.");
+        setIsLoading(false);
+      }
     } catch (err) {
       setError(err?.message || "Authentication failed. Please verify your credentials.");
       setIsLoading(false);

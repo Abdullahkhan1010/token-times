@@ -67,51 +67,46 @@ export async function login({ emailOrUsername, password, rememberMe = true }) {
     }
 
     const payload = {
-        identifier: emailOrUsername.trim(),
-        username: emailOrUsername.trim(),
         email: emailOrUsername.includes("@") ? emailOrUsername.trim() : undefined,
         password: password,
-        loginAt: new Date().toISOString(),
     };
 
     let responseData = null;
     let requestError = null;
 
     try {
-        // Send credentials to /users endpoint on backend
-        responseData = await requestJson("/users", {
+        // Send credentials to /auth/login endpoint on backend
+        responseData = await requestJson("/auth/login", {
             method: "POST",
             body: JSON.stringify(payload),
         });
     } catch (err) {
         requestError = err;
-        console.warn("Backend /users authentication returned an error or is not fully configured yet:", err.message);
+        console.warn("Backend /auth/login authentication returned an error or is not fully configured yet:", err.message);
     }
 
     // Extract token if backend returned JWT or user record
-    const token =
-        responseData?.token ||
-        responseData?.accessToken ||
-        responseData?.access_token ||
-        responseData?.jwt ||
-        `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-
-    const user = responseData?.user || {
-        username: emailOrUsername.trim(),
-        email: emailOrUsername.includes("@") ? emailOrUsername.trim() : `${emailOrUsername.trim()}@tokentimes.com`,
-        role: "admin",
-        authenticatedAt: new Date().toISOString(),
-    };
+    const token = responseData?.access_token
+    const user = responseData?.user
 
     // Save session
     setAuthSession({ token, user, rememberMe });
+    if (!token || !user) {
+        return {
+            success: false,
+            token,
+            user,
+            serverAck: Boolean(responseData && !requestError),
+        };
+    } else {
+        return {
+            success: true,
+            token,
+            user,
+            serverAck: true,
+        };
+    }
 
-    return {
-        success: true,
-        token,
-        user,
-        serverAck: Boolean(responseData && !requestError),
-    };
 }
 
 /**
@@ -133,39 +128,34 @@ export function logout() {
  */
 export async function getAdminUsers() {
     try {
-        const data = await requestJson("/users", { skipCache: true });
+        const data = await requestJson("/auth/getAdmins", { skipCache: true });
         return Array.isArray(data) ? data : [];
     } catch (err) {
-        console.warn("Failed to fetch /users from backend:", err.message);
+        console.warn("Failed to fetch /auth/getAdmins from backend:", err.message);
         return [];
     }
 }
 
 /**
- * Create a new admin user on /users
+ * Create a new admin user on /auth/register
  */
 export async function createAdminUser(userData) {
     const payload = {
-        name: userData.name?.trim(),
-        username: userData.username?.trim(),
         email: userData.email?.trim(),
-        password: userData.password,
-        role: userData.role || "Senior Editor",
-        status: userData.status || "active",
-        createdAt: new Date().toISOString(),
+        password: userData.password
     };
 
-    return await requestJson("/users", {
+    return await requestJson("/auth/register", {
         method: "POST",
         body: JSON.stringify(payload),
     });
 }
 
 /**
- * Delete or deactivate admin user on /users/:id
+ * Delete or deactivate admin user on /auth/admins/:id
  */
 export async function deleteAdminUser(id) {
-    return await requestJson(`/users/${id}`, {
+    return await requestJson(`/auth/admins/${id}`, {
         method: "DELETE",
     });
 }
