@@ -190,7 +190,7 @@ function getUrlExpiryTimestamp(url) {
                 return createdMs + (amzExpires * 1000);
             }
         }
-    } catch (e) {}
+    } catch (e) { }
     return Date.now() + PRESIGNED_TTL_MS;
 }
 
@@ -204,7 +204,7 @@ function isCachedUrlValid(cachedObj) {
 
 function getStoredS3Url(cacheKey) {
     try {
-        const raw = sessionStorage.getItem(`s3_cache_${cacheKey}`);
+        // const raw = sessionStorage.getItem(`s3_cache_${cacheKey}`);
         if (!raw) return null;
         const parsed = JSON.parse(raw);
         if (isCachedUrlValid(parsed)) {
@@ -212,7 +212,7 @@ function getStoredS3Url(cacheKey) {
         }
         // Purge expired entry
         sessionStorage.removeItem(`s3_cache_${cacheKey}`);
-    } catch (e) {}
+    } catch (e) { }
     return null;
 }
 
@@ -224,7 +224,7 @@ function setStoredS3Url(cacheKey, url) {
             expiresAt,
             url,
         }));
-    } catch (e) {}
+    } catch (e) { }
 }
 
 export function evictS3UrlCache(fileKey) {
@@ -241,7 +241,7 @@ export function evictS3UrlCache(fileKey) {
                 sessionStorage.removeItem(k);
             }
         }
-    } catch (e) {}
+    } catch (e) { }
 }
 
 export async function refreshS3ImageUrl(fileKey) {
