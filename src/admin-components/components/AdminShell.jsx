@@ -94,8 +94,7 @@ export default function AdminShell() {
           const id = d.id || d._id || '';
           return {
             id,
-            _id: id,
-            title: d.title || 'Untitled Draft',
+            title: d.headlines[0] || 'Untitled Draft',
             summary: d.summary || '',
             source: d.source || 'AI Feed',
             category: d.category || [],

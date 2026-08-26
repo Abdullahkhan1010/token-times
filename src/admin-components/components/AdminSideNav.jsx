@@ -3,7 +3,6 @@ import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, Help
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", icon: Home },
-  { key: "create-article", label: "Create Article", icon: PenTool },
   { key: "queue", label: "AI Queue", icon: Newspaper },
   { key: "published", label: "Published", icon: BookOpen },
   { key: "published-news", label: "Published News", icon: FileEdit },
@@ -60,8 +59,8 @@ export default function AdminSideNav({ active, onNavigate, queueCount = 0, mobil
                 }}
                 aria-current={isActive ? "page" : undefined}
                 className={`flex items-center gap-3 px-3 py-2 rounded font-label-caps text-label-caps transition-all text-left ${isActive
-                    ? "bg-primary-container text-on-primary-container font-bold border-l-4 border-accent"
-                    : "text-on-surface-variant hover:bg-surface-container-high"
+                  ? "bg-primary-container text-on-primary-container font-bold border-l-4 border-accent"
+                  : "text-on-surface-variant hover:bg-surface-container-high"
                   }`}
               >
                 <Icon size={20} />
@@ -84,11 +83,10 @@ export default function AdminSideNav({ active, onNavigate, queueCount = 0, mobil
               onNavigate?.("manage-admins");
               onClose?.();
             }}
-            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded text-xs transition-colors text-left ${
-              active === "manage-admins"
+            className={`w-full flex items-center gap-2.5 px-3 py-2 rounded text-xs transition-colors text-left ${active === "manage-admins"
                 ? "bg-surface-container-high text-primary font-bold border-l-2 border-accent"
                 : "text-on-surface-variant/80 hover:text-primary hover:bg-surface-container-low"
-            }`}
+              }`}
           >
             <UserCheck size={14} className="text-on-surface-variant/70 shrink-0" />
             <span className="font-medium text-[11px] tracking-wide">Manage Admins</span>
