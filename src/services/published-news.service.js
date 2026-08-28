@@ -46,6 +46,5 @@ export async function archivePublishedNews(id) {
 
 export async function getNewsHeadlines() {
     const data = await requestJson(`${PUBLISHED_NEWS_PATH}/headlines`);
-
-    return Array.isArray(data);
+    return Array.isArray(data) ? data : [];
 }

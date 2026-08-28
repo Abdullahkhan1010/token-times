@@ -5,7 +5,7 @@ export async function getTickerItems() {
 
     const response = await getNewsHeadlines();
 
-    console.log("Ticker items fetched:", response);
+
     if (!Array.isArray(response)) {
       return [];
     }
@@ -14,6 +14,7 @@ export async function getTickerItems() {
     const items = response
       .flatMap(item => item.headlines || [])
       .filter((_, index) => index % 2 === 1);
+
 
     return items;
   }

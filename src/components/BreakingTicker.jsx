@@ -2,16 +2,24 @@ import React, { useState, useEffect } from "react";
 import { getTickerItems } from "../services/ticker.service";
 
 export default function BreakingTicker() {
-  const [items, setItems] = useState(getTickerItems);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
-    const handleUpdate = () => {
-      setItems(getTickerItems());
+    let cancelled = false;
+
+    const handleUpdate = async () => {
+      const updatedItems = await getTickerItems();
+      if (!cancelled) {
+        setItems(Array.isArray(updatedItems) ? updatedItems : []);
+      }
     };
 
     handleUpdate();
     window.addEventListener("ticker-items-updated", handleUpdate);
-    return () => window.removeEventListener("ticker-items-updated", handleUpdate);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("ticker-items-updated", handleUpdate);
+    };
   }, []);
 
   if (!items || items.length === 0) {
