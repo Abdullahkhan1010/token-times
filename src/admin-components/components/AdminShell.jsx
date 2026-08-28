@@ -13,12 +13,12 @@ import KnowledgeHubAdmin from "./KnowledgeHubAdmin";
 import InterviewsAdmin from "./InterviewsAdmin";
 import EventsAdmin from "./EventsAdmin";
 import ReitAdmin from "./ReitAdmin";
-import TickerAdmin from "./TickerAdmin";
 import PublishedNewsAdmin from "./PublishedNewsAdmin";
 import CreateArticleAdmin from "./CreateArticleAdmin";
 import ManageAdminsAdmin from "./ManageAdminsAdmin";
 import AdminLogin from "./AdminLogin";
-import { requestJson } from "../../services/api";
+import { requestJson } from "../../utils/request";
+import { deleteDraft } from "../../services/draft.service";
 import { getPublishedNews } from "../../services/published-news.service";
 import { isAuthenticated, logout, getCurrentUser } from "../../services/auth.service";
 
@@ -162,7 +162,7 @@ export default function AdminShell() {
   const handleReject = (id) => {
     (async () => {
       try {
-        await requestJson(`/news/drafts/${id}`, { method: 'DELETE' });
+        await deleteDraft(id);
         setQueue((prev) => prev.filter((a) => a.id !== id));
       } catch (err) {
         console.error('Reject failed', err);
@@ -350,7 +350,7 @@ export default function AdminShell() {
           />
         )}
 
-        {page === "ticker" && <TickerAdmin />}
+
 
         {page === "reit" && <ReitAdmin />}
 

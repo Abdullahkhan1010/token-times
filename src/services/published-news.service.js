@@ -43,3 +43,9 @@ export async function archivePublishedNews(id) {
     });
     return mapPublishedNews(data);
 }
+
+export async function getNewsHeadlines() {
+    const data = await requestJson(`${PUBLISHED_NEWS_PATH}/headlines`);
+
+    return Array.isArray(data);
+}
