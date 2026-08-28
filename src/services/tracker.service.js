@@ -16,24 +16,21 @@ function sendAnalyticsBeacon(payload) {
     if (typeof window === "undefined") return;
 
     try {
-        const url = buildUrl("/analytics/hit");
+        const url = buildUrl("/stats/event");
         if (!url) return;
 
         const jsonString = JSON.stringify(payload);
 
-        if (typeof navigator !== "undefined" && typeof navigator.sendBeacon === "function") {
-            // text/plain blob avoids complex CORS preflight checks across Firefox and Safari
-            const blob = new Blob([jsonString], { type: "text/plain;charset=UTF-8" });
-            navigator.sendBeacon(url, blob);
-        } else {
-            fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: jsonString,
-                keepalive: true,
-                mode: "cors",
-            }).catch(() => { });
-        }
+        // Use standard non-blocking keepalive fetch to avoid adblocker beacon heuristics
+        fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: jsonString,
+            keepalive: true,
+            mode: "cors",
+        }).catch(() => {
+            // Silently ignore if blocked by client-side adblocker/privacy shields
+        });
     } catch {
         // Safe failover
     }
