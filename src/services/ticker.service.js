@@ -5,7 +5,7 @@ export async function getTickerItems() {
 
     const response = await getNewsHeadlines();
 
-
+    console.log("Ticker items fetched:", response);
     if (!Array.isArray(response)) {
       return [];
     }
