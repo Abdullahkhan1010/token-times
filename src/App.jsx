@@ -36,7 +36,7 @@ import TermsPage from "./pages/TermsPage";
 import ArticleDetailPage from "./pages/ArticleDetailPage";
 import CryptoDetailPage from "./pages/CryptoDetailPage";
 import { trackPageVisit, trackArticleClick } from "./services/tracker.service";
-import { getTickerItems } from "./services";
+
 
 export default function App() {
   const [activePage, setActivePage] = useState("Home");
@@ -55,17 +55,17 @@ export default function App() {
     }
   }, [activePage]);
 
-  useEffect(() => {
-    // Pre-warm data cache asynchronously on initial site mount
-    getTickerItems().catch(() => { });
-    getPublishedNews().catch(() => { });
-    getRegulations().catch(() => { });
-    getKnowlegeHubs().catch(() => { });
-    getEvents().catch(() => { });
-    getResearches().catch(() => { });
-    getInterviews().catch(() => { });
-    getMagzines().catch(() => { });
-  }, []);
+  // useEffect(() => {
+  //   // Pre-warm data cache asynchronously on initial site mount
+  //   getTickerItems().catch(() => { });
+  //   getPublishedNews().catch(() => { });
+  //   getRegulations().catch(() => { });
+  //   getKnowlegeHubs().catch(() => { });
+  //   getEvents().catch(() => { });
+  //   getResearches().catch(() => { });
+  //   getInterviews().catch(() => { });
+  //   getMagzines().catch(() => { });
+  // }, []);
 
   const handleSelectArticle = (article) => {
     if (article) {
