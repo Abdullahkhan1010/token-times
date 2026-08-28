@@ -68,7 +68,7 @@ export default function App() {
   const handleSelectArticle = (article) => {
     if (article) {
       trackArticleClick(
-        article._id || article.id,
+        article.id,
         article.title,
         Array.isArray(article.category) ? article.category[0] : article.category
       );

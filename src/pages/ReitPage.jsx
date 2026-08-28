@@ -70,7 +70,7 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
             if (url) {
               const img = new Image();
               img.src = url;
-              if (img.decode) img.decode().catch(() => {});
+              if (img.decode) img.decode().catch(() => { });
             }
           }
         } catch {
@@ -251,8 +251,8 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
           <button
             onClick={() => setActiveTab("overview")}
             className={`px-4 py-2 text-xs font-bold font-label-caps uppercase rounded-lg transition-all whitespace-nowrap ${activeTab === "overview"
-                ? "bg-[#0C133D] text-[#D4AF37] shadow-sm border border-[#D4AF37]/50"
-                : "text-on-surface-variant hover:text-[#0C133D] bg-surface-container-low"
+              ? "bg-[#0C133D] text-[#D4AF37] shadow-sm border border-[#D4AF37]/50"
+              : "text-on-surface-variant hover:text-[#0C133D] bg-surface-container-low"
               }`}
           >
             What is REIT Technology?
@@ -260,8 +260,8 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
           <button
             onClick={() => setActiveTab("pakistan")}
             className={`px-4 py-2 text-xs font-bold font-label-caps uppercase rounded-lg transition-all whitespace-nowrap ${activeTab === "pakistan"
-                ? "bg-[#0C133D] text-[#D4AF37] shadow-sm border border-[#D4AF37]/50"
-                : "text-on-surface-variant hover:text-[#0C133D] bg-surface-container-low"
+              ? "bg-[#0C133D] text-[#D4AF37] shadow-sm border border-[#D4AF37]/50"
+              : "text-on-surface-variant hover:text-[#0C133D] bg-surface-container-low"
               }`}
           >
             Pakistan Ecosystem & SECP
@@ -269,8 +269,8 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
           <button
             onClick={() => setActiveTab("global")}
             className={`px-4 py-2 text-xs font-bold font-label-caps uppercase rounded-lg transition-all whitespace-nowrap ${activeTab === "global"
-                ? "bg-[#0C133D] text-[#D4AF37] shadow-sm border border-[#D4AF37]/50"
-                : "text-on-surface-variant hover:text-[#0C133D] bg-surface-container-low"
+              ? "bg-[#0C133D] text-[#D4AF37] shadow-sm border border-[#D4AF37]/50"
+              : "text-on-surface-variant hover:text-[#0C133D] bg-surface-container-low"
               }`}
           >
             Global Applications
@@ -278,8 +278,8 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
           <button
             onClick={() => setActiveTab("simulator")}
             className={`px-4 py-2 text-xs font-bold font-label-caps uppercase rounded-lg transition-all whitespace-nowrap ${activeTab === "simulator"
-                ? "bg-[#0C133D] text-[#D4AF37] shadow-sm border border-[#D4AF37]/50"
-                : "text-on-surface-variant hover:text-[#0C133D] bg-surface-container-low"
+              ? "bg-[#0C133D] text-[#D4AF37] shadow-sm border border-[#D4AF37]/50"
+              : "text-on-surface-variant hover:text-[#0C133D] bg-surface-container-low"
               }`}
           >
             Token Yield Simulator
@@ -600,7 +600,7 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
 
               return (
                 <Reveal
-                  key={art._id || art.id || idx}
+                  key={art.id || idx}
                   as="article"
                   delay={idx * 80}
                   className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col justify-between cursor-pointer space-y-4 shadow-sm hover:border-[#D4AF37] transition-all"

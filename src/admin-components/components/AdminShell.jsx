@@ -14,12 +14,15 @@ import InterviewsAdmin from "./InterviewsAdmin";
 import EventsAdmin from "./EventsAdmin";
 import ReitAdmin from "./ReitAdmin";
 import PublishedNewsAdmin from "./PublishedNewsAdmin";
-import CreateArticleAdmin from "./CreateArticleAdmin";
 import ManageAdminsAdmin from "./ManageAdminsAdmin";
 import AdminLogin from "./AdminLogin";
-import { requestJson } from "../../utils/request";
 import { deleteDraft } from "../../services/draft.service";
-import { getPublishedNews } from "../../services/published-news.service";
+import { getDrafts } from "../../services/draft.service";
+import {
+  archivePublishedNews,
+  getPublishedNews,
+  putPublishedNews,
+} from "../../services/published-news.service";
 import { isAuthenticated, logout, getCurrentUser } from "../../services/auth.service";
 
 const getInitialPage = () => {
@@ -88,12 +91,12 @@ export default function AdminShell() {
 
     async function loadDrafts() {
       try {
-        const json = await requestJson('/news/drafts');
+        const json = await getDrafts();
         if (cancelled) return;
 
         // Server returns enriched drafts with `id`, `title`, `summary`, `source`, `category`, `fetchedAt`, `content`
         const mapped = (json || []).map((d) => {
-          const id = d.id || d._id || '';
+          const id = d.id || '';
           return {
             id,
             title: d.headlines[0] || 'Untitled Draft',
@@ -128,7 +131,7 @@ export default function AdminShell() {
 
     async function loadArchived() {
       try {
-        const json = await requestJson('/published-news');
+        const json = await getPublishedNews();
         if (cancelled) return;
 
         const filtered = (json || []).filter(item => item.status === 'archived');
@@ -147,7 +150,7 @@ export default function AdminShell() {
   }, [isAuth]);
 
   const handleEditDraft = (id) => {
-    const draft = queue.find(d => d.id === id || d._id === id);
+    const draft = queue.find(d => d.id === id);
     if (draft) {
       setSelectedDraft(draft);
       setPage('published-news');
@@ -170,40 +173,15 @@ export default function AdminShell() {
     })();
   };
 
-  const handleEditSave = (updated) => {
-    (async () => {
-      try {
-        const payload = {
-          title: updated.title,
-          summary: updated.summary,
-          category: updated.category,
-          source: updated.source,
-          content: updated.content,
-        };
-
-        const updatedDraft = await requestJson(`/news/drafts/${updated.id}`, {
-          method: 'PATCH',
-          body: JSON.stringify(payload),
-        });
-
-        setQueue((prev) => prev.map((a) => (a.id === updated.id ? { ...a, title: updatedDraft.original_title ?? updated.title, summary: updatedDraft.summary ?? updated.summary, source: updated.source ?? a.source, category: updated.category ?? a.category, content: updatedDraft.article ?? updated.content } : a)));
-      } catch (err) {
-        console.error('Save failed', err);
-      }
-    })();
-  };
-
   const handleArchive = async (row) => {
     try {
-      await requestJson(`/published-news/archive/${row._id || row.id}`, {
-        method: 'POST',
-      });
+      await archivePublishedNews(row.id);
 
-      setPublished((prev) => prev.filter((a) => (a._id || a.id) !== (row._id || row.id)));
+      setPublished((prev) => prev.filter((a) => a.id !== row.id));
 
       // Reload archived items
-      const json = await requestJson('/published-news');
-      const filtered = (json || []).filter(item => item.status === 'archived');
+      const publishedNews = await getPublishedNews();
+      const filtered = publishedNews.filter(item => item.status === 'archived');
       setArchived(filtered);
     } catch (err) {
       console.error('Archive failed', err);
@@ -212,16 +190,13 @@ export default function AdminShell() {
 
   const handleRestore = async (row) => {
     try {
-      await requestJson(`/published-news/${row._id || row.id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ status: 'published' }),
-      });
+      await putPublishedNews(row.id, { status: 'published' });
 
-      setArchived((prev) => prev.filter((a) => (a._id || a.id) !== (row._id || row.id)));
+      setArchived((prev) => prev.filter((a) => a.id !== row.id));
 
       // Reload published items
-      const json = await requestJson('/published-news');
-      const filtered = (json || []).filter(item => item.status === 'published');
+      const publishedNews = await getPublishedNews();
+      const filtered = publishedNews.filter(item => item.status === 'published');
       setPublished(filtered);
     } catch (err) {
       console.error('Restore failed', err);
@@ -232,14 +207,14 @@ export default function AdminShell() {
     // Reload published news and queue after publishing
     try {
       // Reload published news
-      const publishedJson = await requestJson('/published-news');
-      const filtered = (publishedJson || []).filter(item => item.status === 'published');
+      const publishedNews = await getPublishedNews();
+      const filtered = publishedNews.filter(item => item.status === 'published');
       setPublished(filtered);
 
       // Reload drafts/queue
-      const draftsJson = await requestJson('/news/drafts');
-      const mapped = (draftsJson || []).map((d) => ({
-        id: d.id || d._id,
+      const drafts = await getDrafts();
+      const mapped = drafts.map((d) => ({
+        id: d.id,
         title: d.title,
         summary: d.summary,
         source: d.source,
@@ -311,28 +286,11 @@ export default function AdminShell() {
           />
         )}
 
-        {page === "create-article" && (
-          <CreateArticleAdmin
-            onArticleCreated={() => {
-              // Reload published news and navigate to published list
-              (async () => {
-                try {
-                  const data = await getPublishedNews();
-                  setPublished(data.filter((i) => i.status === "published"));
-                } catch (e) {
-                  // ignore
-                }
-              })();
-            }}
-          />
-        )}
-
         {page === "queue" && (
           <AIQueue
             queue={queue}
             onApprove={handleApprove}
             onReject={handleReject}
-            onEditSave={handleEditSave}
             onEdit={handleEditDraft}
           />
         )}
@@ -349,8 +307,6 @@ export default function AdminShell() {
             }}
           />
         )}
-
-
 
         {page === "reit" && <ReitAdmin />}
 

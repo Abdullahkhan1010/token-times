@@ -1,11 +1,10 @@
 export const createPublishedNewsInterface = (overrides = {}) => {
-    const rawId = overrides._id || overrides.id || overrides.article_id || '';
+    const rawId = overrides.id || overrides.article_id || '';
     const idStr = typeof rawId === 'object' && rawId !== null ? String(rawId) : String(rawId || '');
     const nowIso = new Date().toISOString();
     const dateVal = overrides.publishedAt || overrides.createdAt || overrides.created_at || overrides.publish_date || nowIso;
 
     return {
-        _id: idStr,
         id: idStr,
         title: overrides.title || '',
         article: overrides.article || '',
@@ -23,7 +22,6 @@ export const createPublishedNewsInterface = (overrides = {}) => {
         publishedAt: dateVal,
         publish_date: overrides.publish_date || dateVal,
         ...overrides,
-        _id: idStr,
         id: idStr,
         publishedAt: dateVal,
     };

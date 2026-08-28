@@ -116,12 +116,11 @@ export default function Analytics({ published = [], queue = [], archived = [] })
     // Merge articles with real click stats
     const articlesWithClicks = safePublished
       .map((art) => {
-        const id = art._id || art.id;
+        const id = art.id;
         const titleKey = art.title ? `title_${art.title.trim().toLowerCase()}` : null;
         const clickRecord =
           (id && articleClicks[id]) ||
           (art.id && articleClicks[art.id]) ||
-          (art._id && articleClicks[art._id]) ||
           (titleKey && articleClicks[titleKey]);
 
         const clicks = clickRecord
@@ -130,7 +129,7 @@ export default function Analytics({ published = [], queue = [], archived = [] })
 
         return {
           ...art,
-          id: id || art.id || art._id,
+          id,
           clicks,
         };
       })
@@ -220,11 +219,10 @@ export default function Analytics({ published = [], queue = [], archived = [] })
             <button
               key={days}
               onClick={() => setTimeRange(days)}
-              className={`px-3 py-1.5 rounded-md transition-all ${
-                timeRange === days
+              className={`px-3 py-1.5 rounded-md transition-all ${timeRange === days
                   ? "bg-[#0C133D] text-[#D4AF37] shadow-sm font-bold"
                   : "text-[#5C525A] hover:text-[#0C133D]"
-              }`}
+                }`}
             >
               {days}D
             </button>
@@ -272,21 +270,19 @@ export default function Analytics({ published = [], queue = [], archived = [] })
             <div className="flex items-center gap-1 bg-[#F2E7E1]/60 p-1 rounded-lg border border-[#E2D4CB] text-xs self-start sm:self-auto">
               <button
                 onClick={() => setActiveTab("published")}
-                className={`px-3 py-1 rounded font-bold transition-all ${
-                  activeTab === "published"
+                className={`px-3 py-1 rounded font-bold transition-all ${activeTab === "published"
                     ? "bg-[#0C133D] text-[#D4AF37] shadow-sm"
                     : "text-[#5C525A] hover:text-[#0C133D]"
-                }`}
+                  }`}
               >
                 Published
               </button>
               <button
                 onClick={() => setActiveTab("drafts")}
-                className={`px-3 py-1 rounded font-bold transition-all ${
-                  activeTab === "drafts"
+                className={`px-3 py-1 rounded font-bold transition-all ${activeTab === "drafts"
                     ? "bg-[#0C133D] text-[#D4AF37] shadow-sm"
                     : "text-[#5C525A] hover:text-[#0C133D]"
-                }`}
+                  }`}
               >
                 AI Queue
               </button>
@@ -456,7 +452,7 @@ export default function Analytics({ published = [], queue = [], archived = [] })
                     .replace(/\b\w/g, (c) => c.toUpperCase());
 
                   return (
-                    <tr key={art._id || art.id || i} className="hover:bg-[#F2E7E1]/30 transition-colors">
+                    <tr key={art.id || i} className="hover:bg-[#F2E7E1]/30 transition-colors">
                       <td className="py-3 px-3">
                         <p className="font-bold text-[#0C133D] line-clamp-1">{art.title || "Untitled"}</p>
                       </td>

@@ -103,7 +103,7 @@ export default function MagazinesAdmin() {
     if (!window.confirm("Are you sure you want to delete this magazine issue?")) return;
     try {
       await deleteMagzine(id);
-      setItems((prev) => prev.filter((item) => item._id !== id));
+      setItems((prev) => prev.filter((item) => item.id !== id));
       setMessage({ type: "success", text: "Magazine issue deleted." });
     } catch (err) {
       setMessage({ type: "error", text: "Failed to delete magazine issue." });
@@ -287,7 +287,7 @@ export default function MagazinesAdmin() {
               </thead>
               <tbody className="divide-y divide-outline-variant/40">
                 {items.map((item) => (
-                  <tr key={item._id} className="hover:bg-surface-container-low/50">
+                  <tr key={item.id} className="hover:bg-surface-container-low/50">
                     <td className="py-3 px-3 font-semibold text-accent">{item.issue_name}</td>
                     <td className="py-3 px-3 font-semibold text-on-surface">{item.title}</td>
                     <td className="py-3 px-3 text-on-surface-variant font-data-tabular">${item.price}</td>
@@ -303,7 +303,7 @@ export default function MagazinesAdmin() {
                     </td>
                     <td className="py-3 px-3 text-right">
                       <button
-                        onClick={() => handleDelete(item._id)}
+                        onClick={() => handleDelete(item.id)}
                         className="text-red-500 hover:text-red-700 p-1 rounded"
                         title="Delete"
                       >

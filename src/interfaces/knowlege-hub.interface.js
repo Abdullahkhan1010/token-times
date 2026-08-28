@@ -1,5 +1,5 @@
 export const createKnowlegeHubInterface = (overrides = {}) => ({
-    _id: '',
+    id: '',
     question: '',
     answer: '',
     author: '',

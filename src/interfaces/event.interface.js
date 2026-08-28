@@ -1,5 +1,5 @@
 export const createEventInterface = (overrides = {}) => ({
-    _id: '',
+    id: '',
     event_title: '',
     event_venue: '',
     event_adress: '',

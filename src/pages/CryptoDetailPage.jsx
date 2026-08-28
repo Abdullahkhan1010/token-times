@@ -298,11 +298,10 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
                 setHoverIndex(null);
                 onNavigate?.("CryptoDetail", { symbol: coin.asset.toLowerCase(), preserveScroll: true });
               }}
-              className={`flex-1 flex items-center justify-between gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all text-xs font-bold shrink-0 min-w-[125px] sm:min-w-[140px] ${
-                isSelected
+              className={`flex-1 flex items-center justify-between gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl transition-all text-xs font-bold shrink-0 min-w-[125px] sm:min-w-[140px] ${isSelected
                   ? "bg-[#0C133D] text-white shadow-sm ring-1 ring-[#D4AF37]/50"
                   : "bg-surface-container-low/50 text-[#5C525A] hover:bg-surface-container-low hover:text-[#0C133D]"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <img
@@ -320,15 +319,14 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
 
               {/* Rise in Green, Fall in Red */}
               <span
-                className={`text-[10px] sm:text-[11px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-full shrink-0 ${
-                  isSelected
+                className={`text-[10px] sm:text-[11px] font-mono font-bold px-1.5 sm:px-2 py-0.5 rounded-full shrink-0 ${isSelected
                     ? isPos
                       ? "bg-emerald-500/25 text-emerald-300 border border-emerald-400/40"
                       : "bg-rose-600/30 text-rose-300 border border-rose-400/40"
                     : isPos
                       ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                       : "bg-rose-50 text-rose-600 border border-rose-200"
-                }`}
+                  }`}
               >
                 {isPos ? "+" : ""}{(ticker?.change || 0).toFixed(2)}%
               </span>
@@ -371,11 +369,10 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
                   ${formatPrice(activePoint?.close || livePrice)}
                 </span>
                 <span
-                  className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-extrabold ${
-                    isPositive
+                  className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-extrabold ${isPositive
                       ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                       : "bg-rose-50 text-rose-600 border border-rose-300"
-                  }`}
+                    }`}
                 >
                   {isPositive ? <ArrowUpRight size={13} className="text-emerald-700" /> : <ArrowDownRight size={13} className="text-rose-600" />}
                   {isPositive ? "+" : ""}{liveChange.toFixed(2)}%
@@ -405,18 +402,16 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
             <div className="flex items-center bg-white rounded-lg p-0.5 border border-outline-variant shadow-2xs text-xs">
               <button
                 onClick={() => setChartType("line")}
-                className={`p-1.5 rounded-md transition-all flex items-center justify-center ${
-                  chartType === "line" ? "bg-[#0C133D] text-[#D4AF37] shadow-2xs" : "text-[#5C525A] hover:text-[#0C133D]"
-                }`}
+                className={`p-1.5 rounded-md transition-all flex items-center justify-center ${chartType === "line" ? "bg-[#0C133D] text-[#D4AF37] shadow-2xs" : "text-[#5C525A] hover:text-[#0C133D]"
+                  }`}
                 title="Area Line Chart"
               >
                 <LineChart size={14} />
               </button>
               <button
                 onClick={() => setChartType("candles")}
-                className={`p-1.5 rounded-md transition-all flex items-center justify-center ${
-                  chartType === "candles" ? "bg-[#0C133D] text-[#D4AF37] shadow-2xs" : "text-[#5C525A] hover:text-[#0C133D]"
-                }`}
+                className={`p-1.5 rounded-md transition-all flex items-center justify-center ${chartType === "candles" ? "bg-[#0C133D] text-[#D4AF37] shadow-2xs" : "text-[#5C525A] hover:text-[#0C133D]"
+                  }`}
                 title="Candlestick OHLC Chart"
               >
                 <CandleIcon size={14} />
@@ -426,17 +421,15 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
             <div className="flex items-center bg-white rounded-lg p-0.5 border border-outline-variant shadow-2xs text-[10px] sm:text-[11px] font-bold">
               <button
                 onClick={() => setChartMode("basic")}
-                className={`px-2 sm:px-2.5 py-1 rounded-md transition-all ${
-                  chartMode === "basic" ? "bg-[#0C133D] text-[#D4AF37]" : "text-[#5C525A]"
-                }`}
+                className={`px-2 sm:px-2.5 py-1 rounded-md transition-all ${chartMode === "basic" ? "bg-[#0C133D] text-[#D4AF37]" : "text-[#5C525A]"
+                  }`}
               >
                 Basic
               </button>
               <button
                 onClick={() => setChartMode("advanced")}
-                className={`px-2 sm:px-2.5 py-1 rounded-md transition-all ${
-                  chartMode === "advanced" ? "bg-[#0C133D] text-[#D4AF37]" : "text-[#5C525A]"
-                }`}
+                className={`px-2 sm:px-2.5 py-1 rounded-md transition-all ${chartMode === "advanced" ? "bg-[#0C133D] text-[#D4AF37]" : "text-[#5C525A]"
+                  }`}
               >
                 Advanced
               </button>
@@ -452,11 +445,10 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
                   setSelectedTimeframe(tf.label);
                   setHoverIndex(null);
                 }}
-                className={`px-2.5 sm:px-3 py-1 rounded-md transition-all whitespace-nowrap text-[11px] sm:text-xs ${
-                  selectedTimeframe === tf.label
+                className={`px-2.5 sm:px-3 py-1 rounded-md transition-all whitespace-nowrap text-[11px] sm:text-xs ${selectedTimeframe === tf.label
                     ? "bg-[#0C133D] text-[#D4AF37] shadow-xs font-black"
                     : "text-[#5C525A] hover:text-[#0C133D]"
-                }`}
+                  }`}
               >
                 {tf.label}
               </button>
@@ -478,11 +470,10 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
               {/* Clamped Crosshair Floating Badge (Prevents Mobile Overflow) */}
               {hoverIndex !== null && activePoint && (
                 <div
-                  className={`absolute z-20 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-white text-xs font-semibold shadow-xl pointer-events-none border transition-all duration-75 ${
-                    isActivePointPositive
+                  className={`absolute z-20 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-white text-xs font-semibold shadow-xl pointer-events-none border transition-all duration-75 ${isActivePointPositive
                       ? "bg-[#0C133D] border-emerald-500/60"
                       : "bg-[#0C133D] border-rose-500/60"
-                  }`}
+                    }`}
                   style={{
                     left: `${Math.max(16, Math.min(84, (activePoint.x / chartWidth) * 100))}%`,
                     top: `${Math.max(20, (activePoint.y / chartHeight) * 100)}%`,
@@ -499,9 +490,8 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
                       })}
                     </p>
                     <span
-                      className={`text-[9px] font-bold font-mono px-1 rounded ${
-                        isActivePointPositive ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"
-                      }`}
+                      className={`text-[9px] font-bold font-mono px-1 rounded ${isActivePointPositive ? "bg-emerald-500/20 text-emerald-300" : "bg-rose-500/20 text-rose-300"
+                        }`}
                     >
                       {isActivePointPositive ? "+" : ""}
                       {activePointDeltaPct.toFixed(2)}%
@@ -844,9 +834,8 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
           <div className="p-2.5 sm:p-3 bg-[#F2E7E1]/40 rounded-xl border border-outline-variant">
             <span className="text-[10px] text-[#7F707A] font-bold uppercase tracking-wider block truncate">Price Delta</span>
             <span
-              className={`font-sans font-extrabold text-xs sm:text-sm tabular-nums block truncate ${
-                isPositive ? "text-emerald-700" : "text-rose-600"
-              }`}
+              className={`font-sans font-extrabold text-xs sm:text-sm tabular-nums block truncate ${isPositive ? "text-emerald-700" : "text-rose-600"
+                }`}
             >
               {isPositive ? "+" : ""}
               {Number(activeStats.priceChange || 0).toFixed(2)} USD
@@ -889,7 +878,7 @@ export default function CryptoDetailPage({ initialAsset = "BTC", onNavigate, onS
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {relatedNews.map((article, i) => (
               <div
-                key={article._id || article.id || i}
+                key={article.id || i}
                 onClick={() => onSelectArticle?.(article)}
                 className="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 flex flex-col justify-between hover-lift cursor-pointer space-y-3 group shadow-2xs hover:border-[#D4AF37]"
               >

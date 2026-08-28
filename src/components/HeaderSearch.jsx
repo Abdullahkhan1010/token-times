@@ -70,7 +70,6 @@ function getStaticArticles() {
 
   if (heroLead?.title) {
     list.push({
-      _id: "static-hero-lead",
       id: "static-hero-lead",
       title: heroLead.title,
       summary: heroLead.summary || "",
@@ -86,7 +85,6 @@ function getStaticArticles() {
 
   (heroSubStories || []).forEach((item, idx) => {
     list.push({
-      _id: `static-sub-${idx}`,
       id: `static-sub-${idx}`,
       title: item.title,
       summary: item.title,
@@ -102,7 +100,6 @@ function getStaticArticles() {
 
   (heroLeftArticles || []).forEach((item, idx) => {
     list.push({
-      _id: `static-left-${idx}`,
       id: `static-left-${idx}`,
       title: item.title,
       summary: item.title,
@@ -118,7 +115,6 @@ function getStaticArticles() {
 
   (editorsPicks || []).forEach((item, idx) => {
     list.push({
-      _id: `static-editors-${idx}`,
       id: `static-editors-${idx}`,
       title: item.title,
       summary: item.desc || "",
@@ -134,7 +130,6 @@ function getStaticArticles() {
 
   (latestNews || []).forEach((item, idx) => {
     list.push({
-      _id: `static-latest-${idx}`,
       id: `static-latest-${idx}`,
       title: item.title,
       summary: item.title,
@@ -150,7 +145,6 @@ function getStaticArticles() {
 
   (pakistanFocus || []).forEach((item, idx) => {
     list.push({
-      _id: `static-pakistan-${idx}`,
       id: `static-pakistan-${idx}`,
       title: item.title,
       summary: item.desc || "",
@@ -166,7 +160,6 @@ function getStaticArticles() {
 
   (globalHighlights || []).forEach((item, idx) => {
     list.push({
-      _id: `static-global-${idx}`,
       id: `static-global-${idx}`,
       title: item.title,
       summary: item.desc || "",
@@ -182,7 +175,6 @@ function getStaticArticles() {
 
   if (featuredAnalysis?.title) {
     list.push({
-      _id: "static-featured-analysis",
       id: "static-featured-analysis",
       title: featuredAnalysis.title,
       summary: featuredAnalysis.desc || "",
@@ -431,17 +423,15 @@ export default function HeaderSearch({
     >
       {/* Search Bar Input Container */}
       <div
-        className={`flex items-center px-3 py-2 rounded-lg border transition-all duration-200 ${
-          isOpen
+        className={`flex items-center px-3 py-2 rounded-lg border transition-all duration-200 ${isOpen
             ? "border-[#D4AF37] bg-white shadow-md ring-2 ring-[#D4AF37]/20"
             : "border-outline-variant bg-surface-container-low hover:border-[#0C133D]/40"
-        }`}
+          }`}
       >
         <Search
           size={16}
-          className={`mr-2 shrink-0 transition-colors ${
-            isOpen ? "text-[#D4AF37]" : "text-on-surface-variant"
-          }`}
+          className={`mr-2 shrink-0 transition-colors ${isOpen ? "text-[#D4AF37]" : "text-on-surface-variant"
+            }`}
         />
         <input
           ref={inputRef}
@@ -475,11 +465,10 @@ export default function HeaderSearch({
       {/* Live Search Results Dropdown Overlay */}
       {isOpen && (
         <div
-          className={`absolute left-0 mt-2 bg-white border border-outline-variant/80 rounded-xl shadow-2xl z-[999] overflow-hidden animate-fade-in ${
-            isMobile
+          className={`absolute left-0 mt-2 bg-white border border-outline-variant/80 rounded-xl shadow-2xl z-[999] overflow-hidden animate-fade-in ${isMobile
               ? "w-full max-w-full"
               : "w-[380px] lg:w-[420px] md:right-0 md:left-auto"
-          }`}
+            }`}
         >
           {/* Header Bar inside Dropdown */}
           <div className="px-3.5 py-2.5 bg-[#0C133D] text-white flex items-center justify-between border-b border-white/10 text-xs">
@@ -532,14 +521,13 @@ export default function HeaderSearch({
 
                   return (
                     <div
-                      key={article._id || article.id || idx}
+                      key={article.id || idx}
                       onClick={() => handleSelect(article)}
                       onMouseEnter={() => setSelectedIndex(idx)}
-                      className={`p-3 flex items-start gap-3 cursor-pointer transition-colors ${
-                        isHighlighted
+                      className={`p-3 flex items-start gap-3 cursor-pointer transition-colors ${isHighlighted
                           ? "bg-[#D4AF37]/15 border-l-4 border-[#D4AF37]"
                           : "hover:bg-surface-container-low border-l-4 border-transparent"
-                      }`}
+                        }`}
                       role="option"
                       aria-selected={isHighlighted}
                     >

@@ -25,7 +25,7 @@ export default function UpcomingEvents() {
             const month = dateObj && !isNaN(dateObj) ? dateObj.toLocaleString("en-US", { month: "short" }).toUpperCase() : "2026";
             const day = dateObj && !isNaN(dateObj) ? dateObj.getDate() : "15";
             return {
-              _id: ev._id,
+              id: ev.id,
               month,
               day: String(day),
               title: ev.event_title || "Untitled Event",
@@ -68,7 +68,7 @@ export default function UpcomingEvents() {
       ) : (
         <div className="space-y-4">
           {events.map((ev, i) => (
-            <div key={ev._id || ev.title + i} className="hover-lift flex gap-3 items-center bg-surface-container-lowest p-3 border border-outline-variant rounded-xl hover:border-[#D4AF37] transition-all cursor-pointer group h-[76px]">
+            <div key={ev.id || ev.title + i} className="hover-lift flex gap-3 items-center bg-surface-container-lowest p-3 border border-outline-variant rounded-xl hover:border-[#D4AF37] transition-all cursor-pointer group h-[76px]">
               <div
                 className={`w-11 h-11 flex flex-col items-center justify-center rounded-lg shrink-0 ${ev.filled ? "bg-[#D4AF37] text-[#0C133D]" : "border border-[#D4AF37] text-[#D4AF37]"
                   }`}

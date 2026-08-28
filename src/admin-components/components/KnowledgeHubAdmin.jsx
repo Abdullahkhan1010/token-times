@@ -69,7 +69,7 @@ export default function KnowledgeHubAdmin() {
     if (!window.confirm("Are you sure you want to delete this entry?")) return;
     try {
       await deleteKnowlegeHub(id);
-      setItems((prev) => prev.filter((item) => (item.id || item._id) !== id));
+      setItems((prev) => prev.filter((item) => item.id !== id));
       setMessage({ type: "success", text: "Entry deleted." });
     } catch (err) {
       setMessage({ type: "error", text: "Failed to delete entry." });
@@ -195,7 +195,7 @@ export default function KnowledgeHubAdmin() {
               </thead>
               <tbody className="divide-y divide-outline-variant/40">
                 {items.map((item) => (
-                  <tr key={item.id || item._id || item.question} className="hover:bg-surface-container-low/50">
+                  <tr key={item.id || item.question} className="hover:bg-surface-container-low/50">
                     <td className="py-3 px-3 font-semibold text-on-surface max-w-xs truncate">{item.question}</td>
                     <td className="py-3 px-3 text-on-surface-variant">{item.author || "N/A"}</td>
                     <td className="py-3 px-3 text-on-surface-variant">
@@ -204,7 +204,7 @@ export default function KnowledgeHubAdmin() {
                     <td className="py-3 px-3 text-on-surface-variant">{item.publish_date || "N/A"}</td>
                     <td className="py-3 px-3 text-right">
                       <button
-                        onClick={() => handleDelete(item.id || item._id)}
+                        onClick={() => handleDelete(item.id)}
                         className="text-red-500 hover:text-red-700 p-1 rounded"
                         title="Delete"
                       >

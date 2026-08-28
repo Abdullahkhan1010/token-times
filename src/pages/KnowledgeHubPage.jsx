@@ -19,7 +19,7 @@ export default function KnowledgeHubPage({ onNavigate }) {
         if (!active) return;
         if (Array.isArray(data) && data.length > 0) {
           const mapped = data.map((item) => ({
-            id: item.id || item._id,
+            id: item.id,
             level: Array.isArray(item.category) && item.category.length > 0 ? item.category[0] : "Guide",
             time: item.publish_date || "5 min read",
             title: item.question,
@@ -87,11 +87,10 @@ export default function KnowledgeHubPage({ onNavigate }) {
             role="tab"
             aria-selected={selectedCategory === cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap border ${
-              selectedCategory === cat
+            className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap border ${selectedCategory === cat
                 ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] shadow-sm font-extrabold"
                 : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37] hover:text-[#0C133D]"
-            }`}
+              }`}
           >
             {cat}
           </button>

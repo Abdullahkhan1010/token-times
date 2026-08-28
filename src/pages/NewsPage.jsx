@@ -41,9 +41,9 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
             if (url && active) {
               const img = new Image();
               img.src = url;
-              if (img.decode) img.decode().catch(() => {});
+              if (img.decode) img.decode().catch(() => { });
             }
-          } catch {}
+          } catch { }
         }
       } catch (err) {
         console.error("Failed to load news page articles", err);
@@ -262,7 +262,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
 
             {feedArticles.map((art, i) => (
               <Reveal
-                key={art.id || art._id || i}
+                key={art.id || i}
                 as="article"
                 delay={i * 60}
                 onClick={() => onSelectArticle?.(art)}

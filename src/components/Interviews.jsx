@@ -81,7 +81,7 @@ export default function Interviews() {
           <p className="text-xs text-on-surface-variant">Loading columnists & interviews...</p>
         ) : interviewList.length > 0 ? (
           interviewList.map((iv) => (
-            <article key={iv._id} className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex gap-3 items-center hover:border-[#D4AF37] transition-all cursor-pointer group h-[76px]">
+            <article key={iv.id} className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex gap-3 items-center hover:border-[#D4AF37] transition-all cursor-pointer group h-[76px]">
               {iv.interviewee_image ? (
                 <div className="relative shrink-0">
                   <img

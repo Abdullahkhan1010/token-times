@@ -24,7 +24,7 @@ export default function ResearchPapers() {
             .slice(0, 2);
 
           const mapped = sorted.map((r) => ({
-            id: r.id || r._id || "",
+            id: r.id || "",
             title: r.title || "Untitled research paper",
             meta: `By ${r.author || "Research Desk"} • ${r.publish_date || "Recent"}`,
             file: r.file || "",

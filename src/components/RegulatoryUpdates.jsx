@@ -40,7 +40,7 @@ function normalizeRegulations(data, limit = 5) {
     .map((regulation) => {
       const formattedDate = formatShortDate(regulation.publish_date || regulation.createdAt);
       return {
-        _id: regulation._id || regulation.id || "",
+        id: regulation.id || "",
         title: regulation.title || "Untitled regulation",
         authority: regulation.authority || "Regulatory Desk",
         publish_date: formattedDate,
@@ -85,7 +85,7 @@ export function RegulatoryBriefings({ onNavigate }) {
           const Icon = ICONS[b.icon] || Gavel;
           return (
             <Reveal
-              key={b._id || `${b.title}-${i}`}
+              key={b.id || `${b.title}-${i}`}
               delay={i * 80}
               as="div"
               className="rounded-full border border-outline-variant bg-surface-container-lowest px-4 py-3 hover-lift flex-1 flex items-center"
@@ -172,7 +172,7 @@ export function RegulatoryTracker({ onNavigate }) {
             <tbody className="font-body-md text-body-md text-on-surface">
               {tracker.map((r, i) => (
                 <tr
-                  key={r._id || `${r.framework}-${i}`}
+                  key={r.id || `${r.framework}-${i}`}
                   className={`hover:bg-surface-container-low transition-colors ${i < tracker.length - 1 ? "border-b border-outline-variant" : ""}`}
                 >
                   <td className="px-6 py-4 font-semibold">{r.authority}</td>

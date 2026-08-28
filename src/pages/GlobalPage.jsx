@@ -45,9 +45,9 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
             if (url && active) {
               const img = new Image();
               img.src = url;
-              if (img.decode) img.decode().catch(() => {});
+              if (img.decode) img.decode().catch(() => { });
             }
-          } catch {}
+          } catch { }
         }
       } catch (err) {
         console.error("Failed to load global articles", err);
@@ -245,7 +245,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
 
           {feedArticles.map((art, i) => (
             <Reveal
-              key={art._id || i}
+              key={art.id || i}
               as="article"
               delay={i * 60}
               onClick={() => onSelectArticle?.(art)}

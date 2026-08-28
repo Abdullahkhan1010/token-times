@@ -59,7 +59,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
     useEffect(() => {
         // Populate form with draft data when provided
         if (draftData) {
-            setDraftId(draftData.id || draftData._id);
+            setDraftId(draftData.id);
             setTitle(draftData.title || "");
             setArticle(draftData.article || "");
             setSummary(draftData.summary || "");
@@ -182,7 +182,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
         if (!window.confirm("Are you sure you want to delete this published news?")) return;
         try {
             await deletePublishedNews(id);
-            setItems((prev) => prev.filter((item) => (item.id || item._id) !== id));
+            setItems((prev) => prev.filter((item) => item.id !== id));
             setMessage({ type: "success", text: "Published news deleted." });
         } catch (err) {
             setMessage({ type: "error", text: "Failed to delete published news." });
@@ -347,11 +347,10 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                                             setDisplaySections(prev => [...prev, "reit"]);
                                         }
                                     }}
-                                    className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${
-                                        categoryStr.toLowerCase().includes(preset.toLowerCase().slice(0, 4))
+                                    className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${categoryStr.toLowerCase().includes(preset.toLowerCase().slice(0, 4))
                                             ? "bg-[#D4AF37] text-[#0C133D] font-bold border-[#D4AF37]"
                                             : "bg-surface-container-high text-on-surface hover:bg-[#D4AF37]/20 border-outline-variant/60"
-                                    }`}
+                                        }`}
                                 >
                                     + {preset}
                                 </button>
@@ -481,7 +480,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                             </thead>
                             <tbody className="divide-y divide-outline-variant/40">
                                 {items.map((item) => (
-                                    <tr key={item._id} className="hover:bg-surface-container-low/50">
+                                    <tr key={item.id} className="hover:bg-surface-container-low/50">
                                         <td className="py-3 px-3 font-semibold text-on-surface max-w-xs truncate">
                                             {item.title}
                                         </td>
@@ -491,13 +490,12 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                                         </td>
                                         <td className="py-3 px-3 text-on-surface-variant font-data-tabular">
                                             {(() => {
-                                                const id = item._id || item.id;
+                                                const id = item.id;
                                                 const titleKey = item.title ? `title_${item.title.trim().toLowerCase()}` : null;
                                                 const articleClicks = getArticleClickStats();
                                                 const tracked =
                                                     (id && articleClicks[id]?.clicks) ||
                                                     (item.id && articleClicks[item.id]?.clicks) ||
-                                                    (item._id && articleClicks[item._id]?.clicks) ||
                                                     (titleKey && articleClicks[titleKey]?.clicks) ||
                                                     0;
                                                 return Math.max(tracked, item.view_count || 0);
@@ -517,7 +515,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                                             <div className="flex items-center justify-end gap-2">
                                                 {item.status !== "archived" && (
                                                     <button
-                                                        onClick={() => handleArchive(item.id || item._id)}
+                                                        onClick={() => handleArchive(item.id)}
                                                         className="text-orange-500 hover:text-orange-700 p-1 rounded"
                                                         title="Archive"
                                                     >
@@ -525,7 +523,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                                                     </button>
                                                 )}
                                                 <button
-                                                    onClick={() => handleDelete(item.id || item._id)}
+                                                    onClick={() => handleDelete(item.id)}
                                                     className="text-red-500 hover:text-red-700 p-1 rounded"
                                                     title="Delete"
                                                 >

@@ -21,7 +21,7 @@ export default function KnowledgeHub() {
             .slice(0, 3);
 
           const mapped = sorted.map((item) => ({
-            _id: item._id,
+            id: item.id,
             eyebrow: Array.isArray(item.category) && item.category.length > 0 ? item.category[0].toUpperCase() : "EXPLAINER",
             title: item.question,
             desc: item.answer,
@@ -55,7 +55,7 @@ export default function KnowledgeHub() {
       ) : (
         <div className="flex flex-col gap-4">
           {hubItems.map((item, i) => (
-            <Reveal key={item._id || item.title + i} delay={i * 70} as="div">
+            <Reveal key={item.id || item.title + i} delay={i * 70} as="div">
               <a
                 href="#"
                 className="group block hover-lift border border-outline-variant p-4 bg-surface-container-lowest"

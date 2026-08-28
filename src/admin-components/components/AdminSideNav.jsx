@@ -1,12 +1,11 @@
 import React from "react";
-import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit, PenTool, LogOut, ExternalLink, Shield, UserCheck, Building2, Zap } from "lucide-react";
+import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit, LogOut, ExternalLink, Shield, UserCheck, Building2 } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", icon: Home },
   { key: "queue", label: "AI Queue", icon: Newspaper },
   { key: "published", label: "Published", icon: BookOpen },
   { key: "published-news", label: "Published News", icon: FileEdit },
-  { key: "ticker", label: "Breaking Ticker", icon: Zap },
   { key: "reit", label: "REIT Management", icon: Building2 },
   { key: "regulations", label: "Regulations", icon: Gavel },
   { key: "research", label: "Research", icon: FileText },
@@ -86,8 +85,8 @@ export default function AdminSideNav({ active, onNavigate, queueCount = 0, mobil
               onClose?.();
             }}
             className={`w-full flex items-center gap-2.5 px-3 py-2 rounded text-xs transition-colors text-left ${active === "manage-admins"
-                ? "bg-surface-container-high text-primary font-bold border-l-2 border-accent"
-                : "text-on-surface-variant/80 hover:text-primary hover:bg-surface-container-low"
+              ? "bg-surface-container-high text-primary font-bold border-l-2 border-accent"
+              : "text-on-surface-variant/80 hover:text-primary hover:bg-surface-container-low"
               }`}
           >
             <UserCheck size={14} className="text-on-surface-variant/70 shrink-0" />

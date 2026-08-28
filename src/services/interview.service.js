@@ -6,8 +6,7 @@ const INTERVIEWS_PATH = '/interviews';
 const mapInterview = (interview = {}) =>
     createInterviewInterface({
         ...interview,
-        id: interview._id ? String(interview._id) : interview.id || '',
-        _id: interview._id ? String(interview._id) : interview._id,
+        id: interview.id ? String(interview.id) : '',
     });
 
 export async function getInterviews() {

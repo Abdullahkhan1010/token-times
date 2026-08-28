@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-import { Filter } from "lucide-react";
+import React from "react";
 import PageHeader from "./PageHeader";
 import ArticleReviewCard from "./ArticleReviewCard";
-import EditArticleModal from "./EditArticleModal";
 
 /**
  * AI Queue Component - Review pending articles
@@ -10,22 +8,15 @@ import EditArticleModal from "./EditArticleModal";
  *  - queue: array of pending articles (id, title, summary, source, category, fetchedAt, content)
  *  - onApprove(id): called when an article is approved (navigates to published-news form)
  *  - onReject(id): called when an article is rejected
- *  - onEditSave(updatedArticle): called when edits are saved
  *  - onEdit(id): called when edit button is clicked (navigates to published-news form)
  */
-export default function AIQueue({ queue, onApprove, onReject, onEditSave, onEdit }) {
-  const [editingId, setEditingId] = useState(null);
-  const editingArticle = queue.find((a) => a.id === editingId || a._id === editingId) || null;
-
+export default function AIQueue({ queue, onApprove, onReject, onEdit }) {
   return (
     <>
       <PageHeader title="Pending Review" subtitle="AI-fetched articles requiring editorial approval.">
         <span className="font-data-tabular text-data-tabular text-on-surface-variant bg-surface-container-low px-3 py-1 border border-outline-variant">
           Queue: {queue.length}
         </span>
-        <button className="flex items-center gap-2 font-label-caps text-label-caps text-primary hover:text-accent transition-colors">
-          <Filter size={18} /> Filter
-        </button>
       </PageHeader>
 
       {queue.length === 0 ? (
@@ -34,11 +25,11 @@ export default function AIQueue({ queue, onApprove, onReject, onEditSave, onEdit
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-gutter">
           {queue.map((article, i) => (
             <ArticleReviewCard
-              key={article.id || article._id}
+              key={article.id}
               article={article}
               className={article.wide ? "lg:col-span-12" : "lg:col-span-6"}
               style={{ animationDelay: `${i * 60}ms` }}
-              onEdit={() => onEdit?.(article.id || article._id)}
+              onEdit={() => onEdit?.(article.id)}
               onReject={onReject}
               onApprove={onApprove}
             />
@@ -46,14 +37,6 @@ export default function AIQueue({ queue, onApprove, onReject, onEditSave, onEdit
         </div>
       )}
 
-      <EditArticleModal
-        article={editingArticle}
-        onClose={() => setEditingId(null)}
-        onSave={(updated) => {
-          onEditSave?.(updated);
-          setEditingId(null);
-        }}
-      />
     </>
   );
 }

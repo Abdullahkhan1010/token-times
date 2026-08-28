@@ -15,7 +15,7 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
   // Track article open click
   useEffect(() => {
     if (article) {
-      const artId = article._id || article.id;
+      const artId = article.id;
       const cat = Array.isArray(article.category) ? article.category[0] : article.category || "News";
       trackArticleClick(artId, article.title, cat);
     }
@@ -33,7 +33,7 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
           if (href) {
             const img = new Image();
             img.src = href;
-            if (img.decode) img.decode().catch(() => {});
+            if (img.decode) img.decode().catch(() => { });
           }
         } catch {
           setResolvedImage(article.image);
@@ -43,7 +43,7 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
       try {
         const allData = await getPublishedNews();
         const published = (Array.isArray(allData) ? allData : []).filter(
-          (a) => a.status === "published" && (a._id || a.id) !== (article?._id || article?.id)
+          (a) => a.status === "published" && a.id !== article?.id
         );
         setRelatedArticles(published.slice(0, 3));
       } catch (err) {
@@ -236,7 +236,7 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedArticles.map((rel) => (
                 <div
-                  key={rel._id || rel.id}
+                  key={rel.id}
                   onClick={() => onSelectArticle?.(rel)}
                   className="group cursor-pointer bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden p-4 space-y-3 hover:border-[#D4AF37] hover:shadow-md transition-all flex flex-col justify-between"
                 >

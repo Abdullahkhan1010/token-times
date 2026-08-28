@@ -35,7 +35,7 @@ export default function EventsPage({ onNavigate }) {
           });
 
           const mappedUpcoming = data.slice(1).map((ev) => ({
-            id: ev._id,
+            id: ev.id,
             format: "Conference",
             title: ev.event_title || "Untitled Event",
             date: ev.event_date || "Date unavailable",

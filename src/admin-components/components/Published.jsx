@@ -27,12 +27,11 @@ export default function Published({ articles = [], onArchive }) {
   }, [articles]);
 
   const getViews = (r) => {
-    const id = r._id || r.id;
+    const id = r.id;
     const titleKey = r.title ? `title_${r.title.trim().toLowerCase()}` : null;
     const clicksFromTracking =
       (id && articleClicks[id]?.clicks) ||
       (r.id && articleClicks[r.id]?.clicks) ||
-      (r._id && articleClicks[r._id]?.clicks) ||
       (titleKey && articleClicks[titleKey]?.clicks) ||
       0;
 
