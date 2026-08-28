@@ -4,37 +4,8 @@
  * Supports local storage aggregation + automatic backend beacon delivery.
  */
 
-import { buildUrl } from "./api";
-
 const STORAGE_PAGE_CLICKS = "token_times_page_clicks";
 const STORAGE_ARTICLE_CLICKS = "token_times_article_clicks";
-
-/**
- * Dispatch a non-blocking background beacon to backend if available
- */
-function sendAnalyticsBeacon(payload) {
-    if (typeof window === "undefined") return;
-
-    try {
-        const url = buildUrl("/stats/event");
-        if (!url) return;
-
-        const jsonString = JSON.stringify(payload);
-
-        // Use standard non-blocking keepalive fetch to avoid adblocker beacon heuristics
-        fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: jsonString,
-            keepalive: true,
-            mode: "cors",
-        }).catch(() => {
-            // Silently ignore if blocked by client-side adblocker/privacy shields
-        });
-    } catch {
-        // Safe failover
-    }
-}
 
 /**
  * Track when a user visits a website page (e.g. Home, REIT, Opinion, Markets, News)
@@ -51,9 +22,6 @@ export function trackPageVisit(pageName) {
     } catch {
         // storage fallback
     }
-
-    // Forward non-blocking hit to backend
-    sendAnalyticsBeacon({ type: "page", page: pageName });
 }
 
 /**
@@ -98,9 +66,6 @@ export function trackArticleClick(articleId, title = "", category = "") {
     } catch {
         // storage fallback
     }
-
-    // Forward non-blocking hit to backend
-    sendAnalyticsBeacon({ type: "article", id: primaryKey, title, category });
 }
 
 /**
