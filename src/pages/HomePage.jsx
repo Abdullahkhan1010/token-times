@@ -17,9 +17,10 @@ import Newsletter from "../components/Newsletter";
 import Partners from "../components/Partners";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
+import HeroSkeleton from "../components/HeroSkeleton";
 
 export default function HomePage({ onNavigate, onSelectArticle }) {
-
+  const [heroReady, setHeroReady] = useState(false);
   const [mainStoryData, setMainStoryData] = React.useState(null);
   const [topStoryData, setTopStoryData] = React.useState(null);
   const [subStoriesData, setSubStoriesData] = React.useState([]);
@@ -33,6 +34,12 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
 
   useEffect(() => {
     let active = true;
+
+    // Safety timeout: ensure site is visible after max 4.5s even under extreme network latency
+    const safetyTimer = setTimeout(() => {
+      if (active) setHeroReady(true);
+    }, 4500);
+
     (async () => {
       try {
         const data = await getPublishedNews();
@@ -46,31 +53,6 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
             return dateB - dateA;
           });
 
-        const updateSections = (articles) => {
-          if (!active) return;
-          const sections = articles.reduce((acc, article) => {
-            article.display_section?.forEach((section) => {
-              if (!acc[section]) acc[section] = [];
-              acc[section].push(article);
-            });
-            return acc;
-          }, {});
-
-          setMainStoryData(sections.main_story?.[0] ?? null);
-          setTopStoryData(sections.top_story?.[0] || sections.top_stories?.[0] || null);
-          setSubStoriesData(sections.sub_stories || sections.substories || []);
-          setFeaturedSpotlightData((sections.featured_spotlight ?? []).slice(0, 2));
-          setEditorsPickData((sections.editor_picks || sections.editors_pick || []).slice(0, 3));
-          setLatestNewsData((sections.latest_news ?? []).slice(0, 4));
-          setPakistanFocusData((sections.Pakistan_Focus || sections.pakistan_focus || []).slice(0, 2));
-          setGlobalHighlightsData((sections.Global_Highlight || sections.global_highlights || []).slice(0, 2));
-          setFeaturedAnalysisData((sections.featured_analysis ?? []).slice(0, 1));
-        };
-
-        // Render layout and text INSTANTLY for all sections
-        updateSections(publishedArticles);
-
-        // Fetch and resolve images ONLY for the main lead story and the 2 featured spotlights
         const sections = publishedArticles.reduce((acc, article) => {
           article.display_section?.forEach((section) => {
             if (!acc[section]) acc[section] = [];
@@ -80,9 +62,11 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
         }, {});
 
         const rawMain = sections.main_story?.[0] ?? null;
+        const rawTopStory = sections.top_story?.[0] || sections.top_stories?.[0] || null;
+        const rawSubStories = sections.sub_stories || sections.substories || [];
         const rawSpotlight = (sections.featured_spotlight ?? []).slice(0, 2);
 
-        // Parallel resolve ONLY for 3 hero images
+        // Fetch and resolve images ONLY for the main lead story and the 2 featured spotlights
         const [resolvedMain, resolvedSpotlights] = await Promise.all([
           rawMain && rawMain.image && typeof rawMain.image === "string" && !rawMain.image.startsWith("http://") && !rawMain.image.startsWith("https://") && !rawMain.image.startsWith("data:")
             ? ToImageUrl(rawMain.image).then((img) => ({ ...rawMain, image: img })).catch(() => rawMain)
@@ -108,35 +92,92 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
           ),
         ]);
 
+        // Preload and decode images in browser memory before showing website
+        const preloadImage = (url) => {
+          if (!url || typeof url !== "string") return Promise.resolve();
+          return new Promise((resolve) => {
+            const img = new Image();
+            img.src = url;
+            if (img.complete) {
+              if (img.decode) {
+                img.decode().then(resolve).catch(resolve);
+              } else {
+                resolve();
+              }
+            } else {
+              img.onload = () => {
+                if (img.decode) {
+                  img.decode().then(resolve).catch(resolve);
+                } else {
+                  resolve();
+                }
+              };
+              img.onerror = () => resolve();
+            }
+          });
+        };
+
+        const heroImageUrls = [
+          resolvedMain?.image,
+          ...resolvedSpotlights.map((s) => s.image),
+        ].filter(Boolean);
+
+        await Promise.all(heroImageUrls.map(preloadImage));
+
         if (active) {
-          if (resolvedMain) setMainStoryData(resolvedMain);
-          if (resolvedSpotlights.length > 0) setFeaturedSpotlightData(resolvedSpotlights);
+          // Set all sections
+          setMainStoryData(resolvedMain);
+          setTopStoryData(rawTopStory);
+          setSubStoriesData(rawSubStories);
+          setFeaturedSpotlightData(resolvedSpotlights);
+          setEditorsPickData((sections.editor_picks || sections.editors_pick || []).slice(0, 3));
+          setLatestNewsData((sections.latest_news ?? []).slice(0, 4));
+          setPakistanFocusData((sections.Pakistan_Focus || sections.pakistan_focus || []).slice(0, 2));
+          setGlobalHighlightsData((sections.Global_Highlight || sections.global_highlights || []).slice(0, 2));
+          setFeaturedAnalysisData((sections.featured_analysis ?? []).slice(0, 1));
+
+          // Reveal hero section smoothly
+          setHeroReady(true);
+          clearTimeout(safetyTimer);
         }
 
       } catch (err) {
         console.error("Failed to load published news for HomePage", err);
+        if (active) setHeroReady(true);
       }
     })();
 
     return () => {
       active = false;
+      clearTimeout(safetyTimer);
     };
   }, []);
-
-
 
   return (
     <>
       <SEOHead pageKey="Home" />
 
-      {/* Hero Section — top featured stories */}
-      <Hero
-        featuredspotlight={featuredSpotlightData}
-        mainStory={mainStoryData}
-        substories={subStoriesData}
-        topStory={topStoriesData[0]}
-        onSelectArticle={onSelectArticle}
-      />
+      {/* Subtle Top Accent Progress Bar while Hero Preloads */}
+      {!heroReady && (
+        <div className="fixed top-0 left-0 right-0 h-[2.5px] z-[9999] overflow-hidden bg-transparent pointer-events-none">
+          <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent rounded-full animate-loader-bar" />
+        </div>
+      )}
+
+      {/* Hero Section: Render subtle skeleton until hero images & text are 100% preloaded */}
+      {!heroReady ? (
+        <HeroSkeleton />
+      ) : (
+        <div className="animate-fade-in">
+          <Hero
+            featuredspotlight={featuredSpotlightData}
+            mainStory={mainStoryData}
+            substories={subStoriesData}
+            topStory={topStoriesData[0] || topStoryData}
+            onSelectArticle={onSelectArticle}
+          />
+        </div>
+      )}
 
       {/* Editor's Pick */}
       <EditorsPick editorsPicks={editorsPickData} onSelectArticle={onSelectArticle} />
