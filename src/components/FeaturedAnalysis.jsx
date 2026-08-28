@@ -1,5 +1,6 @@
 import React from "react";
 import Reveal from "./Reveal";
+import LazyImage from "./LazyImage";
 
 export default function FeaturedAnalysis({ fa = null, onSelectArticle }) {
   const safeFeaturedAnalysis = fa && typeof fa === "object" ? fa : {};
@@ -22,10 +23,11 @@ export default function FeaturedAnalysis({ fa = null, onSelectArticle }) {
           onClick={() => onSelectArticle?.(safeFeaturedAnalysis)}
           className="hover-lift relative h-96 group overflow-hidden rounded-xl cursor-pointer"
         >
-          <img
+          <LazyImage
             alt={safeFeaturedAnalysis.title || "Featured analysis"}
-            className="img-fade img-scale absolute inset-0 w-full h-full object-cover"
             src={safeFeaturedAnalysis.image || ""}
+            className="absolute inset-0 w-full h-full"
+            imgClassName="img-fade img-scale w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0C133D] via-[#0C133D]/80 to-transparent" />
           <div className="absolute bottom-0 left-0 p-6 text-on-primary w-full">

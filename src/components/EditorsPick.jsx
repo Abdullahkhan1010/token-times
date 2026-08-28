@@ -1,5 +1,6 @@
 import React from "react";
 import Reveal from "./Reveal";
+import LazyImage from "./LazyImage";
 
 export default function EditorsPick({ editorsPicks = [], onSelectArticle }) {
   if (!editorsPicks || editorsPicks.length === 0) return null;
@@ -19,7 +20,12 @@ export default function EditorsPick({ editorsPicks = [], onSelectArticle }) {
             className="group cursor-pointer flex flex-col hover-lift border border-outline-variant p-4 rounded-xl bg-surface-container-lowest hover:border-[#D4AF37] transition-all"
           >
             <div className="w-full h-48 overflow-hidden bg-surface-variant mb-4 rounded-xl">
-              <img alt={p.title} className="img-fade img-scale w-full h-full object-cover" src={p.image} />
+              <LazyImage
+                alt={p.title}
+                src={p.image}
+                className="w-full h-full"
+                imgClassName="img-fade img-scale w-full h-full object-cover"
+              />
             </div>
             <span className="font-label-caps text-label-caps text-[#D4AF37] mb-2 block uppercase">
               {Array.isArray(p.category) && p.category.length > 0

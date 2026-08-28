@@ -1,6 +1,7 @@
 import React from "react";
 import Reveal from "./Reveal";
 import { ArrowRight } from "lucide-react";
+import LazyImage from "./LazyImage";
 
 function getCleanCategory(item) {
   if (!item) return "NEWS";
@@ -43,7 +44,12 @@ export default function LatestNews({ latestNews = [], onSelectArticle, onNavigat
             className="flex gap-3 sm:gap-4 group cursor-pointer"
           >
             <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 bg-surface-variant rounded-xl overflow-hidden">
-              <img alt={n.title} className="img-fade w-full h-full object-cover" src={n.image} />
+              <LazyImage
+                alt={n.title}
+                src={n.image}
+                className="w-full h-full"
+                imgClassName="img-fade w-full h-full object-cover"
+              />
             </div>
             <div className="flex flex-col justify-center min-w-0">
               <span className="font-label-caps text-label-caps text-on-surface-variant mb-1 text-[10px] sm:text-xs">

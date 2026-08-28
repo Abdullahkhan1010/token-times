@@ -67,26 +67,50 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
           setFeaturedAnalysisData((sections.featured_analysis ?? []).slice(0, 1));
         };
 
-        // Render layout and text INSTANTLY
+        // Render layout and text INSTANTLY for all sections
         updateSections(publishedArticles);
 
-        // Resolve images in background without blocking initial text render
-        const resolvedArticles = await Promise.all(
-          publishedArticles.map(async (article) => {
-            if (!article.image || typeof article.image !== "string" || article.image.startsWith("http://") || article.image.startsWith("https://") || article.image.startsWith("data:")) {
-              return article;
-            }
-            try {
-              const resolvedImg = await ToImageUrl(article.image);
-              return { ...article, image: resolvedImg };
-            } catch (e) {
-              return article;
-            }
-          })
-        );
+        // Fetch and resolve images ONLY for the main lead story and the 2 featured spotlights
+        const sections = publishedArticles.reduce((acc, article) => {
+          article.display_section?.forEach((section) => {
+            if (!acc[section]) acc[section] = [];
+            acc[section].push(article);
+          });
+          return acc;
+        }, {});
+
+        const rawMain = sections.main_story?.[0] ?? null;
+        const rawSpotlight = (sections.featured_spotlight ?? []).slice(0, 2);
+
+        // Parallel resolve ONLY for 3 hero images
+        const [resolvedMain, resolvedSpotlights] = await Promise.all([
+          rawMain && rawMain.image && typeof rawMain.image === "string" && !rawMain.image.startsWith("http://") && !rawMain.image.startsWith("https://") && !rawMain.image.startsWith("data:")
+            ? ToImageUrl(rawMain.image).then((img) => ({ ...rawMain, image: img })).catch(() => rawMain)
+            : Promise.resolve(rawMain),
+          Promise.all(
+            rawSpotlight.map(async (art) => {
+              if (
+                art.image &&
+                typeof art.image === "string" &&
+                !art.image.startsWith("http://") &&
+                !art.image.startsWith("https://") &&
+                !art.image.startsWith("data:")
+              ) {
+                try {
+                  const img = await ToImageUrl(art.image);
+                  return { ...art, image: img };
+                } catch {
+                  return art;
+                }
+              }
+              return art;
+            })
+          ),
+        ]);
 
         if (active) {
-          updateSections(resolvedArticles);
+          if (resolvedMain) setMainStoryData(resolvedMain);
+          if (resolvedSpotlights.length > 0) setFeaturedSpotlightData(resolvedSpotlights);
         }
 
       } catch (err) {
