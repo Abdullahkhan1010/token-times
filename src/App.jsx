@@ -142,7 +142,11 @@ export default function App() {
     <div className="w-full min-h-screen flex flex-col bg-background text-on-background">
       {/* Top Header */}
       <header className="bg-background border-b border-outline-variant/60 sticky top-0 z-50 rounded-none">
-        <Header activePage={activePage} setActivePage={changePage} />
+        <Header
+          activePage={activePage}
+          setActivePage={changePage}
+          onSelectArticle={handleSelectArticle}
+        />
         {/* Navigation Menu */}
         <Navigation activePage={activePage} setActivePage={changePage} />
       </header>

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Search, Rss, Twitter, Linkedin, Menu, X } from "lucide-react";
+import { Search, Linkedin, Menu, X } from "lucide-react";
 import logo from "../assets/TokenTimesLogo.svg";
 import { navLinks } from "../data/content";
+import HeaderSearch from "./HeaderSearch";
 
-export default function Header({ activePage = "Home", setActivePage }) {
+export default function Header({ activePage = "Home", setActivePage, onSelectArticle }) {
   const [dateStr, setDateStr] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   useEffect(() => {
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
@@ -30,6 +32,7 @@ export default function Header({ activePage = "Home", setActivePage }) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
     setMobileMenuOpen(false);
+    setMobileSearchOpen(false);
   };
 
   return (
@@ -56,9 +59,28 @@ export default function Header({ activePage = "Home", setActivePage }) {
           </span>
         </div>
 
-        {/* Right Spacer for balance */}
-        <div className="w-8 shrink-0" />
+        {/* Right: Search Toggle Button */}
+        <button
+          onClick={() => setMobileSearchOpen((prev) => !prev)}
+          aria-label="Toggle Search"
+          className={`p-1.5 transition-colors flex items-center justify-center rounded-lg ${
+            mobileSearchOpen ? "text-[#D4AF37] bg-[#0C133D]/5" : "text-on-surface hover:text-[#0C133D]"
+          }`}
+        >
+          <Search size={22} />
+        </button>
       </div>
+
+      {/* Mobile Expandable Search Bar */}
+      {mobileSearchOpen && (
+        <div className="md:hidden px-4 py-2.5 bg-surface-container-low border-b border-outline-variant/60 animate-fade-in">
+          <HeaderSearch
+            onSelectArticle={onSelectArticle}
+            isMobile={true}
+            onCloseMobileMenu={() => setMobileSearchOpen(false)}
+          />
+        </div>
+      )}
 
       {/* ---------------- FULL SCREEN MOBILE SLIDE-IN MENU FROM LEFT (md:hidden) ---------------- */}
       {mobileMenuOpen && (
@@ -93,7 +115,19 @@ export default function Header({ activePage = "Home", setActivePage }) {
           {/* Full Screen Menu Content Stream */}
           <div className="p-6 flex-grow flex flex-col justify-between space-y-6">
             <div className="space-y-4">
-              <span className="font-label-caps text-xs text-[#0C133D] font-bold uppercase tracking-widest block border-b border-outline-variant/40 pb-2">
+              {/* In-Drawer Mobile Search Bar */}
+              <div className="pb-1">
+                <span className="font-label-caps text-xs text-[#0C133D] font-bold uppercase tracking-widest block mb-2">
+                  SEARCH INTEL & KEYWORDS
+                </span>
+                <HeaderSearch
+                  onSelectArticle={onSelectArticle}
+                  isMobile={true}
+                  onCloseMobileMenu={() => setMobileMenuOpen(false)}
+                />
+              </div>
+
+              <span className="font-label-caps text-xs text-[#0C133D] font-bold uppercase tracking-widest block border-b border-outline-variant/40 pb-2 pt-2">
                 MAIN NAVIGATION DIRECTORY
               </span>
 
@@ -111,8 +145,8 @@ export default function Header({ activePage = "Home", setActivePage }) {
                     >
                       <span>{link}</span>
                       {isActive && (
-                        <span className="flex items-center gap-2 text-xs text-[#0C133D] font-bold">
-                          ● ACTIVE
+                        <span className="text-xs text-[#0C133D] font-bold">
+                          ACTIVE
                         </span>
                       )}
                     </button>
@@ -158,34 +192,34 @@ export default function Header({ activePage = "Home", setActivePage }) {
         </div>
 
         {/* Search and social */}
-        <div className="flex items-center gap-gutter">
-          <div className="hidden md:flex items-center bg-surface-container-low px-3 py-2 rounded border border-outline-variant focus-within:border-[#0C133D] transition-colors">
-            <Search size={16} className="text-on-surface-variant mr-2" />
-            <input
-              className="bg-transparent border-none text-body-md font-body-md text-on-surface w-48 focus:outline-none"
-              placeholder="Search Intel..."
-              type="text"
-            />
-          </div>
+        <div className="flex items-center gap-4">
+          <HeaderSearch onSelectArticle={onSelectArticle} />
 
-          <div className="hidden lg:flex items-center gap-3 pr-3 border-r border-outline-variant">
-            <a href="#" aria-label="Twitter" className="text-on-surface-variant hover:text-[#0C133D] transition-colors">
-              <Twitter size={18} />
+          <div className="hidden lg:flex items-center gap-3">
+            <a
+              href="https://twitter.com/TokenTimesIO"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="X / Twitter"
+              className="text-on-surface-variant hover:text-[#0C133D] transition-colors p-1"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="w-4 h-4 fill-current">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 24.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
             </a>
-            <a href="#" aria-label="LinkedIn" className="text-on-surface-variant hover:text-[#0C133D] transition-colors">
+            <a
+              href="https://linkedin.com/company/tokentimes"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              className="text-on-surface-variant hover:text-[#0C133D] transition-colors p-1"
+            >
               <Linkedin size={18} />
-            </a>
-            <a href="#" aria-label="RSS Feed" className="text-on-surface-variant hover:text-[#0C133D] transition-colors">
-              <Rss size={18} />
             </a>
           </div>
         </div>
       </div>
 
-
     </div>
   );
 }
-
-
-

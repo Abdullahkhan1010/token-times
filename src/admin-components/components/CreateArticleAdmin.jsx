@@ -26,7 +26,7 @@ import { postPublishedNews } from "../../services/published-news.service";
 import { uploadFileToS3 } from "../../services/file.service";
 import PageHeader from "./PageHeader";
 
-// 9 Editorial Categories acting as placement tags/destinations
+// 10 Editorial Categories acting as placement tags/destinations
 const CATEGORIES = [
   { id: "main_story", label: "Main Story", desc: "Hero top headline banner on homepage", icon: Newspaper },
   { id: "top_story", label: "Top Story", desc: "Prominent Top Story section on homepage hero", icon: Star },
@@ -37,6 +37,7 @@ const CATEGORIES = [
   { id: "pakistan_focus", label: "Pakistan Focus", desc: "SBP, SECP & local regulatory intelligence", icon: Building2 },
   { id: "global_highlights", label: "Global Highlights", desc: "Macro Web3 & international market reports", icon: Globe },
   { id: "featured_analysis", label: "Featured Analysis", desc: "Deep-dive econometric research & whitepapers", icon: BookOpen },
+  { id: "reit", label: "REIT & PropTech", desc: "Real Estate Investment Trusts & Asset Tokenization stream", icon: Building2 },
 ];
 
 export default function CreateArticleAdmin({ onArticleCreated }) {
@@ -173,7 +174,8 @@ export default function CreateArticleAdmin({ onArticleCreated }) {
         latest_news: ["latest_news"],
         pakistan_focus: ["pakistan_focus", "Pakistan_Focus"],
         global_highlights: ["global_highlights", "Global_Highlight"],
-        featured_analysis: ["featured_analysis"]
+        featured_analysis: ["featured_analysis"],
+        reit: ["reit", "reit_stream", "REIT", "reit_research"]
       };
 
       const displaySections = Array.from(new Set(

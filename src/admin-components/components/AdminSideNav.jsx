@@ -1,11 +1,12 @@
 import React from "react";
-import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit, PenTool, LogOut, ExternalLink, Shield, UserCheck } from "lucide-react";
+import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit, PenTool, LogOut, ExternalLink, Shield, UserCheck, Building2 } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", icon: Home },
   { key: "queue", label: "AI Queue", icon: Newspaper },
   { key: "published", label: "Published", icon: BookOpen },
   { key: "published-news", label: "Published News", icon: FileEdit },
+  { key: "reit", label: "REIT Management", icon: Building2 },
   { key: "regulations", label: "Regulations", icon: Gavel },
   { key: "research", label: "Research", icon: FileText },
   { key: "magazines", label: "Magazines", icon: BookOpen },

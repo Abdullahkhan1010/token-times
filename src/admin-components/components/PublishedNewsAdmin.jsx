@@ -17,6 +17,7 @@ const DISPLAY_SECTIONS = [
     { value: "Global_Highlight", label: "Global Highlights", desc: "Macro Web3 & international market reports", icon: Globe },
     { value: "featured_analysis", label: "Featured Analysis", desc: "Deep-dive econometric research & whitepapers", icon: BookOpen },
     { value: "top_stories", label: "Top Stories", desc: "Most viewed and trending stories", icon: Newspaper },
+    { value: "reit", label: "REIT & PropTech", desc: "Real estate investment trusts & property tokenization stream", icon: Building2 },
 ];
 
 export default function PublishedNewsAdmin({ draftData = null, onPublishComplete = null, onCancel = null }) {
@@ -125,9 +126,18 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
         try {
             const imageUpload = await uploadFileToS3(imageFile);
 
-            const categoryArr = categoryStr.split(",").map((c) => c.trim()).filter(Boolean);
+            const parsedCategories = categoryStr.split(",").map((c) => c.trim()).filter(Boolean);
             const tagsArr = tagsStr.split(",").map((t) => t.trim()).filter(Boolean);
             const headlinesArr = headlinesStr.split(",").map((h) => h.trim()).filter(Boolean);
+
+            const isReitSelected = displaySections.includes("reit");
+            const finalCategoryArr = isReitSelected && !parsedCategories.some(c => c.toLowerCase().includes("reit"))
+                ? [...parsedCategories, "REIT & PropTech"]
+                : (parsedCategories.length > 0 ? parsedCategories : (displaySections.length > 0 ? displaySections : ["General"]));
+
+            const finalDisplaySections = isReitSelected
+                ? Array.from(new Set([...displaySections, "reit_stream", "REIT"]))
+                : displaySections;
 
             await postPublishedNews({
                 title,
@@ -136,10 +146,10 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                 author,
                 image: imageUpload.fileKey,
                 approx_time_to_read: parseInt(approxTimeToRead) || 0,
-                category: categoryArr,
+                category: finalCategoryArr,
                 tags: tagsArr,
                 headlines: headlinesArr,
-                display_section: displaySections,
+                display_section: finalDisplaySections,
             });
 
             // If this was from a draft, delete the draft
@@ -318,9 +328,35 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                             type="text"
                             value={categoryStr}
                             onChange={(e) => setCategoryStr(e.target.value)}
-                            placeholder="e.g. Finance, Technology, Policy"
+                            placeholder="e.g. REIT & PropTech, Finance, Technology, Policy"
                             className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
                         />
+                        {/* Category Quick Chips */}
+                        <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                            <span className="text-[10px] text-on-surface-variant/70 font-semibold">Quick Add:</span>
+                            {["REIT & PropTech", "Markets", "Regulation", "Policy", "Web3", "Technology"].map((preset) => (
+                                <button
+                                    key={preset}
+                                    type="button"
+                                    onClick={() => {
+                                        const parts = categoryStr.split(",").map(c => c.trim()).filter(Boolean);
+                                        if (!parts.includes(preset)) {
+                                            setCategoryStr(parts.length ? `${categoryStr}, ${preset}` : preset);
+                                        }
+                                        if (preset === "REIT & PropTech" && !displaySections.includes("reit")) {
+                                            setDisplaySections(prev => [...prev, "reit"]);
+                                        }
+                                    }}
+                                    className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${
+                                        categoryStr.toLowerCase().includes(preset.toLowerCase().slice(0, 4))
+                                            ? "bg-[#D4AF37] text-[#0C133D] font-bold border-[#D4AF37]"
+                                            : "bg-surface-container-high text-on-surface hover:bg-[#D4AF37]/20 border-outline-variant/60"
+                                    }`}
+                                >
+                                    + {preset}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Tags */}

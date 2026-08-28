@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import logo from "../assets/TokenTimesLogo.svg";
+import { navLinks } from "../data/content";
 import { ROUTE_PATH_MAP } from "../data/seoData";
 import {
   ArrowUp,
   Mail,
   Send,
   CheckCircle2,
-  Globe,
   ShieldCheck,
-  FileText,
   TrendingUp,
   Lock
 } from "lucide-react";
@@ -124,108 +123,28 @@ export default function Footer({ setActivePage }) {
         </div>
       </div>
 
-      {/* Main 3-Column Navigation Grid */}
+      {/* Publication Navigation */}
       <div className="px-4 md:px-12 py-8 border-b border-white/10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-xs">
-          {/* Column 1: Publication */}
-          <div className="space-y-3">
-            <h4 className="font-bold text-[#D4AF37] uppercase tracking-wider border-b border-[#D4AF37]/30 pb-1.5 flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5" />
+        <div className="max-w-7xl mx-auto space-y-4">
+          <div className="flex items-center gap-2 border-b border-[#D4AF37]/30 pb-2">
+            <TrendingUp className="w-4 h-4 text-[#D4AF37]" />
+            <h4 className="font-bold text-[#D4AF37] uppercase tracking-wider text-xs">
               Publication
             </h4>
-            <ul className="space-y-2 text-white/80">
-              <li>
-                <a href={ROUTE_PATH_MAP["Home"]} onClick={handleNavClick("Home")} className="hover:text-[#D4AF37] transition-colors">
-                  Home Overview
-                </a>
-              </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["News"]} onClick={handleNavClick("News")} className="hover:text-[#D4AF37] transition-colors">
-                  Latest News & Stream
-                </a>
-              </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["Regulations"]} onClick={handleNavClick("Regulations")} className="hover:text-[#D4AF37] transition-colors">
-                  SBP & SECP Regulations
-                </a>
-              </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["REIT"]} onClick={handleNavClick("REIT")} className="hover:text-[#D4AF37] transition-colors">
-                  REITs & Asset Tokenization
-                </a>
-              </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["Research"]} onClick={handleNavClick("Research")} className="hover:text-[#D4AF37] transition-colors">
-                  Research Papers & Whitepapers
-                </a>
-              </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["Magazine"]} onClick={handleNavClick("Magazine")} className="hover:text-[#D4AF37] transition-colors">
-                  Print & Digital Magazine
-                </a>
-              </li>
-            </ul>
           </div>
-
-          {/* Column 2: Resources & Technology */}
-          <div className="space-y-3">
-            <h4 className="font-bold text-[#D4AF37] uppercase tracking-wider border-b border-[#D4AF37]/30 pb-1.5 flex items-center gap-1.5">
-              <Globe className="w-3.5 h-3.5" />
-              Resources & Tech
-            </h4>
-            <ul className="space-y-2 text-white/80">
-              <li>
-                <a href={ROUTE_PATH_MAP["Knowledge Hub"]} onClick={handleNavClick("Knowledge Hub")} className="hover:text-[#D4AF37] transition-colors">
-                  Knowledge Hub & Glossary
+          <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-6 gap-y-3 text-xs text-white/80">
+            {navLinks.map((link) => (
+              <li key={link}>
+                <a
+                  href={ROUTE_PATH_MAP[link] || "/"}
+                  onClick={handleNavClick(link)}
+                  className="hover:text-[#D4AF37] transition-colors inline-block py-0.5"
+                >
+                  {link}
                 </a>
               </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["Technologies"]} onClick={handleNavClick("Technologies")} className="hover:text-[#D4AF37] transition-colors">
-                  Web3 & Blockchain Tech
-                </a>
-              </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["Events"]} onClick={handleNavClick("Events")} className="hover:text-[#D4AF37] transition-colors">
-                  Industry Events & Summits
-                </a>
-              </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["Resources"]} onClick={handleNavClick("Resources")} className="hover:text-[#D4AF37] transition-colors">
-                  Data Resources & Tools
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: About & Legal */}
-          <div className="space-y-3">
-            <h4 className="font-bold text-[#D4AF37] uppercase tracking-wider border-b border-[#D4AF37]/30 pb-1.5 flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5" />
-              Company & Legal
-            </h4>
-            <ul className="space-y-2 text-white/80">
-              <li>
-                <a href={ROUTE_PATH_MAP["About"]} onClick={handleNavClick("About")} className="hover:text-[#D4AF37] transition-colors">
-                  About Token Times
-                </a>
-              </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["Contact"]} onClick={handleNavClick("Contact")} className="hover:text-[#D4AF37] transition-colors">
-                  Contact & Newsroom Desk
-                </a>
-              </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["Privacy Policy"]} onClick={handleNavClick("Privacy Policy")} className="hover:text-[#D4AF37] transition-colors">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href={ROUTE_PATH_MAP["Terms of Service"]} onClick={handleNavClick("Terms of Service")} className="hover:text-[#D4AF37] transition-colors">
-                  Terms of Service
-                </a>
-              </li>
-            </ul>
-          </div>
+            ))}
+          </ul>
         </div>
       </div>
 
