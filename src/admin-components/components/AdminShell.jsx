@@ -13,6 +13,7 @@ import KnowledgeHubAdmin from "./KnowledgeHubAdmin";
 import InterviewsAdmin from "./InterviewsAdmin";
 import EventsAdmin from "./EventsAdmin";
 import ReitAdmin from "./ReitAdmin";
+import TickerAdmin from "./TickerAdmin";
 import PublishedNewsAdmin from "./PublishedNewsAdmin";
 import CreateArticleAdmin from "./CreateArticleAdmin";
 import ManageAdminsAdmin from "./ManageAdminsAdmin";
@@ -348,6 +349,8 @@ export default function AdminShell() {
             }}
           />
         )}
+
+        {page === "ticker" && <TickerAdmin />}
 
         {page === "reit" && <ReitAdmin />}
 

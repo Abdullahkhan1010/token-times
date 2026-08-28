@@ -1,9 +1,25 @@
-import React from "react";
-import { tickerItems } from "../data/content";
+import React, { useState, useEffect } from "react";
+import { getTickerItems } from "../services/ticker.service";
 
 export default function BreakingTicker() {
+  const [items, setItems] = useState(getTickerItems);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setItems(getTickerItems());
+    };
+
+    handleUpdate();
+    window.addEventListener("ticker-items-updated", handleUpdate);
+    return () => window.removeEventListener("ticker-items-updated", handleUpdate);
+  }, []);
+
+  if (!items || items.length === 0) {
+    return null;
+  }
+
   const tickerLine = (prefix) =>
-    tickerItems.map((item, i) => (
+    items.map((item, i) => (
       <span key={`${prefix}-${i}`} className="inline-flex items-center gap-3 text-[#D4AF37] font-semibold px-4">
         <span>{item}</span>
         <span className="text-[#D4AF37]/60 font-bold">•</span>
