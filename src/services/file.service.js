@@ -167,7 +167,25 @@ export async function uploadFileToS3(file) {
 
 const presignedUrlCache = new Map();
 const presignedInFlight = new Map();
-const PRESIGNED_TTL_MS = 10 * 60 * 1000; // Default 10 minutes fallback
+const PRESIGNED_TTL_MS = 10 * 60 * 1000; // 10 minutes
+
+// Purge any stale localStorage/sessionStorage caches that trigger Chrome conditional ETag 403s on S3
+if (typeof window !== "undefined") {
+    try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith("s3_cache_")) {
+                localStorage.removeItem(k);
+            }
+        }
+        for (let i = sessionStorage.length - 1; i >= 0; i--) {
+            const k = sessionStorage.key(i);
+            if (k && k.startsWith("s3_cache_")) {
+                sessionStorage.removeItem(k);
+            }
+        }
+    } catch (e) { }
+}
 
 /**
  * Parses the actual expiration timestamp from AWS/Supabase S3 presigned URL parameters.
@@ -197,38 +215,22 @@ function getUrlExpiryTimestamp(url) {
 function isCachedUrlValid(cachedObj) {
     if (!cachedObj || !cachedObj.url) return false;
     const now = Date.now();
-    const expiryMs = cachedObj.expiresAt || (cachedObj.timestamp + PRESIGNED_TTL_MS);
+    const expiryMs = cachedObj.expiresAt || getUrlExpiryTimestamp(cachedObj.url);
     // Ensure at least 60 seconds are left before S3 rejects with 403
     return (expiryMs - now) > 60000;
 }
 
-function getStoredS3Url(cacheKey) {
-    try {
-        // const raw = sessionStorage.getItem(`s3_cache_${cacheKey}`);
-        if (!raw) return null;
-        const parsed = JSON.parse(raw);
-        if (isCachedUrlValid(parsed)) {
-            return parsed.url;
-        }
-        // Purge expired entry
-        sessionStorage.removeItem(`s3_cache_${cacheKey}`);
-    } catch (e) { }
-    return null;
-}
-
-
-
-
-
-function setStoredS3Url(cacheKey, url) {
-    try {
-        const expiresAt = getUrlExpiryTimestamp(url);
-        sessionStorage.setItem(`s3_cache_${cacheKey}`, JSON.stringify({
-            timestamp: Date.now(),
-            expiresAt,
-            url,
-        }));
-    } catch (e) { }
+export function getCachedImageUrl(file) {
+    if (!file || typeof file !== "string") return "";
+    if (file.startsWith("data:") || file.startsWith("blob:") || file.startsWith("http://") || file.startsWith("https://")) {
+        return file;
+    }
+    const cacheKey = `${file}:`;
+    const cached = presignedUrlCache.get(cacheKey);
+    if (cached && isCachedUrlValid(cached)) {
+        return cached.url;
+    }
+    return "";
 }
 
 export function evictS3UrlCache(fileKey) {
@@ -237,12 +239,6 @@ export function evictS3UrlCache(fileKey) {
         for (const key of presignedUrlCache.keys()) {
             if (key.includes(fileKey)) {
                 presignedUrlCache.delete(key);
-            }
-        }
-        for (let i = sessionStorage.length - 1; i >= 0; i--) {
-            const k = sessionStorage.key(i);
-            if (k && k.includes(fileKey)) {
-                sessionStorage.removeItem(k);
             }
         }
     } catch (e) { }
@@ -262,22 +258,14 @@ export async function getPresignedDownloadUrl(fileKey, downloadFilename, options
     const forceFresh = options.forceFresh === true;
 
     if (!forceFresh) {
-        // 1. Check memory cache
+        // 1. Check in-memory cache
         const cached = presignedUrlCache.get(cacheKey);
         if (cached && isCachedUrlValid(cached)) {
             return cached.url;
         }
-
-        // 2. Check sessionStorage
-        const stored = getStoredS3Url(cacheKey);
-        if (stored) {
-            const expiresAt = getUrlExpiryTimestamp(stored);
-            presignedUrlCache.set(cacheKey, { timestamp: now, expiresAt, url: stored });
-            return stored;
-        }
     }
 
-    // 3. Check in-flight requests
+    // 2. Check in-flight requests to deduplicate concurrent calls
     if (presignedInFlight.has(cacheKey)) {
         return presignedInFlight.get(cacheKey);
     }
@@ -289,7 +277,6 @@ export async function getPresignedDownloadUrl(fileKey, downloadFilename, options
             if (downloadUrl) {
                 const expiresAt = getUrlExpiryTimestamp(downloadUrl);
                 presignedUrlCache.set(cacheKey, { timestamp: Date.now(), expiresAt, url: downloadUrl });
-                setStoredS3Url(cacheKey, downloadUrl);
             }
             return downloadUrl;
         } finally {

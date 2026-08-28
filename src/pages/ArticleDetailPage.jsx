@@ -4,6 +4,7 @@ import { ArrowLeft, Clock, Calendar, User, Share2, Bookmark, Check, Newspaper, S
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
 import { trackArticleClick } from "../services/tracker.service";
+import LazyImage from "../components/LazyImage";
 
 export default function ArticleDetailPage({ article, onNavigate, onSelectArticle }) {
   const [copied, setCopied] = useState(false);
@@ -26,21 +27,25 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
 
     (async () => {
       if (article?.image) {
-        const href = await ToImageUrl(article.image);
-        setResolvedImage(href);
+        try {
+          const href = await ToImageUrl(article.image);
+          setResolvedImage(href);
+          if (href) {
+            const img = new Image();
+            img.src = href;
+            if (img.decode) img.decode().catch(() => {});
+          }
+        } catch {
+          setResolvedImage(article.image);
+        }
       }
 
       try {
         const allData = await getPublishedNews();
-        const published = (Array.isArray(allData) ? allData : []).filter((a) => a.status === "published" && (a._id || a.id) !== (article?._id || article?.id));
-
-        const resolvedList = await Promise.all(
-          published.slice(0, 3).map(async (item) => ({
-            ...item,
-            image: await ToImageUrl(item.image)
-          }))
+        const published = (Array.isArray(allData) ? allData : []).filter(
+          (a) => a.status === "published" && (a._id || a.id) !== (article?._id || article?.id)
         );
-        setRelatedArticles(resolvedList);
+        setRelatedArticles(published.slice(0, 3));
       } catch (err) {
         console.warn("Could not load related articles", err);
       }
@@ -238,7 +243,12 @@ export default function ArticleDetailPage({ article, onNavigate, onSelectArticle
                   <div className="space-y-3">
                     {rel.image && (
                       <div className="aspect-video w-full rounded-lg overflow-hidden bg-surface-container-low">
-                        <img src={rel.image} alt={rel.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <LazyImage
+                          src={rel.image}
+                          alt={rel.title}
+                          className="w-full h-full"
+                          imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
                       </div>
                     )}
                     <h4 className="font-headline-md text-sm font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors line-clamp-2">

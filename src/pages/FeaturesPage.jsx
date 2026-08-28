@@ -4,6 +4,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
+import LazyImage from "../components/LazyImage";
 
 const FEATURE_CATS = ["All Features", "Deep Dives", "Investigative", "Executive Q&A", "Special Reports"];
 
@@ -31,20 +32,18 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
         const published = (Array.isArray(data) ? data : []).filter((a) => a.status === "published");
         if (active) setArticles(published);
 
-        const resolved = await Promise.all(
-          published.map(async (art) => {
-            if (!art.image || typeof art.image !== "string" || art.image.startsWith("http://") || art.image.startsWith("https://") || art.image.startsWith("data:")) {
-              return art;
+        // Preload lead feature image
+        const lead = published[0];
+        if (lead && lead.image && typeof lead.image === "string" && !lead.image.startsWith("http://") && !lead.image.startsWith("https://") && !lead.image.startsWith("data:")) {
+          try {
+            const url = await ToImageUrl(lead.image);
+            if (url && active) {
+              const img = new Image();
+              img.src = url;
+              if (img.decode) img.decode().catch(() => {});
             }
-            try {
-              const resolvedImg = await ToImageUrl(art.image);
-              return { ...art, image: resolvedImg };
-            } catch {
-              return art;
-            }
-          })
-        );
-        if (active) setArticles(resolved);
+          } catch {}
+        }
       } catch (err) {
         console.error("Failed to load features", err);
       }
@@ -122,7 +121,13 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
             className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
           >
             <div className="relative h-48 sm:h-72 md:h-96 overflow-hidden">
-              <img src={leadFeature.image || leadFeature.img} alt={leadFeature.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <LazyImage
+                src={leadFeature.image || leadFeature.img}
+                alt={leadFeature.title}
+                eager={true}
+                className="w-full h-full"
+                imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
               <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] text-xs font-extrabold px-3 py-1 rounded-full uppercase border border-[#D4AF37]/40">
                 {formatTag(leadFeature.category || leadFeature.tags)}
               </span>
@@ -164,7 +169,12 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
         {gridFeatures.map((card, i) => (
           <Reveal key={i} as="article" onClick={() => onSelectArticle?.(card)} className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-3 sm:p-4 cursor-pointer shadow-sm hover:border-[#D4AF37]">
             <div className="h-36 sm:h-44 rounded-lg overflow-hidden mb-3 border border-outline-variant/40 relative">
-              <img src={card.image || card.img} alt={card.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+              <LazyImage
+                src={card.image || card.img}
+                alt={card.title}
+                className="w-full h-full"
+                imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform"
+              />
               <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] text-[10px] font-bold px-2 py-0.5 rounded">
                 {formatTag(card.category || card.tags)}
               </span>

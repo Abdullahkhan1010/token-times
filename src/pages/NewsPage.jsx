@@ -5,6 +5,7 @@ import Reveal from "../components/Reveal";
 import { BASE_URL } from "../data/seoData";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
+import LazyImage from "../components/LazyImage";
 
 function formatTag(tag) {
   if (!tag) return "NEWS";
@@ -29,24 +30,21 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
         if (!active) return;
         const published = (Array.isArray(data) ? data : []).filter((a) => a.status === "published");
 
-        // Render text and categories INSTANTLY
+        // Render articles immediately
         if (active) setBackendNews(published);
 
-        // Resolve images in background without blocking initial text render
-        const resolved = await Promise.all(
-          published.map(async (art) => {
-            if (!art.image || typeof art.image !== "string" || art.image.startsWith("http://") || art.image.startsWith("https://") || art.image.startsWith("data:")) {
-              return art;
+        // Preload lead story image if present
+        const topStory = published[0];
+        if (topStory && topStory.image && typeof topStory.image === "string" && !topStory.image.startsWith("http://") && !topStory.image.startsWith("https://") && !topStory.image.startsWith("data:")) {
+          try {
+            const url = await ToImageUrl(topStory.image);
+            if (url && active) {
+              const img = new Image();
+              img.src = url;
+              if (img.decode) img.decode().catch(() => {});
             }
-            try {
-              const resolvedImg = await ToImageUrl(art.image);
-              return { ...art, image: resolvedImg };
-            } catch (e) {
-              return art;
-            }
-          })
-        );
-        if (active) setBackendNews(resolved);
+          } catch {}
+        }
       } catch (err) {
         console.error("Failed to load news page articles", err);
       }
@@ -159,10 +157,12 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
             className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
           >
             <div className="relative w-full h-48 sm:h-80 md:h-96 overflow-hidden">
-              <img
+              <LazyImage
                 src={leadStory.image || leadStory.img}
                 alt={leadStory.title}
-                className="img-fade img-scale w-full h-full object-cover"
+                eager={true}
+                className="w-full h-full"
+                imgClassName="img-fade img-scale w-full h-full object-cover"
               />
               <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/50 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
                 {formatTag(leadStory.category || leadStory.display_section)}
@@ -227,7 +227,12 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
           >
             <div>
               <div className="h-36 sm:h-40 w-full overflow-hidden rounded-lg mb-3 border border-outline-variant/40 relative">
-                <img src={card.image || card.img} alt={card.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <LazyImage
+                  src={card.image || card.img}
+                  alt={card.title}
+                  className="w-full h-full"
+                  imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
                 <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] text-[10px] font-extrabold px-2 py-0.5 rounded">
                   {formatTag(card.category || card.tag)}
                 </span>
@@ -264,12 +269,11 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
                 className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-3 sm:p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5 cursor-pointer shadow-sm hover:border-[#D4AF37]"
               >
                 <div className="w-full sm:w-48 sm:h-32 h-40 shrink-0 overflow-hidden rounded-lg bg-surface-variant relative border border-outline-variant/60">
-                  <img
+                  <LazyImage
                     src={art.image || art.img}
                     alt={art.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="img-fade img-scale w-full h-full object-cover"
+                    className="w-full h-full"
+                    imgClassName="img-fade img-scale w-full h-full object-cover"
                   />
                   <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase shadow-sm">
                     {formatTag(art.category || art.tag)}

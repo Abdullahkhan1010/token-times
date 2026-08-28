@@ -26,6 +26,7 @@ import Reveal from "../components/Reveal";
 import { getReitContent } from "../services/reit.service";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
+import LazyImage from "../components/LazyImage";
 
 export default function ReitPage({ onNavigate, onSelectArticle }) {
   const [activeTab, setActiveTab] = useState("overview");
@@ -57,18 +58,27 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
     return () => window.removeEventListener("reit-content-updated", updateContent);
   }, []);
 
-  // Resolve hero image S3/URL
+  // Resolve hero image S3/URL & preload
   useEffect(() => {
+    let active = true;
     (async () => {
       if (reitContent.heroLandmark?.image) {
         try {
           const url = await ToImageUrl(reitContent.heroLandmark.image);
-          setResolvedHeroImg(url || reitContent.heroLandmark.image);
+          if (active) {
+            setResolvedHeroImg(url || reitContent.heroLandmark.image);
+            if (url) {
+              const img = new Image();
+              img.src = url;
+              if (img.decode) img.decode().catch(() => {});
+            }
+          }
         } catch {
-          setResolvedHeroImg(reitContent.heroLandmark.image);
+          if (active) setResolvedHeroImg(reitContent.heroLandmark.image);
         }
       }
     })();
+    return () => { active = false; };
   }, [reitContent.heroLandmark?.image]);
 
   // Fetch dynamic REIT articles published through admin panel
@@ -105,28 +115,8 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
 
         const reitPublished = (Array.isArray(allNews) ? allNews : []).filter(isReitMatch);
 
-        // Resolve article image URLs
-        const resolved = await Promise.all(
-          reitPublished.map(async (art) => {
-            if (!art.image || typeof art.image !== "string") return art;
-            if (
-              art.image.startsWith("http://") ||
-              art.image.startsWith("https://") ||
-              art.image.startsWith("data:")
-            ) {
-              return art;
-            }
-            try {
-              const url = await ToImageUrl(art.image);
-              return { ...art, image: url };
-            } catch {
-              return art;
-            }
-          })
-        );
-
         if (active) {
-          setStreamArticles(resolved);
+          setStreamArticles(reitPublished);
         }
       } catch (err) {
         console.warn("Failed to load REIT dynamic news stream:", err);
@@ -139,9 +129,7 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
     }
 
     loadReitNewsStream();
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, []);
 
   const { heroLandmark, pakistanFeatures, globalApplications } = reitContent;
@@ -624,15 +612,11 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
                 >
                   <div className="h-44 overflow-hidden relative bg-[#0C133D]/10 flex items-center justify-center">
                     {art.image ? (
-                      <img
+                      <LazyImage
                         src={art.image}
                         alt={art.title}
-                        loading="lazy"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.style.display = "none";
-                        }}
+                        className="w-full h-full"
+                        imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
                       <Building2 className="w-12 h-12 text-[#0C133D]/40" />

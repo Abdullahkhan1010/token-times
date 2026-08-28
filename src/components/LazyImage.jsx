@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ToImageUrl } from "../services/file.service";
+import { ToImageUrl, getCachedImageUrl, refreshS3ImageUrl, evictS3UrlCache } from "../services/file.service";
 
 /**
  * Performant LazyImage component:
- * - When eager=false (default), only resolves S3 presigned URLs and loads image when entering/approaching viewport.
+ * - Synchronously uses persistent cache if already resolved (instant display on refresh/navigation).
+ * - When eager=false (default), resolves S3 presigned URLs when entering/approaching viewport.
  * - Displays a subtle skeleton/shimmer placeholder while loading.
+ * - Auto-recovers from expired presigned URLs with seamless retry.
  * - Smooth fade-in transition once loaded.
- * - Prevents unnecessary network requests for below-the-fold content.
  */
 export default function LazyImage({
   src,
@@ -25,13 +26,37 @@ export default function LazyImage({
 }) {
   const containerRef = useRef(null);
   const [inView, setInView] = useState(eager);
-  const [resolvedSrc, setResolvedSrc] = useState(
-    typeof src === "string" && (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:"))
-      ? src
-      : ""
-  );
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [resolvedSrc, setResolvedSrc] = useState(() => {
+    if (!src || typeof src !== "string") return "";
+    if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:") || src.startsWith("blob:")) {
+      return src;
+    }
+    return getCachedImageUrl(src) || "";
+  });
+  const [isLoaded, setIsLoaded] = useState(() => Boolean(resolvedSrc));
   const [hasError, setHasError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  // Sync if src prop changes
+  useEffect(() => {
+    setRetryCount(0);
+    if (!src || typeof src !== "string") {
+      setResolvedSrc("");
+      setIsLoaded(false);
+      setHasError(false);
+      return;
+    }
+    if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:") || src.startsWith("blob:")) {
+      setResolvedSrc(src);
+      setHasError(false);
+      return;
+    }
+    const cached = getCachedImageUrl(src);
+    if (cached) {
+      setResolvedSrc(cached);
+      setHasError(false);
+    }
+  }, [src]);
 
   // IntersectionObserver for lazy loading
   useEffect(() => {
@@ -60,34 +85,31 @@ export default function LazyImage({
     return () => observer.disconnect();
   }, [eager, inView, rootMargin]);
 
-  // Resolve S3 image URL only when inView
+  // Resolve S3 image URL on demand if not already resolved
   useEffect(() => {
-    if (!inView || !src) {
-      if (!src) setResolvedSrc("");
+    if ((!inView && !eager) || !src) {
       return;
     }
 
     let active = true;
 
-    // Already a complete web URL
-    if (
-      typeof src === "string" &&
-      (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("data:") || src.startsWith("blob:"))
-    ) {
-      setResolvedSrc(src);
+    // Check synchronous cache first
+    const cached = getCachedImageUrl(src);
+    if (cached) {
+      setResolvedSrc(cached);
       return;
     }
 
-    // Resolve S3 fileKey on demand
     (async () => {
       try {
         const url = await ToImageUrl(src);
-        if (active) {
-          setResolvedSrc(url || fallbackSrc || "");
+        if (active && url) {
+          setResolvedSrc(url);
+          setHasError(false);
         }
       } catch (err) {
         if (active) {
-          setResolvedSrc(fallbackSrc || "");
+          if (fallbackSrc) setResolvedSrc(fallbackSrc);
           setHasError(true);
         }
       }
@@ -96,14 +118,39 @@ export default function LazyImage({
     return () => {
       active = false;
     };
-  }, [inView, src, fallbackSrc]);
+  }, [inView, eager, src, fallbackSrc]);
 
   const handleImgLoad = (e) => {
     setIsLoaded(true);
+    setHasError(false);
     onLoad?.(e);
   };
 
-  const handleImgError = (e) => {
+  const handleImgError = async (e) => {
+    // If it's an S3 file key and hasn't exceeded 2 retries, force a fresh presigned URL!
+    if (
+      retryCount < 2 &&
+      src &&
+      typeof src === "string" &&
+      !src.startsWith("data:") &&
+      !src.startsWith("blob:") &&
+      !src.startsWith("http://") &&
+      !src.startsWith("https://")
+    ) {
+      try {
+        setRetryCount((prev) => prev + 1);
+        const freshUrl = await refreshS3ImageUrl(src);
+        if (freshUrl && freshUrl !== resolvedSrc) {
+          setResolvedSrc(freshUrl);
+          setHasError(false);
+          setIsLoaded(false);
+          return;
+        }
+      } catch (err) {
+        console.warn("Auto-recovery for S3 image failed:", err);
+      }
+    }
+
     setHasError(true);
     if (fallbackSrc && resolvedSrc !== fallbackSrc) {
       setResolvedSrc(fallbackSrc);

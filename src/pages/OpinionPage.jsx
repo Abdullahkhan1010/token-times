@@ -4,6 +4,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getInterviews } from "../services/interview.service";
 import { ToImageUrl } from "../services/file.service";
+import LazyImage from "../components/LazyImage";
 import { Mic, UserCheck } from "lucide-react";
 
 const OPINION_CATS = ["All Columnists", "Central Bank Policy", "Founder Op-Eds", "Legal & Tax", "Macro Strategy"];
@@ -30,12 +31,20 @@ export default function OpinionPage({ onNavigate, onSelectArticle }) {
         const data = await getInterviews();
         if (!active) return;
         if (Array.isArray(data) && data.length > 0) {
-          for (const item of data) {
-            if (item.interviewee_image) {
-              item.interviewee_image = await ToImageUrl(item.interviewee_image);
-            }
-          }
           if (active) setInterviews(data);
+
+          // Preload lead columnist image
+          const first = data[0];
+          if (first && first.interviewee_image && typeof first.interviewee_image === "string" && !first.interviewee_image.startsWith("http://") && !first.interviewee_image.startsWith("https://") && !first.interviewee_image.startsWith("data:")) {
+            try {
+              const url = await ToImageUrl(first.interviewee_image);
+              if (url && active) {
+                const img = new Image();
+                img.src = url;
+                if (img.decode) img.decode().catch(() => {});
+              }
+            } catch {}
+          }
         }
       } catch (err) {
         console.error("Failed to load opinion columnists", err);
@@ -114,7 +123,15 @@ export default function OpinionPage({ onNavigate, onSelectArticle }) {
             className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
           >
             <div className="p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-center border-b border-outline-variant/40 bg-surface-container-low">
-              <img src={leadOpEd.image} alt={leadOpEd.author} className="w-24 h-24 rounded-full object-cover border-4 border-[#D4AF37] shadow-md shrink-0" />
+              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-[#D4AF37] shadow-md shrink-0">
+                <LazyImage
+                  src={leadOpEd.image}
+                  alt={leadOpEd.author}
+                  eager={true}
+                  className="w-full h-full"
+                  imgClassName="w-full h-full object-cover"
+                />
+              </div>
               <div>
                 <span className="bg-[#0C133D] text-[#D4AF37] text-[10px] font-extrabold px-2.5 py-0.5 rounded uppercase tracking-wider mb-2 inline-block">
                   {leadOpEd.tag}

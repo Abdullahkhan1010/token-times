@@ -4,6 +4,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
+import LazyImage from "../components/LazyImage";
 
 const REGIONS = ["All Regions", "Pakistan", "Middle East & UAE", "Europe & MiCA", "North America", "Asia Pacific"];
 
@@ -31,29 +32,22 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
         if (!active) return;
         const published = (Array.isArray(data) ? data : []).filter((a) => a.status === "published");
 
-        // Render articles and text INSTANTLY
         if (active) {
           setArticles(published);
           setLoading(false);
         }
 
-        // Resolve images in background without blocking initial text render
-        const resolved = await Promise.all(
-          published.map(async (art) => {
-            if (!art.image || typeof art.image !== "string" || art.image.startsWith("http://") || art.image.startsWith("https://") || art.image.startsWith("data:")) {
-              return art;
+        // Preload lead story image if present
+        const topStory = published[0];
+        if (topStory && topStory.image && typeof topStory.image === "string" && !topStory.image.startsWith("http://") && !topStory.image.startsWith("https://") && !topStory.image.startsWith("data:")) {
+          try {
+            const url = await ToImageUrl(topStory.image);
+            if (url && active) {
+              const img = new Image();
+              img.src = url;
+              if (img.decode) img.decode().catch(() => {});
             }
-            try {
-              const resolvedImg = await ToImageUrl(art.image);
-              return { ...art, image: resolvedImg };
-            } catch {
-              return art;
-            }
-          })
-        );
-
-        if (active) {
-          setArticles(resolved);
+          } catch {}
         }
       } catch (err) {
         console.error("Failed to load global articles", err);
@@ -147,10 +141,12 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
             className="lg:col-span-8 hover-lift group bg-surface-container-lowest border-2 border-[#0C133D] rounded-xl overflow-hidden cursor-pointer shadow-md hover:border-[#D4AF37] flex flex-col justify-between"
           >
             <div className="relative w-full h-48 sm:h-80 md:h-96 overflow-hidden">
-              <img
+              <LazyImage
                 src={leadStory.image || leadStory.img}
                 alt={leadStory.title}
-                className="img-fade img-scale w-full h-full object-cover"
+                eager={true}
+                className="w-full h-full"
+                imgClassName="img-fade img-scale w-full h-full object-cover"
               />
               <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/50 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
                 {formatTag(leadStory.category || leadStory.display_section)}
@@ -215,7 +211,12 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
           >
             <div>
               <div className="h-36 sm:h-40 w-full overflow-hidden rounded-lg mb-3 border border-outline-variant/40 relative">
-                <img src={card.image || card.img} alt={card.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <LazyImage
+                  src={card.image || card.img}
+                  alt={card.title}
+                  className="w-full h-full"
+                  imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
                 <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] text-[10px] font-extrabold px-2 py-0.5 rounded">
                   {card.category?.[0] || "GLOBAL"}
                 </span>
@@ -251,7 +252,12 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
               className="hover-lift group bg-surface-container-lowest border border-outline-variant rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4 cursor-pointer shadow-sm hover:border-[#D4AF37]"
             >
               <div className="w-full sm:w-44 h-40 sm:h-32 shrink-0 rounded-lg overflow-hidden border border-outline-variant/60 relative">
-                <img src={art.image || art.img} alt={art.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                <LazyImage
+                  src={art.image || art.img}
+                  alt={art.title}
+                  className="w-full h-full"
+                  imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                />
               </div>
               <div className="flex flex-col justify-between flex-grow">
                 <div>

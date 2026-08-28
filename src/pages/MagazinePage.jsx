@@ -32,6 +32,12 @@ export default function MagazinePage({ onNavigate }) {
           const coverImgHref = await ToImageUrl(latest.cover_img);
           const fileHref = await ToHref(latest.file, "magazine.pdf");
 
+          if (coverImgHref) {
+            const img = new Image();
+            img.src = coverImgHref;
+            if (img.decode) img.decode().catch(() => {});
+          }
+
           setcurrentIssue({
             number: latest.issue_name,
             title: latest.title,
