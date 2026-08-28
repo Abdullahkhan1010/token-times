@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { FileText, Plus, Trash2 } from "lucide-react";
-import { deleteSource, getSources, postSource } from "../../services/source.service";
+import { CheckCircle2, FileText, Plus, Trash2 } from "lucide-react";
+import { deleteSource, getSources, patchSource, postSource } from "../../services/source.service";
 import PageHeader from "./PageHeader";
 
 export default function SourceAdmin() {
@@ -66,6 +66,21 @@ export default function SourceAdmin() {
             setMessage({ type: "success", text: "Source deleted." });
         } catch (err) {
             setMessage({ type: "error", text: err.message || "Failed to delete source." });
+        }
+    };
+
+    const handleActivate = async (item) => {
+        try {
+            const updatedSource = await patchSource(item.id, {
+                status: "active",
+                error: null,
+            });
+            setItems((previous) => previous.map((source) => (
+                source.id === item.id ? updatedSource : source
+            )));
+            setMessage({ type: "success", text: "Source activated." });
+        } catch (err) {
+            setMessage({ type: "error", text: err.message || "Failed to activate source." });
         }
     };
 
@@ -187,6 +202,17 @@ export default function SourceAdmin() {
                                         <td className="py-3 px-3 text-on-surface-variant">{item.publish_date || "N/A"}</td>
                                         <td className="py-3 px-3 text-error max-w-xs truncate">{item.error || "None"}</td>
                                         <td className="py-3 px-3 text-right">
+                                            {item.status !== "active" && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleActivate(item)}
+                                                    className="text-green-600 hover:text-green-800 p-1 rounded mr-2"
+                                                    title="Activate source"
+                                                    aria-label={`Activate ${item.sourceName}`}
+                                                >
+                                                    <CheckCircle2 size={16} />
+                                                </button>
+                                            )}
                                             <button
                                                 type="button"
                                                 onClick={() => handleDelete(item.id)}
