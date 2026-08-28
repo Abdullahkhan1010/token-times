@@ -12,6 +12,7 @@ import MagazinesAdmin from "./MagazinesAdmin";
 import KnowledgeHubAdmin from "./KnowledgeHubAdmin";
 import InterviewsAdmin from "./InterviewsAdmin";
 import EventsAdmin from "./EventsAdmin";
+import SourceAdmin from "./SourceAdmin";
 import ReitAdmin from "./ReitAdmin";
 import PublishedNewsAdmin from "./PublishedNewsAdmin";
 import ManageAdminsAdmin from "./ManageAdminsAdmin";
@@ -321,6 +322,8 @@ export default function AdminShell() {
         {page === "interviews" && <InterviewsAdmin />}
 
         {page === "events" && <EventsAdmin />}
+
+        {page === "source" && <SourceAdmin />}
 
         {page === "manage-admins" && <ManageAdminsAdmin />}
 

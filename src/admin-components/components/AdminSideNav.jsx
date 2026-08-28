@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit, LogOut, ExternalLink, Shield, UserCheck, Building2 } from "lucide-react";
+import { Home, Newspaper, BookOpen, Archive, BarChart3, X, Gavel, FileText, HelpCircle, Mic, Calendar, FileEdit, LogOut, ExternalLink, Shield, UserCheck, Building2, Radio } from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "home", label: "Home", icon: Home },
@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { key: "knowledge-hub", label: "Knowledge Hub", icon: HelpCircle },
   { key: "interviews", label: "Interviews", icon: Mic },
   { key: "events", label: "Events", icon: Calendar },
+  { key: "source", label: "Source", icon: Radio },
   { key: "archived", label: "Archived", icon: Archive },
   { key: "analytics", label: "Analytics", icon: BarChart3 },
 ];
