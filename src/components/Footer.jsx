@@ -61,7 +61,6 @@ export default function Footer({ setActivePage }) {
               <span className="text-xs text-white/50 font-medium mr-1">Connect:</span>
               {[
                 { label: "X / Twitter", icon: "𝕏", href: "https://twitter.com/TokenTimesIO" },
-                { label: "Telegram", icon: "✈", href: "https://t.me/tokentimes" },
                 { label: "LinkedIn", icon: "in", href: "https://linkedin.com/company/tokentimes" },
               ].map((s, idx) => (
                 <a
@@ -177,7 +176,7 @@ export default function Footer({ setActivePage }) {
               <Lock className="w-3.5 h-3.5" />
               <span>Admin Dashboard</span>
             </a>
-            
+
             {/* Smooth Scroll Back to Top */}
             <button
               onClick={scrollToTop}

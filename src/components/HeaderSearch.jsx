@@ -424,8 +424,8 @@ export default function HeaderSearch({
       {/* Search Bar Input Container */}
       <div
         className={`flex items-center px-3 py-2 rounded-lg border transition-all duration-200 ${isOpen
-            ? "border-[#D4AF37] bg-white shadow-md ring-2 ring-[#D4AF37]/20"
-            : "border-outline-variant bg-surface-container-low hover:border-[#0C133D]/40"
+          ? "border-[#D4AF37] bg-white shadow-md ring-2 ring-[#D4AF37]/20"
+          : "border-outline-variant bg-surface-container-low hover:border-[#0C133D]/40"
           }`}
       >
         <Search
@@ -466,8 +466,8 @@ export default function HeaderSearch({
       {isOpen && (
         <div
           className={`absolute left-0 mt-2 bg-white border border-outline-variant/80 rounded-xl shadow-2xl z-[999] overflow-hidden animate-fade-in ${isMobile
-              ? "w-full max-w-full"
-              : "w-[380px] lg:w-[420px] md:right-0 md:left-auto"
+            ? "w-full max-w-full"
+            : "w-[380px] lg:w-[420px] md:right-0 md:left-auto"
             }`}
         >
           {/* Header Bar inside Dropdown */}
@@ -525,8 +525,8 @@ export default function HeaderSearch({
                       onClick={() => handleSelect(article)}
                       onMouseEnter={() => setSelectedIndex(idx)}
                       className={`p-3 flex items-start gap-3 cursor-pointer transition-colors ${isHighlighted
-                          ? "bg-[#D4AF37]/15 border-l-4 border-[#D4AF37]"
-                          : "hover:bg-surface-container-low border-l-4 border-transparent"
+                        ? "bg-[#D4AF37]/15 border-l-4 border-[#D4AF37]"
+                        : "hover:bg-surface-container-low border-l-4 border-transparent"
                         }`}
                       role="option"
                       aria-selected={isHighlighted}

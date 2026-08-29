@@ -10,7 +10,7 @@ html {
 
 body {
   background-color: #F7F0EB;
-  background-image: 
+  background-image:
     radial-gradient(ellipse at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
     radial-gradient(circle at 100% 100%, rgba(226, 212, 203, 0.25) 0%, transparent 50%),
     radial-gradient(circle at 0% 50%, rgba(212, 175, 55, 0.04) 0%, transparent 40%);
@@ -25,8 +25,7 @@ header {
   border-radius: 0 !important;
 }
 
-:where(
-  .bg-surface-container-lowest,
+:where(.bg-surface-container-lowest,
   .bg-surface-container-low,
   .bg-surface-container-high,
   .bg-surface-container-highest,
@@ -36,8 +35,7 @@ header {
   .bg-secondary-container,
   .bg-accent-container,
   .bg-error-container,
-  .border-surface-container-highest
-) {
+  .border-surface-container-highest) {
   border-radius: 1rem;
 }
 
@@ -57,17 +55,20 @@ header {
   box-sizing: content-box;
   white-space: nowrap;
 }
+
 .ticker {
   display: flex;
   width: max-content;
   min-width: 100%;
   will-change: transform;
 }
+
 .ticker-group {
   display: flex;
   flex-shrink: 0;
   white-space: nowrap;
 }
+
 .ticker__item {
   display: inline-flex;
   padding: 0 0.75rem;
@@ -83,6 +84,7 @@ header {
 .accent-underline {
   position: relative;
 }
+
 .accent-underline::after {
   content: "";
   position: absolute;
@@ -93,6 +95,7 @@ header {
   background-color: #D4AF37;
   transition: width 0.25s ease, background-color 0.25s ease;
 }
+
 .accent-underline:hover::after,
 .accent-underline.is-active::after {
   width: 100%;
@@ -103,6 +106,7 @@ header {
 .hover-lift {
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
 }
+
 .hover-lift:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px -12px rgba(12, 19, 61, 0.16);
@@ -113,25 +117,31 @@ header {
 .bg-accent {
   transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
 }
+
 .bg-accent:hover {
   background-color: #F3CF55 !important;
   box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
 }
 
 /* ---------------- Image reveal on hover ---------------- */
-img, video {
+img,
+video {
   max-width: 100%;
 }
+
 .img-fade {
   opacity: 0.92;
   transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .group:hover .img-fade {
   opacity: 1;
 }
+
 .group:hover .img-scale {
   transform: scale(1.04);
 }
+
 .img-scale {
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   max-width: 100%;
@@ -143,6 +153,7 @@ img, video {
   transform: translateY(24px);
   transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
@@ -160,6 +171,7 @@ input:focus-visible {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -170,10 +182,12 @@ input:focus-visible {
     left: -40%;
     width: 40%;
   }
+
   50% {
     left: 20%;
     width: 60%;
   }
+
   100% {
     left: 100%;
     width: 40%;
@@ -188,6 +202,7 @@ input:focus-visible {
   html {
     scroll-behavior: auto;
   }
+
   .reveal,
   .hover-lift,
   .img-fade,
@@ -197,6 +212,7 @@ input:focus-visible {
     transition: none !important;
     animation: none !important;
   }
+
   .reveal {
     opacity: 1;
     transform: none;

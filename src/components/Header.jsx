@@ -63,9 +63,8 @@ export default function Header({ activePage = "Home", setActivePage, onSelectArt
         <button
           onClick={() => setMobileSearchOpen((prev) => !prev)}
           aria-label="Toggle Search"
-          className={`p-1.5 transition-colors flex items-center justify-center rounded-lg ${
-            mobileSearchOpen ? "text-[#D4AF37] bg-[#0C133D]/5" : "text-on-surface hover:text-[#0C133D]"
-          }`}
+          className={`p-1.5 transition-colors flex items-center justify-center rounded-lg ${mobileSearchOpen ? "text-[#D4AF37] bg-[#0C133D]/5" : "text-on-surface hover:text-[#0C133D]"
+            }`}
         >
           <Search size={22} />
         </button>
