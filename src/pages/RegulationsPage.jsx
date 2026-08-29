@@ -4,6 +4,7 @@ import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
 import { getRegulations } from "../services/regulation.service";
+import { ToHref } from "../services/file.service";
 import { formatShortDate } from "../components/RegulatoryUpdates";
 
 export default function RegulationsPage({ onNavigate }) {
@@ -27,12 +28,18 @@ export default function RegulationsPage({ onNavigate }) {
             return dateB - dateA;
           });
 
-          for (const regulation of sorted) {
-            if (regulation.file) {
-              const link = await ToHref(regulation.file, "regulation.pdf");
-              regulation.file = link;
-            }
-          }
+          await Promise.all(
+            sorted.map(async (regulation) => {
+              if (regulation.file) {
+                try {
+                  const link = await ToHref(regulation.file, "regulation.pdf");
+                  regulation.file = link;
+                } catch (e) {
+                  console.error("Failed to resolve regulation file link:", e);
+                }
+              }
+            })
+          );
 
           const mappedBriefings = sorted.map((r) => {
             const shortDate = formatShortDate(r.publish_date || r.createdAt);
