@@ -5,6 +5,7 @@ import Reveal from "../components/Reveal";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
 import LazyImage from "../components/LazyImage";
+import { useLanguage } from "../context/LanguageContext";
 
 const REGIONS = ["All Regions", "Pakistan", "Middle East & UAE", "Europe & MiCA", "North America", "Asia Pacific"];
 
@@ -63,66 +64,74 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
   const [selectedRegion, setSelectedRegion] = useState("All Regions");
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isUrdu, t } = useLanguage();
 
   useEffect(() => {
     let active = true;
-    (async () => {
+
+    async function loadGlobalNews() {
       try {
-        const data = await getPublishedNews();
+        const raw = await getPublishedNews();
         if (!active) return;
-        const published = (Array.isArray(data) ? data : []).filter((a) => a.status === "published");
+
+        const published = (Array.isArray(raw) ? raw : []).filter(
+          (a) => a.status === "published"
+        );
+
+        const resolved = await Promise.all(
+          published.map(async (art) => {
+            if (
+              !art.image ||
+              typeof art.image !== "string" ||
+              art.image.startsWith("http://") ||
+              art.image.startsWith("https://") ||
+              art.image.startsWith("data:")
+            ) {
+              return art;
+            }
+            try {
+              const url = await ToImageUrl(art.image);
+              return { ...art, image: url };
+            } catch {
+              return art;
+            }
+          })
+        );
 
         if (active) {
-          setArticles(published);
-          setLoading(false);
-        }
-
-        // Preload lead story image if present
-        const topStory = published[0];
-        if (topStory && topStory.image && typeof topStory.image === "string" && !topStory.image.startsWith("http://") && !topStory.image.startsWith("https://") && !topStory.image.startsWith("data:")) {
-          try {
-            const url = await ToImageUrl(topStory.image);
-            if (url && active) {
-              const img = new Image();
-              img.src = url;
-              if (img.decode) img.decode().catch(() => { });
-            }
-          } catch { }
+          setArticles(resolved);
         }
       } catch (err) {
-        console.error("Failed to load global articles", err);
+        console.error("Failed to load global news", err);
+      } finally {
         if (active) setLoading(false);
       }
-    })();
+    }
 
+    loadGlobalNews();
     return () => {
       active = false;
     };
   }, []);
 
-  // Filter to only global-relevant articles (strict: by display_section or category only)
-  const globalArticles = articles.filter((a) => {
-    const secs = Array.isArray(a.display_section) ? a.display_section : [];
-    const cats = Array.isArray(a.category) ? a.category : [a.category || ""];
-    const catText = cats.map((t) => String(t).toLowerCase().replace(/_/g, " "));
-    // Match display_section Global_Highlight, or category is explicitly global/international/middle east/asia pacific/europe
-    const isGlobalSection = secs.includes("Global_Highlight") || secs.includes("global_highlights");
-    const globalCategories = ["global", "international", "middle east", "asia pacific", "europe"];
-    const isGlobalCategory = catText.some((c) => globalCategories.includes(c));
-    return isGlobalSection || isGlobalCategory;
+  const filtered = articles.filter((a) => {
+    if (selectedRegion === "All Regions") return true;
+    const textToMatch = [
+      ...(Array.isArray(a.category) ? a.category : [a.category]),
+      ...(Array.isArray(a.tags) ? a.tags : [a.tags]),
+      a.title,
+      a.summary
+    ].join(" ").toLowerCase();
+
+    if (selectedRegion === "Pakistan") return textToMatch.includes("pakistan") || textToMatch.includes("secp") || textToMatch.includes("sbp");
+    if (selectedRegion === "Middle East & UAE") return textToMatch.includes("dubai") || textToMatch.includes("uae") || textToMatch.includes("middle east") || textToMatch.includes("vara") || textToMatch.includes("adgm");
+    if (selectedRegion === "Europe & MiCA") return textToMatch.includes("europe") || textToMatch.includes("eu") || textToMatch.includes("mica") || textToMatch.includes("uk") || textToMatch.includes("germany");
+    if (selectedRegion === "North America") return textToMatch.includes("us") || textToMatch.includes("sec") || textToMatch.includes("america") || textToMatch.includes("canada") || textToMatch.includes("fed");
+    if (selectedRegion === "Asia Pacific") return textToMatch.includes("singapore") || textToMatch.includes("asia") || textToMatch.includes("hong kong") || textToMatch.includes("japan") || textToMatch.includes("china");
+    return true;
   });
 
-  const filteredArticles = selectedRegion === "All Regions"
-    ? globalArticles
-    : globalArticles.filter((a) => {
-      const catArray = Array.isArray(a.category) ? a.category : [a.category || ""];
-      const secArray = Array.isArray(a.display_section) ? a.display_section : [];
-      const allTags = [...catArray, ...secArray].map((t) => String(t).toLowerCase().replace(/_/g, " "));
-      const target = selectedRegion.toLowerCase();
-      return allTags.some((t) => t.includes(target) || target.includes(t));
-    });
-
-  const activeList = filteredArticles.length > 0 ? filteredArticles : (globalArticles.length > 0 ? globalArticles : articles);
+  const activeList = filtered.length > 0 ? filtered : articles;
 
   const leadStory = activeList[0] || null;
   const secondaryHeadlines = activeList.slice(1, 5);
@@ -142,33 +151,38 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
       <Reveal as="div" className="border-b border-outline-variant pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block mb-1">
-            INTERNATIONAL INTELLIGENCE HUB
+            {t("global.hubTag", "INTERNATIONAL INTELLIGENCE HUB")}
           </span>
           <h1 className="font-display-lg text-2xl sm:text-3xl md:text-5xl font-bold text-[#0C133D]">
-            Global Digital Asset Coverage
+            {t("global.pageTitle", "Global Digital Asset Coverage")}
           </h1>
         </div>
-        <p className="text-sm text-on-surface-variant max-w-md">
-          Cross-border monetary policy, international VASP compliance, and institutional Web3 developments worldwide.
+        <p className="text-sm text-on-surface-variant max-w-md font-normal">
+          {t("global.pageDesc", "Cross-border monetary policy, international VASP compliance, and institutional Web3 developments worldwide.")}
         </p>
       </Reveal>
 
       {/* Region Filter Bar */}
       <Reveal as="div" className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2" role="tablist">
-        {REGIONS.map((reg) => (
-          <button
-            key={reg}
-            role="tab"
-            aria-selected={selectedRegion === reg}
-            onClick={() => setSelectedRegion(reg)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap border ${selectedRegion === reg
-              ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] shadow-sm font-extrabold"
-              : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37] hover:text-[#0C133D]"
-              }`}
-          >
-            {reg}
-          </button>
-        ))}
+        {REGIONS.map((reg) => {
+          const isSelected = selectedRegion === reg;
+          const translatedRegion = t(`regions.${reg}`, reg);
+
+          return (
+            <button
+              key={reg}
+              role="tab"
+              aria-selected={isSelected}
+              onClick={() => setSelectedRegion(reg)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap border ${isSelected
+                ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] shadow-sm font-extrabold"
+                : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37] hover:text-[#0C133D]"
+                }`}
+            >
+              {translatedRegion}
+            </button>
+          );
+        })}
       </Reveal>
 
       {/* Hero Section: Lead Story (Full Image + Headline) + Secondary Headlines List */}
@@ -200,7 +214,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
                 {leadStory.summary}
               </p>
               <div className="flex items-center gap-3 text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40">
-                <span>By {leadStory.author || "Global Editorial"}</span>
+                <span>{t("hero.by", "By")} {leadStory.author || "Global Editorial"}</span>
                 <span>•</span>
                 <span>{leadStory.publish_date || "Today"}</span>
               </div>
@@ -212,7 +226,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
         <Reveal as="aside" className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col justify-start gap-3 shadow-sm">
           <div className="border-b border-outline-variant pb-3 flex items-center justify-between">
             <h3 className="font-headline-sm text-sm font-bold text-[#0C133D] uppercase tracking-wider">
-              Global Headlines Wire
+              {t("global.wire", "Global Headlines Wire")}
             </h3>
             <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
           </div>
@@ -231,7 +245,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
                   {item.title}
                 </h4>
                 <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal block mt-1">
-                  {item.approx_time_to_read || 3} mins read
+                  {item.approx_time_to_read || 3} {t("hero.minsRead", "mins read")}
                 </span>
               </div>
             ))}
@@ -269,7 +283,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
               </p>
             </div>
             <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal pt-2 border-t border-outline-variant/40">
-              Read Analysis →
+              {t("news.readAnalysis", "Read Analysis →")}
             </span>
           </Reveal>
         ))}
@@ -280,7 +294,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
         {/* Chronological Feed */}
         <div className="lg:col-span-8 space-y-6">
           <h3 className="font-headline-sm text-base sm:text-lg font-bold text-[#0C133D] border-b border-outline-variant pb-2 uppercase tracking-wider">
-            Chronological Global Dispatch
+            {t("global.dispatch", "Chronological Global Dispatch")}
           </h3>
 
           {feedArticles.map((art, i) => (

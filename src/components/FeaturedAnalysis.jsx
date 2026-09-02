@@ -1,8 +1,10 @@
 import React from "react";
 import Reveal from "./Reveal";
 import LazyImage from "./LazyImage";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function FeaturedAnalysis({ fa = null, onSelectArticle }) {
+  const { t } = useLanguage();
   const safeFeaturedAnalysis = fa && typeof fa === "object" ? fa : {};
   const hasContent = Boolean(
     safeFeaturedAnalysis.title ||
@@ -13,8 +15,8 @@ export default function FeaturedAnalysis({ fa = null, onSelectArticle }) {
 
   return (
     <section>
-      <Reveal as="h2" className="font-headline-lg text-headline-lg text-[#0C133D] section-header-border">
-        Featured Analysis
+      <Reveal as="h2" className="text-xl sm:text-2xl font-extrabold text-[#0C133D] section-header-border">
+        {t("home.featuredAnalysis", "Featured Analysis")}
       </Reveal>
 
       {hasContent ? (
@@ -31,13 +33,13 @@ export default function FeaturedAnalysis({ fa = null, onSelectArticle }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0C133D] via-[#0C133D]/80 to-transparent" />
           <div className="absolute bottom-0 left-0 p-6 text-on-primary w-full">
-            <span className="font-label-caps text-label-caps text-[#D4AF37] mb-2 block">
-              {safeFeaturedAnalysis.tags || "Featured Analysis"}
+            <span className="font-label-caps text-[#D4AF37] mb-2 block uppercase text-[11px] font-bold">
+              {safeFeaturedAnalysis.tags || t("home.featuredAnalysis", "Featured Analysis")}
             </span>
-            <h3 className="font-headline-lg text-headline-lg mb-3">
+            <h3 className="font-headline-lg text-xl sm:text-2xl font-bold mb-3 leading-tight text-white">
               {safeFeaturedAnalysis.title || "Featured analysis"}
             </h3>
-            <p className="font-body-md text-body-md text-surface-variant mb-4 max-w-xl line-clamp-2">
+            <p className="text-xs sm:text-sm text-surface-variant font-normal mb-4 max-w-xl line-clamp-2 leading-relaxed">
               {safeFeaturedAnalysis.summary || "More analysis will appear here soon."}
             </p>
             <button
@@ -46,9 +48,9 @@ export default function FeaturedAnalysis({ fa = null, onSelectArticle }) {
                 e.stopPropagation();
                 onSelectArticle?.(safeFeaturedAnalysis);
               }}
-              className="font-label-caps text-label-caps border border-[#D4AF37] text-[#D4AF37] px-4 py-2 hover:bg-[#D4AF37] hover:text-[#0C133D] transition-colors inline-block font-bold rounded-lg"
+              className="font-label-caps border border-[#D4AF37] text-[#D4AF37] px-4 py-2 hover:bg-[#D4AF37] hover:text-[#0C133D] transition-colors inline-block font-bold rounded-lg text-xs"
             >
-              Read Full Report →
+              {t("home.readFullReport", "Read Full Report →")}
             </button>
           </div>
         </Reveal>

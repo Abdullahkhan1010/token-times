@@ -1,12 +1,14 @@
 import React from "react";
 import Reveal from "./Reveal";
-
+import { useLanguage } from "../context/LanguageContext";
 
 export default function PakistanFocus({ pakistanFocus = [], onSelectArticle }) {
+  const { t } = useLanguage();
+
   return (
     <section className="flex flex-col h-full">
       <Reveal as="h2" className="text-xl sm:text-2xl font-extrabold text-[#0C133D] section-header-border">
-        Pakistan Focus
+        {t("home.pakistanFocus", "Pakistan Focus")}
       </Reveal>
       <div className="flex flex-col gap-4 flex-1">
         {pakistanFocus.map((item, i) => (

@@ -1,25 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { navLinks } from "../data/content";
 import { ROUTE_PATH_MAP } from "../data/seoData";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Navigation({ activePage = "Home", setActivePage }) {
-  const [isUrduSelected, setIsUrduSelected] = useState(() => {
-    try {
-      return localStorage.getItem("selected_lang") === "ur";
-    } catch {
-      return false;
-    }
-  });
-
-  const toggleLanguage = () => {
-    setIsUrduSelected((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem("selected_lang", next ? "ur" : "en");
-      } catch {}
-      return next;
-    });
-  };
+  const { isUrdu, toggleLanguage, t } = useLanguage();
 
   return (
     <nav className="w-full hidden md:block" aria-label="Main Navigation">
@@ -30,6 +15,8 @@ export default function Navigation({ activePage = "Home", setActivePage }) {
           {navLinks.map((link) => {
             const isActive = activePage === link;
             const hrefPath = ROUTE_PATH_MAP[link] || "/";
+            const translatedText = t(`nav.${link}`, link);
+
             return (
               <a
                 key={link}
@@ -45,7 +32,7 @@ export default function Navigation({ activePage = "Home", setActivePage }) {
                   isActive ? "text-[#D4AF37] font-bold is-active" : "text-[#0C133D] hover:text-[#D4AF37]"
                 }`}
               >
-                {link}
+                {translatedText}
               </a>
             );
           })}
@@ -57,12 +44,12 @@ export default function Navigation({ activePage = "Home", setActivePage }) {
             type="button"
             onClick={toggleLanguage}
             id="lang-toggle-btn"
-            aria-label={isUrduSelected ? "Switch to English" : "اردو منتخب کریں"}
-            title={isUrduSelected ? "Switch to English" : "اردو منتخب کریں"}
+            aria-label={isUrdu ? "Switch to English" : "اردو منتخب کریں"}
+            title={isUrdu ? "Switch to English" : "اردو منتخب کریں"}
             className="px-3.5 py-1 text-xs font-bold rounded-lg border border-[#0C133D]/20 bg-white/70 hover:bg-[#D4AF37] hover:text-[#0C133D] hover:border-[#D4AF37] text-[#0C133D] transition-all shadow-xs flex items-center justify-center cursor-pointer select-none"
           >
-            <span className={isUrduSelected ? "font-sans font-bold tracking-wide" : "font-urdu text-sm leading-none pt-0.5"}>
-              {isUrduSelected ? "English" : "اردو"}
+            <span className={isUrdu ? "font-sans font-bold tracking-wide" : "font-urdu text-sm leading-none pt-0.5"}>
+              {isUrdu ? "English" : "اردو"}
             </span>
           </button>
         </div>

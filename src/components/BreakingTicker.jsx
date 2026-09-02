@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { getTickerItems } from "../services/ticker.service";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function BreakingTicker() {
   const [items, setItems] = useState([]);
+  const { t } = useLanguage();
 
   useEffect(() => {
     let cancelled = false;
@@ -39,7 +41,7 @@ export default function BreakingTicker() {
       <div className="px-4 md:px-12 font-label-caps text-xs whitespace-nowrap bg-[#0C133D] z-10 font-bold border-r border-white/10 pr-4 flex items-center gap-2">
         <span className="bg-[#D4AF37] text-[#0C133D] px-2.5 py-0.5 rounded-sm text-[11px] font-extrabold tracking-wider flex items-center gap-1.5 shadow-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-[#0C133D] animate-pulse" />
-          BREAKING
+          {t("ticker.breaking", "BREAKING")}
         </span>
       </div>
 

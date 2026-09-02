@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Calendar } from "lucide-react";
 import { getEvents } from "../services/event.service";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function UpcomingEvents() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -55,10 +57,10 @@ export default function UpcomingEvents() {
     <section className="flex flex-col h-full">
       <div className="flex items-center justify-between border-b-2 border-[#0C133D] pb-2.5 mb-5 min-h-[42px]">
         <h3 className="font-headline-md text-base font-bold text-[#0C133D] flex items-center gap-2 uppercase tracking-wider">
-          <Calendar size={18} className="text-[#D4AF37]" /> Upcoming Events
+          <Calendar size={18} className="text-[#D4AF37]" /> {t("home.upcomingEvents", "Upcoming Events")}
         </h3>
         <span className="px-2.5 py-0.5 rounded-full bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 font-extrabold text-[10px] uppercase tracking-wider shadow-sm">
-          CALENDAR
+          {t("home.calendar", "CALENDAR")}
         </span>
       </div>
 

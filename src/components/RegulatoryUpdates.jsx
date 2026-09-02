@@ -120,9 +120,12 @@ export function RegulatoryBriefings({ onNavigate }) {
   );
 }
 
+import { useLanguage } from "../context/LanguageContext";
+
 export function RegulatoryTracker({ onNavigate }) {
   const [tracker, setTracker] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isUrdu, t } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -148,13 +151,15 @@ export function RegulatoryTracker({ onNavigate }) {
   return (
     <section className="mb-8 border border-outline-variant bg-surface-container-lowest rounded-xl overflow-hidden shadow-xs">
       <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-outline-variant bg-surface-bright flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <h2 className="font-headline-md text-base sm:text-lg font-bold text-on-surface">Pakistan Regulatory Tracker</h2>
+        <h2 className="font-headline-md text-base sm:text-lg font-bold text-on-surface">
+          {t("tracker.title", "Pakistan Regulatory Tracker")}
+        </h2>
         <button
           type="button"
           onClick={() => onNavigate?.("Policy & Regulation")}
-          className="font-label-caps text-xs text-[#D4AF37] hover:text-[#B08D23] flex items-center gap-1 group cursor-pointer bg-transparent border-0 self-start sm:self-auto"
+          className="font-label-caps text-xs text-[#D4AF37] hover:text-[#B08D23] flex items-center gap-1 group cursor-pointer bg-transparent border-0 self-start sm:self-auto font-bold"
         >
-          View Full Dashboard <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+          {isUrdu ? "مکمل ڈیش بورڈ دیکھیں ←" : "View Full Dashboard →"}
         </button>
       </div>
 
@@ -165,10 +170,10 @@ export function RegulatoryTracker({ onNavigate }) {
           <table className="w-full text-left border-collapse min-w-[550px]">
             <thead>
               <tr className="bg-surface-container-low border-b border-outline-variant font-label-caps text-[11px] text-on-surface-variant">
-                <th className="px-4 sm:px-6 py-3 font-semibold uppercase">Authority</th>
-                <th className="px-4 sm:px-6 py-3 font-semibold uppercase">Framework / Initiative</th>
-                <th className="px-4 sm:px-6 py-3 font-semibold uppercase">Latest Update</th>
-                <th className="px-4 sm:px-6 py-3 font-semibold uppercase">Status</th>
+                <th className="px-4 sm:px-6 py-3 font-semibold uppercase">{isUrdu ? "ادارہ" : "Authority"}</th>
+                <th className="px-4 sm:px-6 py-3 font-semibold uppercase">{isUrdu ? "فریم ورک / اقدام" : "Framework / Initiative"}</th>
+                <th className="px-4 sm:px-6 py-3 font-semibold uppercase">{isUrdu ? "تاریخ" : "Latest Update"}</th>
+                <th className="px-4 sm:px-6 py-3 font-semibold uppercase">{isUrdu ? "حیثیت" : "Status"}</th>
               </tr>
             </thead>
             <tbody className="font-body-md text-xs sm:text-sm text-on-surface">

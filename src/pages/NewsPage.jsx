@@ -6,6 +6,7 @@ import { BASE_URL } from "../data/seoData";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
 import LazyImage from "../components/LazyImage";
+import { useLanguage } from "../context/LanguageContext";
 
 const INTERNAL_SECTION_KEYS = new Set([
   "main_story", "mainstory", "top_story", "top_stories", "topstory",
@@ -73,6 +74,7 @@ function getSingleCleanTag(item, fallback = "NEWS") {
 export default function NewsPage({ onNavigate, onSelectArticle }) {
   const [selectedCat, setSelectedCat] = useState("All");
   const [backendNews, setBackendNews] = useState([]);
+  const { isUrdu, t } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -198,14 +200,14 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
       <Reveal as="div" className="border-b border-outline-variant pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block mb-1">
-            DIGITAL ASSETS INTELLIGENCE STREAM
+            {t("news.streamTag", "DIGITAL ASSETS INTELLIGENCE STREAM")}
           </span>
           <h1 className="font-display-lg text-2xl sm:text-3xl md:text-5xl font-bold text-[#0C133D]">
-            Latest News & Market Analysis
+            {t("news.pageTitle", "Latest News & Market Analysis")}
           </h1>
         </div>
-        <p className="text-sm text-on-surface-variant max-w-md">
-          Real-time reporting on regulatory shifts, market momentum, and Web3 innovation across Pakistan and global hubs.
+        <p className="text-sm text-on-surface-variant max-w-md font-normal">
+          {t("news.pageDesc", "Real-time reporting on regulatory shifts, market momentum, and Web3 innovation across Pakistan and global hubs.")}
         </p>
       </Reveal>
 
@@ -214,6 +216,8 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" role="tablist">
           {NEWS_FILTER_CATEGORIES.map((cat) => {
             const isSelected = selectedCat === cat;
+            const translatedCat = cat === "All" ? t("filter.All", "All News") : t(`filter.${cat}`, cat);
+
             return (
               <button
                 key={cat}
@@ -229,7 +233,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
                 {isSelected && (
                   <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] shrink-0" />
                 )}
-                <span>{cat === "All" ? "All News" : cat}</span>
+                <span>{translatedCat}</span>
               </button>
             );
           })}
@@ -239,13 +243,13 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
       {/* Empty State when no articles match filter */}
       {filteredArticles.length === 0 && (
         <div className="rounded-xl border border-dashed border-outline-variant bg-surface-container-lowest p-8 text-center text-sm text-on-surface-variant space-y-2">
-          <p className="font-semibold text-base text-[#0C133D]">No articles found under "{selectedCat}".</p>
-          <p className="text-xs text-on-surface-variant">Showing latest news across all categories.</p>
+          <p className="font-semibold text-base text-[#0C133D]">{isUrdu ? `اس زمرے میں کوئی مضامین نہیں ملے "${selectedCat}".` : `No articles found under "${selectedCat}".`}</p>
+          <p className="text-xs text-on-surface-variant">{isUrdu ? "تمام زمروں کی تازہ ترین خبریں دکھائی جا رہی ہیں۔" : "Showing latest news across all categories."}</p>
           <button
             onClick={() => setSelectedCat("All")}
             className="mt-2 px-4 py-2 rounded-lg bg-[#0C133D] text-[#D4AF37] text-xs font-bold hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all cursor-pointer"
           >
-            Reset Filter to All News
+            {t("news.resetFilter", "Reset Filter to All News")}
           </button>
         </div>
       )}
@@ -290,7 +294,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
           <Reveal as="aside" className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col justify-start gap-3 shadow-sm">
             <div className="border-b border-outline-variant pb-3 flex items-center justify-between">
               <h3 className="font-headline-sm text-sm font-bold text-[#0C133D] uppercase tracking-wider">
-                News Wire Bulletins
+                {t("news.wireBulletins", "News Wire Bulletins")}
               </h3>
               <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-pulse" />
             </div>
@@ -310,7 +314,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
                       {item.title}
                     </h4>
                     <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal block mt-1">
-                      {item.approx_time_to_read || 3} mins read
+                      {item.approx_time_to_read || 3} {t("hero.minsRead", "mins read")}
                     </span>
                   </div>
                 ))
@@ -353,7 +357,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
                 </p>
               </div>
               <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal pt-2 border-t border-outline-variant/40">
-                Read Analysis →
+                {t("news.readAnalysis", "Read Analysis →")}
               </span>
             </Reveal>
           ))}
@@ -367,7 +371,7 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
           <div className="lg:col-span-8 space-y-6">
             <div className="space-y-6">
               <h3 className="font-headline-sm text-lg font-bold text-[#0C133D] border-b border-outline-variant pb-2 uppercase tracking-wider">
-                {selectedCat === "All" ? "Recent News Stream" : `${selectedCat} News`}
+                {selectedCat === "All" ? t("news.recentNewsStream", "Recent News Stream") : `${selectedCat} News`}
               </h3>
 
               {feedArticles.map((art, i) => (
@@ -399,8 +403,8 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
                       </p>
                     </div>
                     <div className="flex items-center justify-between text-xs text-on-surface-variant font-data-tabular font-normal pt-2 border-t border-outline-variant/30">
-                      <span>By {art.author || "News Desk"} • {art.publish_date || art.time || "Recent"}</span>
-                      <span className="text-[#D4AF37] font-semibold">{art.readTime || "4 mins read"}</span>
+                      <span>{t("hero.by", "By")} {art.author || "News Desk"} • {art.publish_date || art.time || "Recent"}</span>
+                      <span className="text-[#D4AF37] font-semibold">{art.readTime || `4 ${t("hero.minsRead", "mins read")}`}</span>
                     </div>
                   </div>
                 </Reveal>
@@ -412,25 +416,29 @@ export default function NewsPage({ onNavigate, onSelectArticle }) {
           <div className="lg:col-span-4 space-y-6">
             {/* Newsletter Box */}
             <Reveal as="div" className="bg-surface-container-lowest border border-outline-variant border-t-4 border-t-[#D4AF37] rounded-xl p-6 space-y-4 shadow-sm">
-              <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase">DAILY DISPATCH</span>
+              <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase">
+                {isUrdu ? "روزنامہ ڈسپیچ" : "DAILY DISPATCH"}
+              </span>
               <h4 className="font-headline-md text-lg font-bold text-[#0C133D]">
-                Get the Token Times Briefing
+                {isUrdu ? "ٹوکن ٹائمز بریفنگ حاصل کریں" : "Get the Token Times Briefing"}
               </h4>
               <p className="text-xs text-on-surface-variant leading-relaxed">
-                Every morning, get our curated breakdown of virtual asset policy, markets, and macroeconomic analysis.
+                {isUrdu
+                  ? "ہر صبح ورچوئل اثاثوں کی پالیسی، مارکیٹس اور میکرو اکنامک تجزیے پر مبنی ہماری جامع رپورٹ حاصل کریں۔"
+                  : "Every morning, get our curated breakdown of virtual asset policy, markets, and macroeconomic analysis."}
               </p>
               <form onSubmit={(e) => e.preventDefault()} className="space-y-2">
                 <input
                   type="email"
-                  placeholder="Enter your email..."
+                  placeholder={t("newsletter.placeholder", "Enter your email...")}
                   aria-label="Email address for daily briefing newsletter"
                   className="w-full px-3 py-2 text-xs bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:border-[#D4AF37]"
                 />
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/60 text-xs font-extrabold rounded-lg hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm"
+                  className="w-full py-2.5 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/60 text-xs font-extrabold rounded-lg hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm cursor-pointer"
                 >
-                  Subscribe Free →
+                  {t("newsletter.subscribe", "Subscribe Free →")}
                 </button>
               </form>
             </Reveal>

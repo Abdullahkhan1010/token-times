@@ -1,5 +1,6 @@
 import React from "react";
 import Reveal from "./Reveal";
+import { useLanguage } from "../context/LanguageContext";
 
 function getSingleCleanTag(article, fallback = "NEWS") {
   if (!article) return fallback;
@@ -28,6 +29,7 @@ function getSingleCleanTag(article, fallback = "NEWS") {
 }
 
 export default function Hero({ featuredspotlight = [], substories = [], mainStory = null, topStory = null, onSelectArticle }) {
+  const { t } = useLanguage();
   const safeFeaturedSpotlight = Array.isArray(featuredspotlight) ? featuredspotlight : [];
   const safeSubStories = Array.isArray(substories) ? substories : [];
   const safeMainStory = mainStory && typeof mainStory === "object" ? mainStory : null;
@@ -54,7 +56,6 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
   }
 
   return (
-
     <section aria-label="Top featured stories" className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8 items-stretch">
       {/* Left Column: Top Story + 3 Sub-Stories */}
       <div className="lg:col-span-3 order-3 lg:order-1 flex flex-col gap-3 h-full justify-between">
@@ -63,7 +64,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#B22222] text-white border border-red-400/60 rounded-full max-w-full shadow-md">
             <span className="w-2.5 h-2.5 rounded-full bg-amber-300 animate-pulse flex-shrink-0" />
             <span className="font-label-caps text-xs font-black uppercase tracking-widest truncate text-white">
-              TOP STORY
+              {t("hero.topStory", "TOP STORY")}
             </span>
           </div>
         </div>
@@ -90,8 +91,8 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
                 )}
               </div>
               <div className="flex items-center justify-between font-data-tabular text-xs text-on-surface-variant font-normal pt-2.5 border-t border-outline-variant/40 mt-auto">
-                <span>By {activeTopStory.author || "Editorial Desk"} • {activeTopStory.time || `${activeTopStory.approx_time_to_read || 4} mins read`}</span>
-                <span className="text-[#B22222] font-black text-xs shrink-0 ml-2 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">Read Story →</span>
+                <span>{t("hero.by", "By")} {activeTopStory.author || t("hero.editorialDesk", "Editorial Desk")} • {activeTopStory.time || `${activeTopStory.approx_time_to_read || 4} ${t("hero.minsRead", "mins read")}`}</span>
+                <span className="text-[#B22222] font-black text-xs shrink-0 ml-2 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">{t("hero.readStory", "Read Story →")}</span>
               </div>
             </div>
           </Reveal>
@@ -102,7 +103,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 rounded-full max-w-full shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] flex-shrink-0" />
             <span className="font-label-caps text-[10px] font-extrabold uppercase tracking-wider truncate">
-              Sub Stories
+              {t("hero.subStories", "Sub Stories")}
             </span>
           </div>
         </div>
@@ -126,7 +127,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
                 </h4>
               </div>
               <span className="font-data-tabular text-[9px] text-on-surface-variant font-normal pt-1 mt-1 border-t border-outline-variant/20">
-                {s.time || `${s.approx_time_to_read || 3} mins read`}
+                {s.time || `${s.approx_time_to_read || 3} ${t("hero.minsRead", "mins read")}`}
               </span>
             </Reveal>
           ))}
@@ -173,7 +174,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
               </div>
             )}
             <div className="absolute top-3 left-3 bg-[#D4AF37] text-[#0C133D] font-label-caps px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide shadow-md max-w-[calc(100%-1.5rem)] truncate z-10">
-              LIVE • {getSingleCleanTag(safeMainStory, "FEATURED")}
+              {t("hero.liveFeatured", "LIVE • FEATURED")}
             </div>
           </div>
 
@@ -187,9 +188,9 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
               {safeMainStory?.summary || ""}
             </p>
             <div className="flex items-center justify-between text-xs text-on-surface-variant font-data-tabular font-normal pt-3 border-t border-outline-variant/40 mt-auto">
-              <span>By {safeMainStory?.author || "Editorial Desk"} • {safeMainStory?.approx_time_to_read || 4} mins read</span>
+              <span>{t("hero.by", "By")} {safeMainStory?.author || t("hero.editorialDesk", "Editorial Desk")} • {safeMainStory?.approx_time_to_read || 4} {t("hero.minsRead", "mins read")}</span>
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[#0C133D] text-[#D4AF37] font-bold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all">
-                Read Story →
+                {t("hero.readStory", "Read Story →")}
               </span>
             </div>
           </div>
@@ -203,7 +204,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 rounded-full max-w-full shadow-sm">
             <span className="w-2 h-2 rounded-full bg-[#D4AF37] flex-shrink-0 animate-pulse" />
             <span className="font-label-caps text-xs font-extrabold uppercase tracking-wider truncate">
-              Featured Spotlight
+              {t("hero.featuredSpotlight", "Featured Spotlight")}
             </span>
           </div>
         </div>
@@ -211,7 +212,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
         <div className="flex flex-col sm:grid sm:grid-cols-2 lg:flex lg:flex-col gap-4 flex-grow">
           {featuredspotlight.map((art, i) => (
             <Reveal
-              key={art.title}
+              key={art.title || i}
               as="article"
               delay={i * 90}
               onClick={() => onSelectArticle?.(art)}
@@ -235,9 +236,9 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
                   {art.title}
                 </h3>
                 <div className="flex items-center justify-between text-[11px] text-on-surface-variant font-data-tabular font-normal pt-2 border-t border-outline-variant/30 mt-auto">
-                  <span>{art.approx_time_to_read} mins read</span>
+                  <span>{art.approx_time_to_read || 3} {t("hero.minsRead", "mins read")}</span>
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#0C133D] text-[#F7F0EB] font-bold text-[11px] group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all">
-                    Read →
+                    {t("hero.read", "Read →")}
                   </span>
                 </div>
               </div>
@@ -246,7 +247,6 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
         </div>
       </div>
     </section>
-
   );
 }
 

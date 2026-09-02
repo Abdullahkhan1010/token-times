@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { BookOpen } from "lucide-react";
 import { getResearches } from "../services/research.service";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function ResearchPapers() {
   const [papers, setPapers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -50,10 +52,10 @@ export default function ResearchPapers() {
     <section className="flex flex-col h-full">
       <div className="flex items-center justify-between border-b-2 border-[#0C133D] pb-2.5 mb-5 min-h-[42px]">
         <h3 className="font-headline-md text-base font-bold text-[#0C133D] flex items-center gap-2 uppercase tracking-wider">
-          <BookOpen size={18} className="text-[#D4AF37]" /> Research
+          <BookOpen size={18} className="text-[#D4AF37]" /> {t("home.research", "Research")}
         </h3>
         <span className="px-2.5 py-0.5 rounded-full bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 font-extrabold text-[10px] uppercase tracking-wider shadow-sm">
-          PAPERS
+          {t("home.papers", "PAPERS")}
         </span>
       </div>
 

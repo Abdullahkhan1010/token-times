@@ -6,6 +6,7 @@ import { getInterviews } from "../services/interview.service";
 import { ToImageUrl } from "../services/file.service";
 import LazyImage from "../components/LazyImage";
 import { Mic, UserCheck } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 const OPINION_CATS = ["All Columnists", "Central Bank Policy", "Founder Op-Eds", "Legal & Tax", "Macro Strategy"];
 
@@ -23,6 +24,7 @@ function formatTag(tag) {
 export default function OpinionPage({ onNavigate, onSelectArticle }) {
   const [selectedCat, setSelectedCat] = useState("All Columnists");
   const [interviews, setInterviews] = useState([]);
+  const { isUrdu, t } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -47,36 +49,33 @@ export default function OpinionPage({ onNavigate, onSelectArticle }) {
           }
         }
       } catch (err) {
-        console.error("Failed to load opinion columnists", err);
+        console.error("Failed to load opinion articles", err);
       }
     })();
     return () => { active = false; };
   }, []);
 
-  const filteredInterviews = selectedCat === "All Columnists"
-    ? interviews
-    : interviews.filter((item) => {
-        const title = (item.interview_title || "").toLowerCase();
-        const name = (item.interviewee_name || "").toLowerCase();
-        const target = selectedCat.toLowerCase();
-        return title.includes(target) || name.includes(target);
+  const mappedInterviews = interviews.map((iv) => ({
+    id: iv.id,
+    title: iv.article_title || iv.question || "Opinion & Strategic Column",
+    author: iv.interviewee_name || "Guest Columnist",
+    image: iv.interviewee_image,
+    summary: iv.article_description || iv.answer || "",
+    tag: formatTag(iv.category || "OPINION"),
+    approx_time_to_read: 5,
+  }));
+
+  const filteredOpEds = selectedCat === "All Columnists"
+    ? mappedInterviews
+    : mappedInterviews.filter((item) => {
+        const textToMatch = `${item.tag} ${item.title} ${item.summary}`.toLowerCase();
+        return textToMatch.includes(selectedCat.toLowerCase());
       });
 
-  const activeList = filteredInterviews.length > 0 ? filteredInterviews : interviews;
+  const activeList = filteredOpEds.length > 0 ? filteredOpEds : mappedInterviews;
 
-  const leadOpEd = activeList[0] ? {
-    title: activeList[0].interview_title,
-    author: activeList[0].interviewee_name || "Guest Columnist",
-    image: activeList[0].interviewee_image || "",
-    summary: activeList[0].summary || activeList[0].interview_title || "",
-    tag: "EXECUTIVE OP-ED"
-  } : null;
-
-  const secondaryOpEds = activeList.slice(1, 5).map(item => ({
-    title: item.interview_title,
-    author: item.interviewee_name || "Guest Columnist",
-    approx_time_to_read: 5
-  }));
+  const leadOpEd = activeList[0] || null;
+  const secondaryOpEds = activeList.slice(1, 5);
 
   return (
     <div className="space-y-8">
@@ -86,32 +85,37 @@ export default function OpinionPage({ onNavigate, onSelectArticle }) {
       <Reveal as="div" className="border-b border-outline-variant pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block mb-1">
-            EXECUTIVE PERSPECTIVES & OP-EDS
+            {t("opinion.streamTag", "EXECUTIVE PERSPECTIVES & OP-EDS")}
           </span>
           <h1 className="font-display-lg text-3xl md:text-5xl font-bold text-[#0C133D]">
-            Opinion & Columnists
+            {t("opinion.pageTitle", "Opinion & Columnists")}
           </h1>
         </div>
-        <p className="text-sm text-on-surface-variant max-w-md">
-          Commentary, op-eds, and strategic analysis from regulators, central bank leaders, and Web3 founders.
+        <p className="text-sm text-on-surface-variant max-w-md font-normal">
+          {t("opinion.pageDesc", "Commentary, op-eds, and strategic analysis from regulators, central bank leaders, and Web3 founders.")}
         </p>
       </Reveal>
 
       {/* Filter Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-        {OPINION_CATS.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setSelectedCat(cat)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
-              selectedCat === cat
-                ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] font-extrabold"
-                : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37]"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+        {OPINION_CATS.map((cat) => {
+          const isSelected = selectedCat === cat;
+          const translatedCat = t(`opinion.${cat}`, cat);
+
+          return (
+            <button
+              key={cat}
+              onClick={() => setSelectedCat(cat)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
+                isSelected
+                  ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] font-extrabold"
+                  : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37]"
+              }`}
+            >
+              {translatedCat}
+            </button>
+          );
+        })}
       </div>
 
       {/* Hero Section: Featured Op-Ed Lead */}
@@ -137,20 +141,20 @@ export default function OpinionPage({ onNavigate, onSelectArticle }) {
                   {leadOpEd.tag}
                 </span>
                 <h3 className="font-headline-lg text-lg sm:text-2xl font-bold text-[#0C133D]">
-                  By {leadOpEd.author}
+                  {t("hero.by", "By")} {leadOpEd.author}
                 </h3>
-                <p className="text-xs text-on-surface-variant font-medium mt-1">Named Columnist & Industry Leader</p>
+                <p className="text-xs text-on-surface-variant font-medium mt-1">{isUrdu ? "معروف کالم نگار اور انڈسٹری لیڈر" : "Named Columnist & Industry Leader"}</p>
               </div>
             </div>
             <div className="p-6">
               <h2 className="font-headline-lg text-xl sm:text-2xl md:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight mb-3 italic">
                 "{leadOpEd.title}"
               </h2>
-              <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+              <p className="text-sm text-on-surface-variant leading-relaxed mb-4 font-normal">
                 {leadOpEd.summary}
               </p>
-              <span className="text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40 block">
-                Opinion & Analysis Column • Token Times
+              <span className="text-xs font-data-tabular text-on-surface-variant font-normal pt-3 border-t border-outline-variant/40 block">
+                {isUrdu ? "رائے اور تجزیاتی کالم • ٹوکن ٹائمز" : "Opinion & Analysis Column • Token Times"}
               </span>
             </div>
           </Reveal>
@@ -159,18 +163,18 @@ export default function OpinionPage({ onNavigate, onSelectArticle }) {
         {/* Secondary Op-Eds Rail */}
         <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-start gap-4 shadow-sm">
           <h3 className="font-headline-sm text-sm font-bold text-[#0C133D] border-b border-outline-variant pb-3 uppercase tracking-wider flex items-center gap-2">
-            <Mic size={16} className="text-[#D4AF37]" /> Columnist Wire
+            <Mic size={16} className="text-[#D4AF37]" /> {t("opinion.wire", "Columnist Wire")}
           </h3>
           <div className="space-y-4">
             {secondaryOpEds.map((item, i) => (
               <div key={i} onClick={() => onSelectArticle?.(item)} className="group cursor-pointer border-b border-outline-variant/40 pb-3 last:border-none">
                 <span className="text-[10px] font-bold text-[#D4AF37] uppercase block mb-0.5">
-                  BY {item.author || "GUEST COLUMNIST"}
+                  {t("hero.by", "BY")} {item.author || "GUEST COLUMNIST"}
                 </span>
                 <h4 className="text-xs sm:text-sm font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors line-clamp-2 italic">
                   "{item.title}"
                 </h4>
-                <span className="text-[10px] text-on-surface-variant block mt-1">{item.approx_time_to_read || 5} mins read</span>
+                <span className="text-[10px] text-on-surface-variant font-normal block mt-1">{item.approx_time_to_read || 5} {t("hero.minsRead", "mins read")}</span>
               </div>
             ))}
           </div>

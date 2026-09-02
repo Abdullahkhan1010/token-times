@@ -5,6 +5,7 @@ import Reveal from "../components/Reveal";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
 import LazyImage from "../components/LazyImage";
+import { useLanguage } from "../context/LanguageContext";
 
 const FEATURE_CATS = ["All Features", "Deep Dives", "Investigative", "Executive Q&A", "Special Reports"];
 
@@ -62,6 +63,8 @@ function getSingleCleanTag(item, fallback = "FEATURE") {
 export default function FeaturesPage({ onNavigate, onSelectArticle }) {
   const [selectedCat, setSelectedCat] = useState("All Features");
   const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { isUrdu, t } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -86,6 +89,8 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
         }
       } catch (err) {
         console.error("Failed to load features", err);
+      } finally {
+        if (active) setLoading(false);
       }
     })();
     return () => { active = false; };
@@ -125,31 +130,36 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
       <Reveal as="div" className="border-b border-outline-variant pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block mb-1">
-            LONG-FORM JOURNALISM & DEEP DIVES
+            {t("features.streamTag", "LONG-FORM JOURNALISM & DEEP DIVES")}
           </span>
           <h1 className="font-display-lg text-2xl sm:text-3xl md:text-5xl font-bold text-[#0C133D]">
-            Feature Stories & Analysis
+            {t("features.pageTitle", "Feature Stories & Analysis")}
           </h1>
         </div>
-        <p className="text-sm text-on-surface-variant max-w-md">
-          In-depth investigative reports, technical breakdowns, and flagship digital asset feature stories.
+        <p className="text-sm text-on-surface-variant max-w-md font-normal">
+          {t("features.pageDesc", "In-depth investigative reports, technical breakdowns, and flagship digital asset feature stories.")}
         </p>
       </Reveal>
 
       {/* Filter Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-        {FEATURE_CATS.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setSelectedCat(cat)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${selectedCat === cat
-                ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] font-extrabold"
-                : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37]"
-              }`}
-          >
-            {cat}
-          </button>
-        ))}
+        {FEATURE_CATS.map((cat) => {
+          const isSelected = selectedCat === cat;
+          const translatedCat = t(`features.${cat}`, cat);
+
+          return (
+            <button
+              key={cat}
+              onClick={() => setSelectedCat(cat)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${isSelected
+                  ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] font-extrabold"
+                  : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37]"
+                }`}
+            >
+              {translatedCat}
+            </button>
+          );
+        })}
       </div>
 
       {/* Hero Section */}
@@ -180,7 +190,7 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
                 {leadFeature.summary}
               </p>
               <span className="text-xs font-data-tabular text-on-surface-variant font-normal pt-3 border-t border-outline-variant/40 block">
-                By {leadFeature.author} • {leadFeature.publish_date}
+                {t("hero.by", "By")} {leadFeature.author} • {leadFeature.publish_date}
               </span>
             </div>
           </Reveal>
@@ -188,7 +198,7 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
 
         <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col justify-start gap-4 shadow-sm">
           <h3 className="font-headline-sm text-sm font-bold text-[#0C133D] border-b border-outline-variant pb-3 uppercase tracking-wider">
-            Featured Reading List
+            {t("features.readingList", "Featured Reading List")}
           </h3>
           <div className="space-y-4">
             {secondaryFeatures.map((item, i) => (
@@ -199,7 +209,7 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
                 <h4 className="text-xs sm:text-sm font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors line-clamp-2">
                   {item.title}
                 </h4>
-                <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal block mt-1">{item.approx_time_to_read || 7} mins read</span>
+                <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal block mt-1">{item.approx_time_to_read || 7} {t("hero.minsRead", "mins read")}</span>
               </div>
             ))}
           </div>

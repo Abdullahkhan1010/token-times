@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { LanguageProvider } from "./context/LanguageContext";
 
 import Header from "./components/Header";
 import Navigation from "./components/Navigation";
@@ -38,7 +39,7 @@ import CryptoDetailPage from "./pages/CryptoDetailPage";
 import { trackPageVisit, trackArticleClick } from "./services/tracker.service";
 
 
-export default function App() {
+function AppContent() {
   const [activePage, setActivePage] = useState("Home");
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [selectedCryptoAsset, setSelectedCryptoAsset] = useState("BTC");
@@ -55,50 +56,17 @@ export default function App() {
     }
   }, [activePage]);
 
-  // useEffect(() => {
-  //   // Pre-warm data cache asynchronously on initial site mount
-  //   getTickerItems().catch(() => { });
-  //   getPublishedNews().catch(() => { });
-  //   getRegulations().catch(() => { });
-  //   getKnowlegeHubs().catch(() => { });
-  //   getEvents().catch(() => { });
-  //   getResearches().catch(() => { });
-  //   getInterviews().catch(() => { });
-  //   getMagzines().catch(() => { });
-  // }, []);
-
   const handleSelectArticle = (article) => {
-    if (article) {
-      trackArticleClick(
-        article.id,
-        article.title,
-        Array.isArray(article.category) ? article.category[0] : article.category
-      );
+    if (article?.id) {
+      trackArticleClick(article.id);
     }
     setSelectedArticle(article);
-    changePage("ArticleDetail");
+    changePage("ArticleDetail", { article });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const renderCurrentPage = () => {
     switch (activePage) {
-      case "ArticleDetail":
-        return (
-          <ArticleDetailPage
-            article={selectedArticle}
-            onNavigate={handleNavigate}
-            onSelectArticle={handleSelectArticle}
-          />
-        );
-      case "CryptoDetail":
-      case "Crypto Detail":
-      case "Crypto":
-        return (
-          <CryptoDetailPage
-            initialAsset={selectedCryptoAsset}
-            onNavigate={handleNavigate}
-            onSelectArticle={handleSelectArticle}
-          />
-        );
       case "News":
         return <NewsPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
       case "Global":
@@ -109,23 +77,31 @@ export default function App() {
         return <MarketsPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
       case "Opinion":
         return <OpinionPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
+      case "Magazine":
+        return <MagazinePage onNavigate={handleNavigate} />;
       case "Policy & Regulation":
-      case "Regulations":
         return <RegulationsPage onNavigate={handleNavigate} />;
-      case "REIT":
-      case "Reit":
-        return <ReitPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
       case "Learn":
       case "Knowledge Hub":
         return <KnowledgeHubPage onNavigate={handleNavigate} />;
-      case "Magazine":
-        return <MagazinePage onNavigate={handleNavigate} />;
+      case "REIT":
+        return <ReitPage onNavigate={handleNavigate} onSelectArticle={handleSelectArticle} />;
       case "Research":
         return <ResearchPage onNavigate={handleNavigate} />;
       case "Resources":
         return <ResourcesPage onNavigate={handleNavigate} />;
       case "Events":
         return <EventsPage onNavigate={handleNavigate} />;
+      case "CryptoDetail":
+        return (
+          <CryptoDetailPage
+            asset={selectedCryptoAsset}
+            onNavigate={handleNavigate}
+            onSelectArticle={handleSelectArticle}
+          />
+        );
+      case "ArticleDetail":
+        return <ArticleDetailPage article={selectedArticle} onNavigate={handleNavigate} />;
       case "About":
         return <AboutPage onNavigate={handleNavigate} />;
       case "Contact":
@@ -164,5 +140,13 @@ export default function App() {
       {/* Footer */}
       <Footer setActivePage={changePage} />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }

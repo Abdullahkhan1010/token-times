@@ -9,6 +9,7 @@ import { TrendingUp, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react
 import btcLogo from "../assets/logos/btc.png";
 import ethLogo from "../assets/logos/eth.png";
 import xrpLogo from "../assets/logos/xrp.png";
+import { useLanguage } from "../context/LanguageContext";
 
 const MARKET_TABS = ["All Markets", "Bitcoin & Majors", "CBDC Pilots", "Tokenized Assets", "DeFi & Yields"];
 
@@ -22,6 +23,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
   const [selectedTab, setSelectedTab] = useState("All Markets");
   const [articles, setArticles] = useState([]);
   const [tickerData, setTickerData] = useState([]);
+  const { isUrdu, t } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -152,10 +154,10 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-[11px] font-extrabold tracking-wider uppercase text-[#0C133D]">
-              LIVE CRYPTO MARKETS DESK
+              {t("markets.liveDesk", "LIVE CRYPTO MARKETS DESK")}
             </span>
           </div>
-          <span className="text-[10px] text-[#7F707A] font-medium">Real-Time Binance Spot Average</span>
+          <span className="text-[10px] text-[#7F707A] font-medium">{t("markets.binanceAvg", "Real-Time Binance Spot Average")}</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
@@ -204,7 +206,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
                     ${formatPrice(coin.price)}
                   </span>
                   <span className="text-[10px] font-bold text-[#D4AF37] group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
-                    Chart ↗
+                    {t("markets.chart", "Chart ↗")}
                   </span>
                 </div>
               </div>
@@ -217,32 +219,37 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
       <Reveal as="div" className="border-b border-outline-variant pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <span className="font-label-caps text-xs text-[#D4AF37] font-extrabold uppercase tracking-widest block mb-1">
-            FINANCIAL INTELLIGENCE & DATA
+            {t("markets.streamTag", "FINANCIAL INTELLIGENCE & DATA")}
           </span>
           <h1 className="font-display-lg text-2xl sm:text-3xl md:text-5xl font-bold text-[#0C133D]">
-            Market Dashboards & News
+            {t("markets.pageTitle", "Market Dashboards & News")}
           </h1>
         </div>
-        <p className="text-sm text-on-surface-variant max-w-md">
-          Track institutional capital flows, forex exchange rates, and market liquidity across regional crypto desks.
+        <p className="text-sm text-on-surface-variant max-w-md font-normal">
+          {t("markets.pageDesc", "Track institutional capital flows, forex exchange rates, and market liquidity across regional crypto desks.")}
         </p>
       </Reveal>
 
       {/* Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
-        {MARKET_TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setSelectedTab(tab)}
-            className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
-              selectedTab === tab
-                ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] font-extrabold"
-                : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37]"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+        {MARKET_TABS.map((tab) => {
+          const isSelected = selectedTab === tab;
+          const translatedTab = t(`markets.${tab}`, tab);
+
+          return (
+            <button
+              key={tab}
+              onClick={() => setSelectedTab(tab)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
+                isSelected
+                  ? "bg-[#0C133D] text-[#D4AF37] border-[#D4AF37] font-extrabold"
+                  : "bg-surface-container-lowest text-on-surface-variant border-outline-variant hover:border-[#D4AF37]"
+              }`}
+            >
+              {translatedTab}
+            </button>
+          );
+        })}
       </div>
 
       {/* Lead Story + Rail */}
@@ -260,7 +267,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] text-xs font-extrabold px-3 py-1 rounded-full uppercase border border-[#D4AF37]/40">
-                MARKETS LEAD
+                {t("markets.leadTag", "MARKETS LEAD")}
               </span>
             </div>
             <div className="p-4 sm:p-6">
@@ -271,7 +278,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
                 {leadMarket.summary}
               </p>
               <span className="text-xs font-data-tabular text-on-surface-variant font-normal pt-3 border-t border-outline-variant/40 block">
-                By {leadMarket.author} • Live Markets
+                {t("hero.by", "By")} {leadMarket.author} • Live Markets
               </span>
             </div>
           </Reveal>
@@ -279,7 +286,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
 
         <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-4 sm:p-5 flex flex-col justify-start gap-4 shadow-sm">
           <h3 className="font-headline-sm text-sm font-bold text-[#0C133D] border-b border-outline-variant pb-3 uppercase tracking-wider">
-            Markets Headlines Wire
+            {t("markets.wire", "Markets Headlines Wire")}
           </h3>
           <div className="space-y-4">
             {secondaryMarketStories.map((item, i) => (
@@ -293,7 +300,7 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
                   {item.title}
                 </h4>
                 <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal block mt-1">
-                  {item.approx_time_to_read || 4} mins read
+                  {item.approx_time_to_read || 4} {t("hero.minsRead", "mins read")}
                 </span>
               </div>
             ))}

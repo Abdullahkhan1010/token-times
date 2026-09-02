@@ -11,10 +11,12 @@ import {
   TrendingUp,
   Lock
 } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Footer({ setActivePage }) {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const { isUrdu, t } = useLanguage();
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -49,16 +51,16 @@ export default function Footer({ setActivePage }) {
             <div className="flex items-center gap-3">
               <img src={logo} alt="Token Times logo" loading="lazy" decoding="async" className="w-10 h-10 shrink-0" />
               <h2 className="font-headline-lg text-2xl font-bold text-white tracking-tight">
-                Token Times
+                {t("brand.title", "Token Times")}
               </h2>
             </div>
             <p className="text-xs text-white/70 leading-relaxed font-sans">
-              Pakistan's Digital Assets & Sovereign Financial Platform. Real-time news, regulatory tracking, and Web3 insights.
+              {t("footer.desc")}
             </p>
 
             {/* Social Connect */}
             <div className="flex items-center gap-2 pt-1">
-              <span className="text-xs text-white/50 font-medium mr-1">Connect:</span>
+              <span className="text-xs text-white/50 font-medium mr-1">{isUrdu ? "رابطہ:" : "Connect:"}</span>
               {[
                 { label: "X / Twitter", icon: "𝕏", href: "https://twitter.com/TokenTimesIO" },
                 { label: "LinkedIn", icon: "in", href: "https://linkedin.com/company/tokentimes" },
@@ -83,17 +85,17 @@ export default function Footer({ setActivePage }) {
             <div className="flex items-center gap-2 mb-1.5">
               <Mail className="w-4 h-4 text-[#D4AF37]" />
               <h3 className="font-semibold text-xs text-white uppercase tracking-wider">
-                Daily Token Times Dispatch
+                {isUrdu ? "روزنامہ ٹوکن ٹائمز بریفنگ" : "Daily Token Times Dispatch"}
               </h3>
             </div>
             <p className="text-[11px] text-white/70 mb-3">
-              Get essential daily crypto market analysis & regulatory updates in your inbox.
+              {isUrdu ? "کرپٹو مارکیٹ اور ریگولیٹری اپ ڈیٹس روزانہ حاصل کریں۔" : "Get essential daily crypto market analysis & regulatory updates in your inbox."}
             </p>
 
             {subscribed ? (
               <div className="bg-[#D4AF37]/20 border border-[#D4AF37]/40 rounded-lg p-2.5 flex items-center gap-2 text-xs text-[#D4AF37]">
                 <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                <span className="font-medium text-[11px]">Subscribed successfully! Welcome aboard.</span>
+                <span className="font-medium text-[11px]">{isUrdu ? "کامیابی سے سبسکرائب ہو گیا!" : "Subscribed successfully! Welcome aboard."}</span>
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="flex gap-2">
@@ -101,7 +103,7 @@ export default function Footer({ setActivePage }) {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter email address..."
+                  placeholder={t("newsletter.placeholder", "Enter email address...")}
                   aria-label="Email address for daily newsletter"
                   required
                   className="bg-[#0C133D] border border-white/20 rounded-lg px-3 py-2 text-xs text-white placeholder-white/40 focus:outline-none focus:border-[#D4AF37] flex-grow"
@@ -110,13 +112,13 @@ export default function Footer({ setActivePage }) {
                   type="submit"
                   className="bg-[#D4AF37] hover:bg-[#F3CF55] text-[#0C133D] font-bold px-4 py-2 rounded-lg text-xs flex items-center gap-1.5 transition-all"
                 >
-                  <span>Subscribe</span>
+                  <span>{t("newsletter.subscribe", "Subscribe")}</span>
                   <Send className="w-3 h-3" />
                 </button>
               </form>
             )}
             <p className="text-[10px] text-white/40 mt-2 flex items-center gap-1">
-              <Lock className="w-3 h-3 text-white/40" /> No spam. Unsubscribe anytime.
+              <Lock className="w-3 h-3 text-white/40" /> {isUrdu ? "کوئی اسپام نہیں، کسی بھی وقت ان سبسکرائب کریں۔" : "No spam. Unsubscribe anytime."}
             </p>
           </div>
         </div>
@@ -128,7 +130,7 @@ export default function Footer({ setActivePage }) {
           <div className="flex items-center gap-2 border-b border-[#D4AF37]/30 pb-2">
             <TrendingUp className="w-4 h-4 text-[#D4AF37]" />
             <h4 className="font-bold text-[#D4AF37] uppercase tracking-wider text-xs">
-              Publication
+              {t("footer.quickNav", "Publication")}
             </h4>
           </div>
           <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-6 gap-y-3 text-xs text-white/80">
@@ -139,7 +141,7 @@ export default function Footer({ setActivePage }) {
                   onClick={handleNavClick(link)}
                   className="hover:text-[#D4AF37] transition-colors inline-block py-0.5"
                 >
-                  {link}
+                  {t(`nav.${link}`, link)}
                 </a>
               </li>
             ))}
@@ -152,7 +154,7 @@ export default function Footer({ setActivePage }) {
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-[11px] text-white/50 leading-normal">
           <ShieldCheck className="w-4 h-4 text-[#D4AF37] flex-shrink-0" />
           <p>
-            <strong className="text-white/70">Disclaimer:</strong> Token Times provides financial news and regulatory intelligence for informational purposes only. Content should not be construed as investment or financial advice.
+            <strong className="text-white/70">{isUrdu ? "وضاحت:" : "Disclaimer:"}</strong> {isUrdu ? "ٹوکن ٹائمز مالیاتی خبریں اور ریگولیٹری معلومات صرف معلوماتی مقاصد کے لیے فراہم کرتا ہے۔" : "Token Times provides financial news and regulatory intelligence for informational purposes only. Content should not be construed as investment or financial advice."}
           </p>
         </div>
       </div>
@@ -161,9 +163,9 @@ export default function Footer({ setActivePage }) {
       <div className="px-4 md:px-12 py-5 bg-[#05081E]">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/60">
           <div className="flex items-center gap-3">
-            <p>© {new Date().getFullYear()} Token Times. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} {t("brand.title", "Token Times")}. {t("footer.allRights", "All rights reserved.")}</p>
             <span className="text-white/20">|</span>
-            <span className="text-white/80 font-medium">🇵🇰 Pakistan Edition</span>
+            <span className="text-white/80 font-medium">🇵🇰 {isUrdu ? "پاکستان ایڈیشن" : "Pakistan Edition"}</span>
           </div>
 
           {/* Action Buttons */}
@@ -174,7 +176,7 @@ export default function Footer({ setActivePage }) {
               className="flex items-center gap-1.5 bg-white/5 hover:bg-[#D4AF37] hover:text-[#0C133D] text-white/80 px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 transition-all"
             >
               <Lock className="w-3.5 h-3.5" />
-              <span>Admin Dashboard</span>
+              <span>{isUrdu ? "ایڈمن ڈیش بورڈ" : "Admin Dashboard"}</span>
             </a>
 
             {/* Smooth Scroll Back to Top */}
@@ -184,7 +186,7 @@ export default function Footer({ setActivePage }) {
               aria-label="Back to Top"
               className="flex items-center gap-1.5 bg-white/5 hover:bg-[#D4AF37] hover:text-[#0C133D] text-white/80 px-3 py-1.5 rounded-full text-xs font-medium border border-white/10 transition-all"
             >
-              <span>Back to Top</span>
+              <span>{isUrdu ? "اوپر جائیں" : "Back to Top"}</span>
               <ArrowUp className="w-3.5 h-3.5" />
             </button>
           </div>

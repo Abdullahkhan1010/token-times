@@ -3,16 +3,18 @@ import { Search, Linkedin, Menu, X } from "lucide-react";
 import logo from "../assets/TokenTimesLogo.svg";
 import { navLinks } from "../data/content";
 import HeaderSearch from "./HeaderSearch";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Header({ activePage = "Home", setActivePage, onSelectArticle }) {
   const [dateStr, setDateStr] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const { isUrdu, toggleLanguage, t } = useLanguage();
 
   useEffect(() => {
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
-    setDateStr(new Date().toLocaleDateString("en-US", options).toUpperCase());
-  }, []);
+    setDateStr(new Date().toLocaleDateString(isUrdu ? "ur-PK" : "en-US", options).toUpperCase());
+  }, [isUrdu]);
 
   // Lock body scroll when mobile full-screen menu is open
   useEffect(() => {
@@ -55,19 +57,28 @@ export default function Header({ activePage = "Home", setActivePage, onSelectArt
         >
           <img alt="Token Times logo" className="w-7 h-7 shrink-0" src={logo} />
           <span className="font-display-lg text-lg font-bold tracking-tight text-[#0C133D] uppercase group-hover:text-[#0C133D] transition-colors">
-            Token Times
+            {t("brand.title", "Token Times")}
           </span>
         </div>
 
-        {/* Right: Search Toggle Button */}
-        <button
-          onClick={() => setMobileSearchOpen((prev) => !prev)}
-          aria-label="Toggle Search"
-          className={`p-1.5 transition-colors flex items-center justify-center rounded-lg ${mobileSearchOpen ? "text-[#D4AF37] bg-[#0C133D]/5" : "text-on-surface hover:text-[#0C133D]"
-            }`}
-        >
-          <Search size={22} />
-        </button>
+        {/* Right: Search & Quick Lang Toggle */}
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={toggleLanguage}
+            className="px-2 py-0.5 text-[11px] font-bold rounded border border-[#0C133D]/20 bg-white/70 text-[#0C133D]"
+          >
+            {isUrdu ? "EN" : "اردو"}
+          </button>
+          <button
+            onClick={() => setMobileSearchOpen((prev) => !prev)}
+            aria-label="Toggle Search"
+            className={`p-1.5 transition-colors flex items-center justify-center rounded-lg ${mobileSearchOpen ? "text-[#D4AF37] bg-[#0C133D]/5" : "text-on-surface hover:text-[#0C133D]"
+              }`}
+          >
+            <Search size={22} />
+          </button>
+        </div>
       </div>
 
       {/* Mobile Expandable Search Bar */}
@@ -103,12 +114,18 @@ export default function Header({ activePage = "Home", setActivePage, onSelectArt
             >
               <img alt="Token Times logo" className="w-7 h-7 shrink-0" src={logo} />
               <span className="font-display-lg text-lg font-bold tracking-tight text-[#0C133D] uppercase">
-                Token Times
+                {t("brand.title", "Token Times")}
               </span>
             </div>
 
-            {/* Right Spacer */}
-            <div className="w-10 shrink-0" />
+            {/* Right: Language switch button in drawer */}
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className="px-2.5 py-1 text-xs font-bold rounded-lg border border-[#0C133D]/20 bg-white/80 text-[#0C133D]"
+            >
+              {isUrdu ? "English" : "اردو"}
+            </button>
           </div>
 
           {/* Full Screen Menu Content Stream */}
@@ -117,7 +134,7 @@ export default function Header({ activePage = "Home", setActivePage, onSelectArt
               {/* In-Drawer Mobile Search Bar */}
               <div className="pb-1">
                 <span className="font-label-caps text-xs text-[#0C133D] font-bold uppercase tracking-widest block mb-2">
-                  SEARCH INTEL & KEYWORDS
+                  {t("header.searchIntel", "SEARCH INTEL & KEYWORDS")}
                 </span>
                 <HeaderSearch
                   onSelectArticle={onSelectArticle}
@@ -127,12 +144,14 @@ export default function Header({ activePage = "Home", setActivePage, onSelectArt
               </div>
 
               <span className="font-label-caps text-xs text-[#0C133D] font-bold uppercase tracking-widest block border-b border-outline-variant/40 pb-2 pt-2">
-                MAIN NAVIGATION DIRECTORY
+                {t("header.mainDirectory", "MAIN NAVIGATION DIRECTORY")}
               </span>
 
               <div className="flex flex-col divide-y divide-outline-variant/30">
                 {navLinks.map((link) => {
                   const isActive = activePage === link;
+                  const translatedLink = t(`nav.${link}`, link);
+
                   return (
                     <button
                       key={link}
@@ -142,10 +161,10 @@ export default function Header({ activePage = "Home", setActivePage, onSelectArt
                         : "text-on-surface hover:text-[#0C133D]"
                         }`}
                     >
-                      <span>{link}</span>
+                      <span>{translatedLink}</span>
                       {isActive && (
                         <span className="text-xs text-[#0C133D] font-bold">
-                          ACTIVE
+                          {t("header.active", "ACTIVE")}
                         </span>
                       )}
                     </button>
@@ -157,10 +176,10 @@ export default function Header({ activePage = "Home", setActivePage, onSelectArt
             {/* Bottom Footer Info inside Fullscreen Mobile Drawer */}
             <div className="pt-4 border-t border-outline-variant/40 text-xs text-on-surface-variant space-y-2">
               <span className="font-label-caps text-[11px] font-bold text-[#0C133D] block uppercase">
-                Token Times Intelligence Platform
+                {t("brand.title", "Token Times")} Intelligence Platform
               </span>
               <p className="text-[11px] text-on-surface-variant leading-relaxed">
-                Pakistan's premiere platform for virtual asset regulations, digital currencies, and market analysis.
+                {t("footer.desc")}
               </p>
             </div>
           </div>
@@ -179,10 +198,10 @@ export default function Header({ activePage = "Home", setActivePage, onSelectArt
           />
           <div className="flex flex-col min-w-0 cursor-pointer" onClick={() => handleSelectPage("Home")}>
             <h1 className="font-display-lg text-3xl md:text-5xl font-extrabold text-[#0C133D] tracking-tight leading-none truncate uppercase font-serif">
-              Token Times
+              {t("brand.title", "Token Times")}
             </h1>
             <span className="font-label-caps text-xs text-on-surface-variant tracking-widest truncate mt-1 font-bold pl-2">
-              Gateway to the Digital Asset Economy
+              {t("brand.tagline", "Gateway to the Digital Asset Economy")}
             </span>
             <span className="font-data-tabular text-xs font-bold text-[#0C133D] tracking-wider mt-0.5 block pl-2">
               {dateStr}

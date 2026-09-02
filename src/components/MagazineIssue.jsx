@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import Reveal from "./Reveal";
 import { getMagzines } from "../services/magzine.service";
 import { ToHref, ToImageUrl } from "../services/file.service";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function MagazineIssue() {
   const [mag, setMag] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -80,19 +82,19 @@ export default function MagazineIssue() {
               />
               <div className="absolute top-4 left-0 w-full text-center" style={{ mixBlendMode: "difference" }}>
                 <h4 className="font-display-lg text-display-lg" style={{ color: "#fff", letterSpacing: "-0.03em" }}>
-                  TOKEN TIMES
+                  {t("brand.title", "TOKEN TIMES")}
                 </h4>
               </div>
             </div>
           </div>
           <div className="w-full md:w-2/3 flex flex-col items-center md:items-start text-center md:text-left">
             <span className="font-label-caps text-label-caps text-[#D4AF37] mb-2">
-              {safeMag.issue || "Latest Issue"}
+              {safeMag.issue || t("home.latestIssue", "Latest Issue")}
             </span>
             <h2 className="font-display-lg text-display-lg text-[#0C133D] mb-4">
-              {safeMag.title || "Token Times Magazine"}
+              {safeMag.title || t("home.magazine", "Token Times Magazine")}
             </h2>
-            <p className="font-body-lg text-body-lg text-on-surface-variant mb-6 max-w-2xl">
+            <p className="font-body-lg text-body-lg text-on-surface-variant mb-6 max-w-2xl font-normal leading-relaxed">
               {safeMag.desc || "New magazine content will appear here soon."}
             </p>
             <div className="flex flex-wrap gap-4 justify-center md:justify-start">
@@ -103,15 +105,15 @@ export default function MagazineIssue() {
                   rel="noreferrer"
                   className="bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/60 px-6 py-3 font-label-caps text-xs font-extrabold hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm rounded-lg"
                 >
-                  Read Online →
+                  {t("home.readOnline", "Read Online →")}
                 </a>
               ) : (
                 <button className="bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/60 px-6 py-3 font-label-caps text-xs font-extrabold hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-sm rounded-lg">
-                  Read Online →
+                  {t("home.readOnline", "Read Online →")}
                 </button>
               )}
               <button className="border-2 border-[#0C133D] bg-transparent text-[#0C133D] px-6 py-3 font-label-caps text-xs font-bold hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-[#0C133D] transition-all rounded-lg">
-                Order Print Edition
+                {t("home.orderPrint", "Order Print Edition")}
               </button>
             </div>
           </div>

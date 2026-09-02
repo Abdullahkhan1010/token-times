@@ -18,8 +18,10 @@ import Partners from "../components/Partners";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
 import HeroSkeleton from "../components/HeroSkeleton";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function HomePage({ onNavigate, onSelectArticle }) {
+  const { isUrdu, t } = useLanguage();
   const [heroReady, setHeroReady] = useState(false);
   const [mainStoryData, setMainStoryData] = React.useState(null);
   const [topStoryData, setTopStoryData] = React.useState(null);
@@ -195,19 +197,25 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
       {/* Regulatory Updates & Market Dashboards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 items-start">
         <div className="flex flex-col w-full">
-          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Regulatory Briefings</h2>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-[#0C133D] section-header-border shrink-0">
+            {t("home.regulatoryBriefings", "Regulatory Briefings")}
+          </h2>
           <div className="w-full">
             <RegulatoryBriefings onNavigate={onNavigate} />
           </div>
         </div>
         <div className="flex flex-col w-full">
-          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Forex Trade Rates</h2>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-[#0C133D] section-header-border shrink-0">
+            {t("home.forexTradeRates", "Forex Trade Rates")}
+          </h2>
           <div className="w-full">
             <ForexRates />
           </div>
         </div>
         <div className="flex flex-col w-full">
-          <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Crypto Marketplace</h2>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-[#0C133D] section-header-border shrink-0">
+            {t("home.cryptoMarketplace", "Crypto Marketplace")}
+          </h2>
           <div className="w-full">
             <MarketsDashboard onNavigate={onNavigate} />
           </div>
