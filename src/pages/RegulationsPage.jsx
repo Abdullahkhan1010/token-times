@@ -95,21 +95,21 @@ export default function RegulationsPage({ onNavigate }) {
       </Reveal>
 
       {/* Regulatory Tracker Matrix Table */}
-      <Reveal as="section" className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden space-y-4 p-6 shadow-sm">
-        <div className="flex items-center justify-between border-b border-outline-variant pb-3">
+      <Reveal as="section" className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden space-y-4 p-4 sm:p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-outline-variant pb-3 gap-2">
           <div>
-            <h2 className="font-headline-sm text-xl font-bold text-[#0C133D] flex items-center gap-2">
+            <h2 className="font-headline-sm text-lg sm:text-xl font-bold text-[#0C133D] flex items-center gap-2">
               <Gavel size={20} className="text-[#D4AF37]" /> Active Institutional Framework Matrix
             </h2>
             <p className="text-xs text-on-surface-variant">Status overview of local regulatory bodies (PVARA, SBP, SECP, FBR) and international regimes.</p>
           </div>
-          <span className="text-xs font-data-tabular text-[#D4AF37] font-semibold flex items-center gap-1">
+          <span className="text-xs font-data-tabular text-[#D4AF37] font-semibold flex items-center gap-1 shrink-0 self-start sm:self-auto">
             <CheckCircle2 size={14} /> Updated Q4 2026
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs sm:text-sm">
+        <div className="overflow-x-auto w-full no-scrollbar">
+          <table className="w-full text-left text-xs sm:text-sm min-w-[500px]">
             <thead>
               <tr className="border-b border-outline-variant bg-surface-container-low text-on-surface-variant font-label-caps text-[11px] uppercase tracking-wider">
                 <th className="py-3 px-4">Authority</th>

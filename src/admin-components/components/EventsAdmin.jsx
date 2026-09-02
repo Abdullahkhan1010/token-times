@@ -3,15 +3,11 @@ import { Calendar, Plus, Trash2, FileText, CheckCircle2, AlertCircle } from "luc
 import { getEvents, postEvent, deleteEvent } from "../../services/event.service";
 import { uploadFileToS3, ToHref } from "../../services/file.service";
 import PageHeader from "./PageHeader";
+import MediaUploadInput from "./MediaUploadInput";
 
-const MAX_PDF_SIZE_BYTES = 5 * 1024 * 1024;
-
-
-
+const MAX_PDF_SIZE_BYTES = 10 * 1024 * 1024;
 
 export default function EventsAdmin() {
-  const imageInputRef = useRef(null);
-  const agendaInputRef = useRef(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -25,7 +21,9 @@ export default function EventsAdmin() {
   const [eventGuestsStr, setEventGuestsStr] = useState("");
   const [eventHostsStr, setEventHostsStr] = useState("");
   const [eventAgendaFile, setEventAgendaFile] = useState(null);
+  const [eventAgendaUrl, setEventAgendaUrl] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
 
   const loadData = async () => {
     setLoading(true);
@@ -58,23 +56,34 @@ export default function EventsAdmin() {
     const guestsArr = eventGuestsStr.split(",").map((g) => g.trim()).filter(Boolean);
     const hostsArr = eventHostsStr.split(",").map((h) => h.trim()).filter(Boolean);
 
-    if (!eventAgendaFile) {
-      setMessage({ type: "error", text: "Please select an agenda PDF." });
+    if (!imageFile && (!imageUrl || !imageUrl.trim())) {
+      setMessage({ type: "error", text: "Please select an event banner image or provide an image link." });
       setSubmitting(false);
       return;
     }
 
-    if (!imageFile) {
-      setMessage({ type: "error", text: "Please select an event banner image." });
+    if (!eventAgendaFile && (!eventAgendaUrl || !eventAgendaUrl.trim())) {
+      setMessage({ type: "error", text: "Please select an agenda PDF or provide an agenda document link." });
       setSubmitting(false);
       return;
     }
 
     try {
-      const [agendaUpload, imageUpload] = await Promise.all([
-        uploadFileToS3(eventAgendaFile),
-        uploadFileToS3(imageFile),
-      ]);
+      let finalAgendaKey = "";
+      if (eventAgendaFile) {
+        const agendaUpload = await uploadFileToS3(eventAgendaFile);
+        finalAgendaKey = agendaUpload.fileKey;
+      } else if (eventAgendaUrl && eventAgendaUrl.trim()) {
+        finalAgendaKey = eventAgendaUrl.trim();
+      }
+
+      let finalImageKey = "";
+      if (imageFile) {
+        const imageUpload = await uploadFileToS3(imageFile);
+        finalImageKey = imageUpload.fileKey;
+      } else if (imageUrl && imageUrl.trim()) {
+        finalImageKey = imageUrl.trim();
+      }
 
       await postEvent({
         event_title: eventTitle,
@@ -84,8 +93,8 @@ export default function EventsAdmin() {
         event_guests: guestsArr,
         event_description: eventDescription,
         event_hosts: hostsArr,
-        event_agenda: agendaUpload.fileKey,
-        image: imageUpload.fileKey,
+        event_agenda: finalAgendaKey,
+        image: finalImageKey,
       });
       setMessage({ type: "success", text: "Event created successfully!" });
       setEventTitle("");
@@ -96,13 +105,9 @@ export default function EventsAdmin() {
       setEventGuestsStr("");
       setEventHostsStr("");
       setEventAgendaFile(null);
+      setEventAgendaUrl("");
       setImageFile(null);
-      if (imageInputRef.current) {
-        imageInputRef.current.value = "";
-      }
-      if (agendaInputRef.current) {
-        agendaInputRef.current.value = "";
-      }
+      setImageUrl("");
       await loadData();
     } catch (err) {
       setMessage({ type: "error", text: err.message || "Failed to create event." });
@@ -220,82 +225,35 @@ export default function EventsAdmin() {
         {/* Uploads Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-outline-variant/60">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-              Event Banner Image <span className="text-rose-500">*</span>
-            </label>
-
-            <div
-              onClick={() => imageInputRef.current?.click()}
-              className="border border-dashed border-outline-variant rounded-xl p-3 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
-            >
-              <input
-                type="file"
-                ref={imageInputRef}
-                accept="image/*"
-                required
-                onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-                className="hidden"
-              />
-              {imageFile ? (
-                <div className="py-1 flex items-center justify-center gap-2 text-xs font-bold text-[#0C133D]">
-                  <FileText size={16} className="text-[#D4AF37]" />
-                  <span className="truncate max-w-[200px]">{imageFile.name}</span>
-                  <span className="text-[10px] uppercase font-bold text-[#D4AF37]">Change</span>
-                </div>
-              ) : (
-                <div className="py-2 flex items-center justify-center gap-2">
-                  <Calendar size={18} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-bold text-[#0C133D]">Upload Event Banner</span>
-                  <span className="text-[10px] text-on-surface-variant">(PNG, JPG, WebP)</span>
-                </div>
-              )}
-            </div>
+            <MediaUploadInput
+              label="Event Banner Image"
+              required
+              file={imageFile}
+              onFileChange={setImageFile}
+              url={imageUrl}
+              onUrlChange={setImageUrl}
+              accept="image/*"
+              mediaType="image"
+              icon={Calendar}
+              placeholder="https://... or direct event banner image URL"
+              helperText="PNG, JPG, WebP up to 5MB or direct image link"
+            />
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-              Event Agenda PDF Attachment <span className="text-rose-500">*</span>
-            </label>
-
-            <div
-              onClick={() => agendaInputRef.current?.click()}
-              className="border border-dashed border-outline-variant rounded-xl p-3 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
-            >
-              <input
-                type="file"
-                ref={agendaInputRef}
-                accept="application/pdf"
-                required
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) {
-                    setEventAgendaFile(null);
-                    return;
-                  }
-                  if (file.size > MAX_PDF_SIZE_BYTES) {
-                    setEventAgendaFile(null);
-                    if (agendaInputRef.current) agendaInputRef.current.value = "";
-                    setMessage({ type: "error", text: "Agenda PDF must be 5MB or smaller." });
-                    return;
-                  }
-                  setEventAgendaFile(file);
-                }}
-                className="hidden"
-              />
-              {eventAgendaFile ? (
-                <div className="py-1 flex items-center justify-center gap-2 text-xs font-bold text-[#0C133D]">
-                  <FileText size={16} className="text-[#D4AF37]" />
-                  <span className="truncate max-w-[200px]">{eventAgendaFile.name}</span>
-                  <span className="text-[10px] uppercase font-bold text-[#D4AF37]">Change</span>
-                </div>
-              ) : (
-                <div className="py-2 flex items-center justify-center gap-2">
-                  <FileText size={18} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-bold text-[#0C133D]">Upload Event Agenda PDF</span>
-                  <span className="text-[10px] text-on-surface-variant">(PDF up to 5MB)</span>
-                </div>
-              )}
-            </div>
+            <MediaUploadInput
+              label="Event Agenda Attachment"
+              required
+              file={eventAgendaFile}
+              onFileChange={setEventAgendaFile}
+              url={eventAgendaUrl}
+              onUrlChange={setEventAgendaUrl}
+              accept="application/pdf,.pdf"
+              mediaType="file"
+              icon={FileText}
+              placeholder="https://.../agenda.pdf or direct PDF document link"
+              helperText="PDF document up to 10MB or direct document URL"
+            />
           </div>
         </div>
 

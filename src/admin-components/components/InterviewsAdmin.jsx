@@ -3,9 +3,9 @@ import { Mic, Plus, Trash2, FileText, CheckCircle2, AlertCircle } from "lucide-r
 import { getInterviews, postInterview, deleteInterview } from "../../services/interview.service";
 import { uploadFileToS3 } from "../../services/file.service";
 import PageHeader from "./PageHeader";
+import MediaUploadInput from "./MediaUploadInput";
 
 export default function InterviewsAdmin() {
-  const imageInputRef = useRef(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -15,12 +15,11 @@ export default function InterviewsAdmin() {
   const [intervieweeName, setIntervieweeName] = useState("");
   const [interviewerName, setInterviewerName] = useState("");
   const [intervieweeImage, setIntervieweeImage] = useState(null);
+  const [intervieweeImageUrl, setIntervieweeImageUrl] = useState("");
   const [publishDate, setPublishDate] = useState("");
-  const [questionsStr, setQuestionsStr] = useState("");
-  const [answersStr, setAnswersStr] = useState("");
+  const [qaList, setQaList] = useState([{ question: "", answer: "" }]);
   const [tagsStr, setTagsStr] = useState("");
   const [categoryStr, setCategoryStr] = useState("");
-
 
   const loadData = async () => {
     setLoading(true);
@@ -38,33 +37,58 @@ export default function InterviewsAdmin() {
     loadData();
   }, []);
 
+  const handleAddQuestion = () => {
+    setQaList((prev) => [...prev, { question: "", answer: "" }]);
+  };
+
+  const handleRemoveQuestion = (index) => {
+    if (qaList.length <= 1) {
+      setQaList([{ question: "", answer: "" }]);
+      return;
+    }
+    setQaList((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleQaChange = (index, field, value) => {
+    setQaList((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!interviewTitle || !intervieweeName || !intervieweeImage) return;
-    setSubmitting(true);
-    setMessage(null);
+    if (!interviewTitle || !intervieweeName) return;
 
-    const questionsArr = questionsStr.split("\n").map((q) => q.trim()).filter(Boolean);
-    const answersArr = answersStr.split("\n").map((a) => a.trim()).filter(Boolean);
-    const tagsArr = tagsStr.split(",").map((t) => t.trim()).filter(Boolean);
-    const categoryArr = categoryStr.split(",").map((c) => c.trim()).filter(Boolean);
-
-    if (!intervieweeImage) {
-      setMessage({ type: "error", text: "Please select an image for the interviewee." });
-      setSubmitting(false);
+    if (!intervieweeImage && (!intervieweeImageUrl || !intervieweeImageUrl.trim())) {
+      setMessage({ type: "error", text: "Please select an image or provide an image link for the interviewee." });
       return;
     }
 
-    try {
+    setSubmitting(true);
+    setMessage(null);
 
-      const [intervieweeImageUpload] = await Promise.all([
-        uploadFileToS3(intervieweeImage)]);
+    const validQaList = qaList.filter((qa) => qa.question.trim() || qa.answer.trim());
+    const questionsArr = validQaList.map((qa) => qa.question.trim());
+    const answersArr = validQaList.map((qa) => qa.answer.trim());
+    const tagsArr = tagsStr.split(",").map((t) => t.trim()).filter(Boolean);
+    const categoryArr = categoryStr.split(",").map((c) => c.trim()).filter(Boolean);
+
+    try {
+      let finalImageKey = "";
+      if (intervieweeImage) {
+        const [intervieweeImageUpload] = await Promise.all([
+          uploadFileToS3(intervieweeImage),
+        ]);
+        finalImageKey = intervieweeImageUpload.fileKey;
+      } else if (intervieweeImageUrl && intervieweeImageUrl.trim()) {
+        finalImageKey = intervieweeImageUrl.trim();
+      }
 
       await postInterview({
         interview_title: interviewTitle,
         interviewee_name: intervieweeName,
         interviewer_name: interviewerName,
-        interviewee_image: intervieweeImageUpload.fileKey,
+        interviewee_image: finalImageKey,
         publish_date: publishDate || new Date().toISOString().split("T")[0],
         questions: questionsArr,
         answers: answersArr,
@@ -76,14 +100,11 @@ export default function InterviewsAdmin() {
       setIntervieweeName("");
       setInterviewerName("");
       setIntervieweeImage(null);
+      setIntervieweeImageUrl("");
       setPublishDate("");
-      setQuestionsStr("");
-      setAnswersStr("");
+      setQaList([{ question: "", answer: "" }]);
       setTagsStr("");
       setCategoryStr("");
-      if (imageInputRef.current) {
-        imageInputRef.current.value = "";
-      }
       await loadData();
     } catch (err) {
       setMessage({ type: "error", text: err.message || "Failed to create interview." });
@@ -113,12 +134,12 @@ export default function InterviewsAdmin() {
       />
 
       {/* Add New Form */}
-      <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-4 shadow-sm">
+      <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-6 shadow-sm">
         <h3 className="text-base font-bold text-on-surface flex items-center gap-2">
           <Plus size={18} className="text-accent" /> Add Interview
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-xs font-semibold text-on-surface-variant mb-1">Interview Title *</label>
             <input
@@ -163,61 +184,113 @@ export default function InterviewsAdmin() {
               className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
             />
           </div>
+        </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Questions (one per line)</label>
-            <textarea
-              rows={2}
-              value={questionsStr}
-              onChange={(e) => setQuestionsStr(e.target.value)}
-              placeholder="Question 1&#10;Question 2"
-              className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
-            />
+        {/* Dynamic Questions & Answers Section */}
+        <div className="pt-4 border-t border-outline-variant/60 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#0C133D]">
+                Interview Questions &amp; Answers ({qaList.length})
+              </label>
+              <p className="text-[11px] text-on-surface-variant mt-0.5">
+                Add each interview question and its corresponding answer below.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleAddQuestion}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0C133D] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0C133D] border border-[#D4AF37]/50 text-xs font-extrabold rounded-lg shadow-sm transition-all cursor-pointer self-start sm:self-auto"
+            >
+              <Plus size={15} /> Add Question
+            </button>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-on-surface-variant mb-1">Answers (one per line)</label>
-            <textarea
-              rows={2}
-              value={answersStr}
-              onChange={(e) => setAnswersStr(e.target.value)}
-              placeholder="Answer 1&#10;Answer 2"
-              className="w-full px-3 py-2 bg-surface-container-low border border-outline-variant rounded text-xs text-on-surface focus:outline-none focus:border-accent"
-            />
+          <div className="space-y-4">
+            {qaList.map((qa, index) => (
+              <div
+                key={index}
+                className="bg-surface-container-low/50 border border-outline-variant rounded-xl p-4 space-y-3 relative group transition-all hover:border-[#D4AF37]/60 shadow-2xs"
+              >
+                {/* Header of each Q&A item */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 bg-[#0C133D] text-[#D4AF37] text-[10px] font-extrabold rounded-md uppercase tracking-wider shadow-xs">
+                      Q&amp;A #{index + 1}
+                    </span>
+                    <span className="text-xs font-bold text-[#0C133D]">
+                      Question &amp; Response Pair
+                    </span>
+                  </div>
+                  {qaList.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveQuestion(index)}
+                      className="text-rose-500 hover:text-rose-700 hover:bg-rose-50 px-2 py-1 rounded text-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                      title="Remove this question & answer"
+                    >
+                      <Trash2 size={14} /> Remove
+                    </button>
+                  )}
+                </div>
+
+                {/* Question Input */}
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">
+                    Question {index + 1}
+                  </label>
+                  <input
+                    type="text"
+                    value={qa.question}
+                    onChange={(e) => handleQaChange(index, "question", e.target.value)}
+                    placeholder={`e.g. Question ${index + 1}: What was the primary motivation behind the licensing framework?`}
+                    className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs text-on-surface focus:outline-none focus:border-accent"
+                  />
+                </div>
+
+                {/* Answer Input */}
+                <div>
+                  <label className="block text-xs font-semibold text-on-surface-variant mb-1">
+                    Answer {index + 1}
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={qa.answer}
+                    onChange={(e) => handleQaChange(index, "answer", e.target.value)}
+                    placeholder={`e.g. Answer ${index + 1}: Our primary goal is balancing fintech innovation with robust systemic risk management...`}
+                    className="w-full px-3 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs text-on-surface focus:outline-none focus:border-accent resize-y"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-start">
+            <button
+              type="button"
+              onClick={handleAddQuestion}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-surface-container-low hover:bg-surface-bright text-[#0C133D] hover:text-[#D4AF37] border border-dashed border-outline-variant hover:border-[#D4AF37] text-xs font-bold rounded-lg transition-all cursor-pointer"
+            >
+              <Plus size={15} className="text-[#D4AF37]" /> Add Another Question &amp; Answer
+            </button>
           </div>
         </div>
 
         {/* Upload Row */}
-        <div className="pt-3 border-t border-outline-variant/60">
-          <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-            Interviewee Portrait Image <span className="text-rose-500">*</span>
-          </label>
-          <div
-            onClick={() => imageInputRef.current?.click()}
-            className="border border-dashed border-outline-variant rounded-xl p-3 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
-          >
-            <input
-              type="file"
-              ref={imageInputRef}
-              accept="image/*"
-              required
-              onChange={(e) => setIntervieweeImage(e.target.files?.[0] || null)}
-              className="hidden"
-            />
-            {intervieweeImage ? (
-              <div className="py-1 flex items-center justify-center gap-2 text-xs font-bold text-[#0C133D]">
-                <FileText size={16} className="text-[#D4AF37]" />
-                <span className="truncate max-w-[300px]">{intervieweeImage.name}</span>
-                <span className="text-[10px] uppercase font-bold text-[#D4AF37]">Change</span>
-              </div>
-            ) : (
-              <div className="py-2 flex items-center justify-center gap-2">
-                <Mic size={18} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-bold text-[#0C133D]">Upload Interviewee Portrait</span>
-                <span className="text-[10px] text-on-surface-variant">(PNG, JPG, WebP up to 5MB)</span>
-              </div>
-            )}
-          </div>
+        <div className="pt-4 border-t border-outline-variant/60">
+          <MediaUploadInput
+            label="Interviewee Portrait Image"
+            required
+            file={intervieweeImage}
+            onFileChange={setIntervieweeImage}
+            url={intervieweeImageUrl}
+            onUrlChange={setIntervieweeImageUrl}
+            accept="image/*"
+            mediaType="image"
+            icon={Mic}
+            placeholder="https://... or direct portrait image link"
+            helperText="PNG, JPG, WebP up to 5MB or direct image link"
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

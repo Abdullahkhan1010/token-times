@@ -15,6 +15,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import PageHeader from "./PageHeader";
+import MediaUploadInput from "./MediaUploadInput";
 import {
   getReitContent,
   saveReitContent,
@@ -431,44 +432,19 @@ export default function ReitAdmin() {
               </div>
 
               {/* Image URL & Upload */}
-              <div className="md:col-span-2 space-y-2">
-                <label className="block text-xs font-bold text-[#0C133D]">
-                  Landmark Image
-                </label>
-                <div className="flex flex-col sm:flex-row items-center gap-3">
-                  <input
-                    type="url"
-                    value={content.heroLandmark?.image || ""}
-                    onChange={(e) => handleHeroChange("image", e.target.value)}
-                    className="flex-grow w-full bg-surface-container-low border border-outline-variant rounded-lg px-3 py-2 text-xs text-[#0C133D] focus:border-[#D4AF37] focus:outline-none"
-                    placeholder="Enter image URL or upload image file..."
-                  />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-outline-variant bg-surface-container-high text-[#0C133D] text-xs font-bold shrink-0 hover:bg-[#D4AF37] transition-colors"
-                  >
-                    <Upload size={14} /> Upload File
-                  </button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageFileChange}
-                    className="hidden"
-                  />
-                </div>
-
-                {/* Preview */}
-                {(imagePreview || content.heroLandmark?.image) && (
-                  <div className="mt-2 w-full max-w-sm h-36 rounded-lg overflow-hidden border border-outline-variant bg-black/5">
-                    <img
-                      src={imagePreview || content.heroLandmark?.image}
-                      alt="Landmark Preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
+              <div className="md:col-span-2">
+                <MediaUploadInput
+                  label="Landmark Image"
+                  file={imageFile}
+                  onFileChange={setImageFile}
+                  url={content.heroLandmark?.image || ""}
+                  onUrlChange={(newUrl) => handleHeroChange("image", newUrl)}
+                  accept="image/*"
+                  mediaType="image"
+                  icon={Building2}
+                  placeholder="https://... or direct landmark image URL"
+                  helperText="PNG, JPG, WebP up to 5MB or direct image link"
+                />
               </div>
             </div>
           </div>

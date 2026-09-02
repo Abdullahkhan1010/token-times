@@ -62,8 +62,8 @@ export default function ResearchPapers() {
       ) : papers.length > 0 ? (
         <div className="space-y-4">
           {papers.map((r, i) => (
-            <article key={r.id || `${r.title}-${i}`} className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex gap-3 items-center hover:border-[#D4AF37] transition-all cursor-pointer group h-[76px]">
-              <div className="w-11 h-11 rounded-lg bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 flex items-center justify-center font-extrabold text-xs shrink-0 shadow-sm">
+            <article key={r.id || `${r.title}-${i}`} className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex gap-3 items-center hover:border-[#D4AF37] transition-all cursor-pointer group min-h-[76px]">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 flex items-center justify-center font-extrabold text-xs shrink-0 shadow-sm">
                 PDF
               </div>
               <a className="group block min-w-0 flex-1" href={r.file || "#"} target={r.file ? "_blank" : "_self"} rel="noreferrer" style={{ textDecoration: "none" }}>

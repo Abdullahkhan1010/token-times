@@ -3,10 +3,9 @@ import { BookOpen, Plus, Trash2, FileText, CheckCircle2, AlertCircle } from "luc
 import { getMagzines, postMagzine, deleteMagzine } from "../../services/magzine.service";
 import { uploadFileToS3, ToHref } from "../../services/file.service";
 import PageHeader from "./PageHeader";
+import MediaUploadInput from "./MediaUploadInput";
 
 export default function MagazinesAdmin() {
-  const coverImgInputRef = useRef(null);
-  const fileInputRef = useRef(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -14,11 +13,13 @@ export default function MagazinesAdmin() {
 
   const [title, setTitle] = useState("");
   const [coverImg, setCoverImg] = useState(null);
+  const [coverImgUrl, setCoverImgUrl] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState(0);
   const [issueName, setIssueName] = useState("");
   const [publishDate, setPublishDate] = useState("");
   const [file, setFile] = useState(null);
+  const [fileUrl, setFileUrl] = useState("");
 
   const loadData = async () => {
     setLoading(true);
@@ -45,52 +46,56 @@ export default function MagazinesAdmin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title || !issueName) return;
+
+    if (!coverImg && (!coverImgUrl || !coverImgUrl.trim())) {
+      setMessage({ type: "error", text: "Please select a cover image or provide a cover image link." });
+      return;
+    }
+
+    if (!file && (!fileUrl || !fileUrl.trim())) {
+      setMessage({ type: "error", text: "Please select a digital edition PDF file or provide a link." });
+      return;
+    }
+
     setSubmitting(true);
     setMessage(null);
 
-    if (!coverImg) {
-      setMessage({ type: "error", text: "Please select a cover image." });
-      setSubmitting(false);
-      return;
-    }
-
-    if (!file) {
-      setMessage({ type: "error", text: "Please select a digital edition PDF file." });
-      setSubmitting(false);
-      return;
-    }
-
     try {
+      let finalCoverImgKey = "";
+      if (coverImg) {
+        const coverImgUpload = await uploadFileToS3(coverImg);
+        finalCoverImgKey = coverImgUpload.fileKey;
+      } else if (coverImgUrl && coverImgUrl.trim()) {
+        finalCoverImgKey = coverImgUrl.trim();
+      }
 
-      const [coverImgUpload, fileUpload] = await Promise.all([
-        uploadFileToS3(coverImg),
-        uploadFileToS3(file),
-      ]);
-
+      let finalFileKey = "";
+      if (file) {
+        const fileUpload = await uploadFileToS3(file);
+        finalFileKey = fileUpload.fileKey;
+      } else if (fileUrl && fileUrl.trim()) {
+        finalFileKey = fileUrl.trim();
+      }
 
       await postMagzine({
         title,
-        cover_img: coverImgUpload.fileKey,
+        cover_img: finalCoverImgKey,
         description,
         price: Number(price) || 0,
         issue_name: issueName,
         publish_date: publishDate || new Date().toISOString().split("T")[0],
-        file: fileUpload.fileKey,
+        file: finalFileKey,
       });
       setMessage({ type: "success", text: "Magazine issue added successfully!" });
       setTitle("");
       setCoverImg(null);
+      setCoverImgUrl("");
       setDescription("");
       setPrice(0);
       setIssueName("");
       setPublishDate("");
       setFile(null);
-      if (coverImgInputRef.current) {
-        coverImgInputRef.current.value = "";
-      }
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      setFileUrl("");
       await loadData();
     } catch (err) {
       setMessage({ type: "error", text: err.message || "Failed to create magazine issue." });
@@ -187,67 +192,35 @@ export default function MagazinesAdmin() {
         {/* Uploads Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-outline-variant/60">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-              Cover Image Asset <span className="text-rose-500">*</span>
-            </label>
-            <div
-              onClick={() => coverImgInputRef.current?.click()}
-              className="border border-dashed border-outline-variant rounded-xl p-3 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
-            >
-              <input
-                type="file"
-                ref={coverImgInputRef}
-                accept="image/*"
-                required
-                onChange={(e) => setCoverImg(e.target.files?.[0] || null)}
-                className="hidden"
-              />
-              {coverImg ? (
-                <div className="py-1 flex items-center justify-center gap-2 text-xs font-bold text-[#0C133D]">
-                  <FileText size={16} className="text-[#D4AF37]" />
-                  <span className="truncate max-w-[200px]">{coverImg.name}</span>
-                  <span className="text-[10px] uppercase font-bold text-[#D4AF37]">Change</span>
-                </div>
-              ) : (
-                <div className="py-2 flex items-center justify-center gap-2">
-                  <BookOpen size={18} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-bold text-[#0C133D]">Upload Cover Image</span>
-                  <span className="text-[10px] text-on-surface-variant">(PNG, JPG, WebP)</span>
-                </div>
-              )}
-            </div>
+            <MediaUploadInput
+              label="Cover Image Asset"
+              required
+              file={coverImg}
+              onFileChange={setCoverImg}
+              url={coverImgUrl}
+              onUrlChange={setCoverImgUrl}
+              accept="image/*"
+              mediaType="image"
+              icon={BookOpen}
+              placeholder="https://... or direct cover image link"
+              helperText="PNG, JPG, WebP up to 5MB or direct image link"
+            />
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-              Digital Edition PDF <span className="text-rose-500">*</span>
-            </label>
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="border border-dashed border-outline-variant rounded-xl p-3 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
-            >
-              <input
-                type="file"
-                ref={fileInputRef}
-                accept="application/pdf"
-                required
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-                className="hidden"
-              />
-              {file ? (
-                <div className="py-1 flex items-center justify-center gap-2 text-xs font-bold text-[#0C133D]">
-                  <FileText size={16} className="text-[#D4AF37]" />
-                  <span className="truncate max-w-[200px]">{file.name}</span>
-                  <span className="text-[10px] uppercase font-bold text-[#D4AF37]">Change</span>
-                </div>
-              ) : (
-                <div className="py-2 flex items-center justify-center gap-2">
-                  <FileText size={18} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-bold text-[#0C133D]">Upload Digital PDF</span>
-                  <span className="text-[10px] text-on-surface-variant">(PDF up to 20MB)</span>
-                </div>
-              )}
-            </div>
+            <MediaUploadInput
+              label="Digital Edition PDF"
+              required
+              file={file}
+              onFileChange={setFile}
+              url={fileUrl}
+              onUrlChange={setFileUrl}
+              accept="application/pdf,.pdf"
+              mediaType="file"
+              icon={FileText}
+              placeholder="https://.../edition.pdf or direct PDF document link"
+              helperText="PDF up to 20MB or direct document URL"
+            />
           </div>
         </div>
 

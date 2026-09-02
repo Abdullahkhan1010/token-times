@@ -8,15 +8,55 @@ import LazyImage from "../components/LazyImage";
 
 const REGIONS = ["All Regions", "Pakistan", "Middle East & UAE", "Europe & MiCA", "North America", "Asia Pacific"];
 
-function formatTag(tag) {
-  if (!tag) return "GLOBAL";
-  if (Array.isArray(tag)) {
-    if (tag.length === 0) return "GLOBAL";
-    return tag.map((t) => formatTag(t)).join(" • ");
+const INTERNAL_SECTION_KEYS = new Set([
+  "main_story", "mainstory", "top_story", "top_stories", "topstory",
+  "sub_stories", "substories", "substory", "featured_spotlight",
+  "spotlight", "editor_picks", "editors_pick", "editorspick",
+  "latest_news", "latestnews", "featured_analysis", "featuredanalyis"
+]);
+
+function getSingleCleanTag(item, fallback = "GLOBAL") {
+  if (!item) return fallback;
+
+  let candidates = [];
+  if (typeof item === "object" && !Array.isArray(item)) {
+    const cats = Array.isArray(item.category)
+      ? item.category
+      : typeof item.category === "string"
+      ? item.category.split(",")
+      : [];
+    const tags = Array.isArray(item.tags)
+      ? item.tags
+      : typeof item.tags === "string"
+      ? item.tags.split(",")
+      : [];
+    const displaySecs = Array.isArray(item.display_section)
+      ? item.display_section
+      : [];
+    candidates = [...cats, ...tags, ...displaySecs];
+  } else if (Array.isArray(item)) {
+    candidates = item.flatMap((t) => typeof t === "string" ? t.split(",") : [t]);
+  } else if (typeof item === "string") {
+    candidates = item.split(",");
   }
-  return String(tag)
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+
+  for (const raw of candidates) {
+    if (!raw) continue;
+    const str = String(raw).trim();
+    const normalizedKey = str.toLowerCase().replace(/[\s_-]+/g, "_");
+    if (INTERNAL_SECTION_KEYS.has(normalizedKey)) continue;
+
+    const cleaned = str
+      .replace(/_/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (cleaned && cleaned.length >= 2) {
+      return cleaned.toUpperCase();
+    }
+  }
+
+  return fallback;
 }
 
 export default function GlobalPage({ onNavigate, onSelectArticle }) {
@@ -149,7 +189,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
                 imgClassName="img-fade img-scale w-full h-full object-cover"
               />
               <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/50 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow">
-                {formatTag(leadStory.category || leadStory.display_section)}
+                {getSingleCleanTag(leadStory)}
               </span>
             </div>
             <div className="p-4 sm:p-6">
@@ -185,12 +225,12 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
                 className="group cursor-pointer border-b border-outline-variant/40 pb-3 last:border-none"
               >
                 <span className="font-label-caps text-[10px] font-bold text-[#D4AF37] uppercase block mb-0.5">
-                  INTERNATIONAL WIRE
+                  {getSingleCleanTag(item, "INTERNATIONAL WIRE")}
                 </span>
-                <h4 className="font-headline-md text-xs sm:text-sm font-semibold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug line-clamp-2">
+                <h4 className="text-xs sm:text-sm font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug line-clamp-2">
                   {item.title}
                 </h4>
-                <span className="font-data-tabular text-[10px] text-on-surface-variant block mt-1">
+                <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal block mt-1">
                   {item.approx_time_to_read || 3} mins read
                 </span>
               </div>
@@ -217,18 +257,18 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
                   className="w-full h-full"
                   imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
-                <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] text-[10px] font-extrabold px-2 py-0.5 rounded">
-                  {card.category?.[0] || "GLOBAL"}
+                <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase border border-[#D4AF37]/40 shadow-sm">
+                  {getSingleCleanTag(card)}
                 </span>
               </div>
-              <h3 className="font-headline-md text-sm sm:text-base font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug mb-2 line-clamp-2">
+              <h3 className="text-sm sm:text-base font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug mb-2 line-clamp-2">
                 {card.title}
               </h3>
-              <p className="text-xs text-on-surface-variant line-clamp-2 mb-3">
+              <p className="text-xs text-on-surface-variant font-normal line-clamp-2 mb-3 leading-relaxed">
                 {card.summary}
               </p>
             </div>
-            <span className="font-data-tabular text-[10px] text-on-surface-variant pt-2 border-t border-outline-variant/40">
+            <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal pt-2 border-t border-outline-variant/40">
               Read Analysis →
             </span>
           </Reveal>
@@ -239,7 +279,7 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Chronological Feed */}
         <div className="lg:col-span-8 space-y-6">
-          <h3 className="font-headline-sm text-base font-bold text-[#0C133D] border-b border-outline-variant pb-2 uppercase tracking-wider">
+          <h3 className="font-headline-sm text-base sm:text-lg font-bold text-[#0C133D] border-b border-outline-variant pb-2 uppercase tracking-wider">
             Chronological Global Dispatch
           </h3>
 
@@ -258,20 +298,20 @@ export default function GlobalPage({ onNavigate, onSelectArticle }) {
                   className="w-full h-full"
                   imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform"
                 />
+                <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] border border-[#D4AF37]/40 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase shadow-sm">
+                  {getSingleCleanTag(art)}
+                </span>
               </div>
               <div className="flex flex-col justify-between flex-grow">
                 <div>
-                  <span className="font-label-caps text-[10px] font-bold text-[#D4AF37] uppercase block mb-1">
-                    {art.category?.[0] || "GLOBAL"}
-                  </span>
-                  <h4 className="font-headline-md text-sm sm:text-base font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug mb-1">
+                  <h4 className="text-sm sm:text-base font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug mb-1">
                     {art.title}
                   </h4>
-                  <p className="text-xs text-on-surface-variant line-clamp-2">
+                  <p className="text-xs text-on-surface-variant font-normal line-clamp-2 leading-relaxed">
                     {art.summary}
                   </p>
                 </div>
-                <span className="font-data-tabular text-[10px] text-on-surface-variant pt-2 border-t border-outline-variant/30 mt-2">
+                <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal pt-2 border-t border-outline-variant/30 mt-2">
                   By {art.author || "Global Desk"} • {art.publish_date || "Today"}
                 </span>
               </div>

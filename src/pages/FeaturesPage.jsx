@@ -8,15 +8,55 @@ import LazyImage from "../components/LazyImage";
 
 const FEATURE_CATS = ["All Features", "Deep Dives", "Investigative", "Executive Q&A", "Special Reports"];
 
-function formatTag(tag) {
-  if (!tag) return "FEATURE";
-  if (Array.isArray(tag)) {
-    if (tag.length === 0) return "FEATURE";
-    return tag.map((t) => formatTag(t)).join(" • ");
+const INTERNAL_SECTION_KEYS = new Set([
+  "main_story", "mainstory", "top_story", "top_stories", "topstory",
+  "sub_stories", "substories", "substory", "featured_spotlight",
+  "spotlight", "editor_picks", "editors_pick", "editorspick",
+  "latest_news", "latestnews", "featured_analysis", "featuredanalyis"
+]);
+
+function getSingleCleanTag(item, fallback = "FEATURE") {
+  if (!item) return fallback;
+
+  let candidates = [];
+  if (typeof item === "object" && !Array.isArray(item)) {
+    const cats = Array.isArray(item.category)
+      ? item.category
+      : typeof item.category === "string"
+      ? item.category.split(",")
+      : [];
+    const tags = Array.isArray(item.tags)
+      ? item.tags
+      : typeof item.tags === "string"
+      ? item.tags.split(",")
+      : [];
+    const displaySecs = Array.isArray(item.display_section)
+      ? item.display_section
+      : [];
+    candidates = [...cats, ...tags, ...displaySecs];
+  } else if (Array.isArray(item)) {
+    candidates = item.flatMap((t) => typeof t === "string" ? t.split(",") : [t]);
+  } else if (typeof item === "string") {
+    candidates = item.split(",");
   }
-  return String(tag)
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+
+  for (const raw of candidates) {
+    if (!raw) continue;
+    const str = String(raw).trim();
+    const normalizedKey = str.toLowerCase().replace(/[\s_-]+/g, "_");
+    if (INTERNAL_SECTION_KEYS.has(normalizedKey)) continue;
+
+    const cleaned = str
+      .replace(/_/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (cleaned && cleaned.length >= 2) {
+      return cleaned.toUpperCase();
+    }
+  }
+
+  return fallback;
 }
 
 export default function FeaturesPage({ onNavigate, onSelectArticle }) {
@@ -128,18 +168,18 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
                 className="w-full h-full"
                 imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] text-xs font-extrabold px-3 py-1 rounded-full uppercase border border-[#D4AF37]/40">
-                {formatTag(leadFeature.category || leadFeature.tags)}
+              <span className="absolute top-3 left-3 bg-[#0C133D] text-[#D4AF37] text-xs font-extrabold px-3 py-1 rounded-full uppercase border border-[#D4AF37]/40 shadow-sm">
+                {getSingleCleanTag(leadFeature, "FEATURE")}
               </span>
             </div>
             <div className="p-4 sm:p-6">
               <h2 className="font-headline-lg text-xl sm:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors mb-3">
                 {leadFeature.title}
               </h2>
-              <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+              <p className="text-sm md:text-base text-on-surface-variant font-normal leading-relaxed mb-4">
                 {leadFeature.summary}
               </p>
-              <span className="text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40 block">
+              <span className="text-xs font-data-tabular text-on-surface-variant font-normal pt-3 border-t border-outline-variant/40 block">
                 By {leadFeature.author} • {leadFeature.publish_date}
               </span>
             </div>
@@ -153,11 +193,13 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
           <div className="space-y-4">
             {secondaryFeatures.map((item, i) => (
               <div key={i} onClick={() => onSelectArticle?.(item)} className="group cursor-pointer border-b border-outline-variant/40 pb-3 last:border-none">
-                <span className="text-[10px] font-bold text-[#D4AF37] uppercase block mb-0.5">LONG READ</span>
+                <span className="font-label-caps text-[10px] font-bold text-[#D4AF37] uppercase block mb-0.5">
+                  {getSingleCleanTag(item, "LONG READ")}
+                </span>
                 <h4 className="text-xs sm:text-sm font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors line-clamp-2">
                   {item.title}
                 </h4>
-                <span className="text-[10px] text-on-surface-variant block mt-1">{item.approx_time_to_read || 7} mins read</span>
+                <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal block mt-1">{item.approx_time_to_read || 7} mins read</span>
               </div>
             ))}
           </div>
@@ -175,14 +217,14 @@ export default function FeaturesPage({ onNavigate, onSelectArticle }) {
                 className="w-full h-full"
                 imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform"
               />
-              <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] text-[10px] font-bold px-2 py-0.5 rounded">
-                {formatTag(card.category || card.tags)}
+              <span className="absolute top-2 left-2 bg-[#0C133D] text-[#D4AF37] text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase border border-[#D4AF37]/40 shadow-sm">
+                {getSingleCleanTag(card, "FEATURE")}
               </span>
             </div>
-            <h3 className="text-sm font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors mb-1 line-clamp-2">
+            <h3 className="text-sm sm:text-base font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors mb-1 line-clamp-2">
               {card.title}
             </h3>
-            <p className="text-xs text-on-surface-variant line-clamp-2">{card.summary}</p>
+            <p className="text-xs text-on-surface-variant font-normal line-clamp-2 leading-relaxed">{card.summary}</p>
           </Reveal>
         ))}
       </div>

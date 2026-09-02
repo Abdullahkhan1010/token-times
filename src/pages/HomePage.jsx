@@ -193,22 +193,22 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
       </div>
 
       {/* Regulatory Updates & Market Dashboards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 items-stretch">
-        <div className="flex flex-col h-full min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 items-start">
+        <div className="flex flex-col w-full">
           <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Regulatory Briefings</h2>
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="w-full">
             <RegulatoryBriefings onNavigate={onNavigate} />
           </div>
         </div>
-        <div className="flex flex-col h-full min-h-0">
+        <div className="flex flex-col w-full">
           <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Forex Trade Rates</h2>
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="w-full">
             <ForexRates />
           </div>
         </div>
-        <div className="flex flex-col h-full min-h-0">
+        <div className="flex flex-col w-full">
           <h2 className="font-headline-lg text-headline-lg text-primary section-header-border shrink-0">Crypto Marketplace</h2>
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="w-full">
             <MarketsDashboard onNavigate={onNavigate} />
           </div>
         </div>
@@ -218,7 +218,7 @@ export default function HomePage({ onNavigate, onSelectArticle }) {
       {/* Featured Analysis & Knowledge Hub */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <FeaturedAnalysis fa={featuredAnalysisData[0]} onSelectArticle={onSelectArticle} />
-        <KnowledgeHub />
+        <KnowledgeHub onNavigate={onNavigate} />
       </div>
 
       {/* Current Magazine Issue */}

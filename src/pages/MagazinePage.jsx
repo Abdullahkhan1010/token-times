@@ -56,17 +56,18 @@ export default function MagazinePage({ onNavigate }) {
             }));
             setPastIssues(mappedPast);
           }
-        } else {
-          setStatusMessage("Failed to fetch Magzine")
         }
+      } catch (err) {
+        console.error("Failed to load magazines", err);
       }
-      catch (err) { console.error("Failed to load magazines", err); }
     })();
 
     return () => {
       active = false;
     };
   }, []);
+
+  const hasMagazine = Boolean(currentIssue.title || currentIssue.coverImg);
 
   return (
     <div className="space-y-12">
@@ -77,7 +78,7 @@ export default function MagazinePage({ onNavigate }) {
       {/* Magazine Edition Header */}
       <Reveal as="div" className="text-center max-w-3xl mx-auto space-y-3">
         <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-widest uppercase block">
-          TOKEN TIMES QUARTERLY PRINT & DIGITAL EDITION
+          TOKEN TIMES QUARTERLY PRINT &amp; DIGITAL EDITION
         </span>
         <h1 className="font-display-lg text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#0C133D] tracking-tight">
           The Magazine
@@ -88,78 +89,82 @@ export default function MagazinePage({ onNavigate }) {
       </Reveal>
 
       {/* Hero Showcase: Current Magazine Cover Issue */}
-      <Reveal
-        as="section"
-        className="bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-8 md:p-10"
-      >
-        {/* Left 5 Columns: Cover Preview */}
-        <div className="lg:col-span-5 flex flex-col justify-center items-center">
-          <div className="relative group w-full max-w-md aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-outline-variant">
-            {currentIssue.coverImg && (
-              <img
-                alt={currentIssue.title}
-                loading="eager"
-                src={currentIssue.coverImg}
-                decoding="async"
-                onError={(e) => {
-                  console.log("Image failed:", e.currentTarget.src);
-                }}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-            )}
+      {hasMagazine ? (
+        <Reveal
+          as="section"
+          className="bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-8 md:p-10"
+        >
+          {/* Left 5 Columns: Cover Preview */}
+          <div className="lg:col-span-5 flex flex-col justify-center items-center">
+            <div className="relative group w-full max-w-md aspect-[3/4] rounded-xl overflow-hidden shadow-2xl border border-outline-variant">
+              {currentIssue.coverImg && (
+                <img
+                  alt={currentIssue.title}
+                  loading="eager"
+                  src={currentIssue.coverImg}
+                  decoding="async"
+                  onError={(e) => {
+                    console.log("Image failed:", e.currentTarget.src);
+                  }}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+              )}
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
-              <span className="text-xs font-bold text-[#D4AF37] tracking-wider uppercase mb-1">
-                {currentIssue.number}
-              </span>
-              <h3 className="font-headline-lg text-2xl font-bold leading-tight">
-                {currentIssue.title}
-              </h3>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
+                <span className="text-xs font-bold text-[#D4AF37] tracking-wider uppercase mb-1">
+                  {currentIssue.number}
+                </span>
+                <h3 className="font-headline-lg text-2xl font-bold leading-tight">
+                  {currentIssue.title}
+                </h3>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Right 7 Columns: Editorial Details */}
-        <div className="lg:col-span-7 flex flex-col justify-center space-y-6">
-          <div className="space-y-2">
-            <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-wider uppercase">
-              {currentIssue.number}
-            </span>
-            <h2 className="font-headline-lg text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#0C133D] leading-tight">
-              {currentIssue.title}
-            </h2>
-            <h3 className="text-base sm:text-lg font-semibold text-on-surface-variant">
-              {currentIssue.subtitle}
-            </h3>
-          </div>
+          {/* Right 7 Columns: Editorial Details */}
+          <div className="lg:col-span-7 flex flex-col justify-center space-y-6">
+            <div className="space-y-2">
+              <span className="font-label-caps text-xs text-[#D4AF37] font-bold tracking-wider uppercase">
+                {currentIssue.number}
+              </span>
+              <h2 className="font-headline-lg text-2xl sm:text-3xl md:text-4xl font-extrabold text-[#0C133D] leading-tight">
+                {currentIssue.title}
+              </h2>
+              <h3 className="text-base sm:text-lg font-semibold text-on-surface-variant">
+                {currentIssue.subtitle}
+              </h3>
+            </div>
 
-          <p className="text-sm md:text-base text-on-surface-variant leading-relaxed">
-            {currentIssue.description}
-          </p>
+            <p className="text-sm md:text-base text-on-surface-variant leading-relaxed">
+              {currentIssue.description}
+            </p>
 
-
-
-          <div className="flex flex-wrap items-center gap-4 pt-2">
-            {currentIssue.file ? (
-              <a
-                href={currentIssue.file}
-                target="_blank"
-                rel="noreferrer"
-                className="px-6 py-3 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-md"
-              >
-                Read Digital Edition (PDF)
-              </a>
-            ) : (
-              <button className="px-6 py-3 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-md">
-                Read Digital Edition (PDF)
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              {currentIssue.file ? (
+                <a
+                  href={currentIssue.file}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-6 py-3 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-md"
+                >
+                  Read Digital Edition (PDF)
+                </a>
+              ) : (
+                <button className="px-6 py-3 bg-[#0C133D] text-[#F7F0EB] border border-[#D4AF37]/50 font-extrabold text-xs rounded-xl hover:bg-[#D4AF37] hover:text-[#0C133D] transition-all shadow-md">
+                  Read Digital Edition (PDF)
+                </button>
+              )}
+              <button className="px-6 py-3 border-2 border-[#0C133D] bg-transparent text-[#0C133D] font-bold text-xs rounded-xl hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-[#0C133D] transition-all">
+                Subscribe to Print
               </button>
-            )}
-            <button className="px-6 py-3 border-2 border-[#0C133D] bg-transparent text-[#0C133D] font-bold text-xs rounded-xl hover:bg-[#D4AF37] hover:border-[#D4AF37] hover:text-[#0C133D] transition-all">
-              Subscribe to Print
-            </button>
+            </div>
           </div>
+        </Reveal>
+      ) : (
+        <div className="rounded-2xl border border-dashed border-outline-variant bg-surface-container-lowest p-10 text-center text-sm text-on-surface-variant">
+          No magazine issue published yet. New quarterly editions will appear here soon.
         </div>
-      </Reveal>
+      )}
 
       {/* Featured Long Reads & Essays */}
       {/* <div className="space-y-6">

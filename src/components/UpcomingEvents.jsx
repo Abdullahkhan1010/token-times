@@ -4,7 +4,7 @@ import { getEvents } from "../services/event.service";
 
 export default function UpcomingEvents() {
   const [events, setEvents] = useState([]);
-  const [statusMessage, setStatusMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
@@ -34,17 +34,16 @@ export default function UpcomingEvents() {
             };
           });
           setEvents(mapped);
-          setStatusMessage("");
         } else {
           setEvents([]);
-          setStatusMessage("failed to fetch events");
         }
       })
       .catch((err) => {
         console.error("Failed to load events", err);
-        if (!active) return;
-        setEvents([]);
-        setStatusMessage("failed to fetch events");
+        if (active) setEvents([]);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
       });
 
     return () => {
@@ -63,14 +62,14 @@ export default function UpcomingEvents() {
         </span>
       </div>
 
-      {statusMessage ? (
-        <p className="text-xs text-on-surface-variant">{statusMessage}</p>
-      ) : (
+      {loading ? (
+        <p className="text-xs text-on-surface-variant py-2">Loading upcoming events...</p>
+      ) : events.length > 0 ? (
         <div className="space-y-4">
           {events.map((ev, i) => (
-            <div key={ev.id || ev.title + i} className="hover-lift flex gap-3 items-center bg-surface-container-lowest p-3 border border-outline-variant rounded-xl hover:border-[#D4AF37] transition-all cursor-pointer group h-[76px]">
+            <div key={ev.id || ev.title + i} className="hover-lift flex gap-3 items-center bg-surface-container-lowest p-3 border border-outline-variant rounded-xl hover:border-[#D4AF37] transition-all cursor-pointer group min-h-[76px]">
               <div
-                className={`w-11 h-11 flex flex-col items-center justify-center rounded-lg shrink-0 ${ev.filled ? "bg-[#D4AF37] text-[#0C133D]" : "border border-[#D4AF37] text-[#D4AF37]"
+                className={`w-10 h-10 sm:w-11 sm:h-11 flex flex-col items-center justify-center rounded-lg shrink-0 ${ev.filled ? "bg-[#D4AF37] text-[#0C133D]" : "border border-[#D4AF37] text-[#D4AF37]"
                   }`}
               >
                 <span className="font-label-caps text-[9px] font-extrabold uppercase leading-none">{ev.month}</span>
@@ -83,6 +82,8 @@ export default function UpcomingEvents() {
             </div>
           ))}
         </div>
+      ) : (
+        <p className="text-xs text-on-surface-variant py-2">No upcoming events scheduled right now.</p>
       )}
     </section>
   );

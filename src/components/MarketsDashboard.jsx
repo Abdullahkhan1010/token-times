@@ -129,10 +129,10 @@ export default function MarketsDashboard({ onNavigate }) {
   return (
     <Reveal
       as="section"
-      className="bg-surface-container-lowest text-on-surface p-3.5 sm:p-4 flex flex-col justify-between h-full rounded-2xl relative overflow-hidden border border-outline-variant shadow-xs"
+      className="bg-surface-container-lowest text-on-surface p-3.5 sm:p-4 flex flex-col justify-between min-h-[390px] h-[390px] lg:h-[420px] xl:h-[440px] rounded-2xl relative overflow-hidden border border-outline-variant shadow-xs w-full"
     >
       {/* 1. Modern Pill Selector Bar */}
-      <div className="flex items-center gap-1.5 p-1 bg-[#F2E7E1]/80 rounded-full border border-outline-variant shrink-0 overflow-x-auto no-scrollbar">
+      <div className="flex items-center gap-1.5 p-1 bg-[#F2E7E1]/80 rounded-full border border-outline-variant shrink-0 w-full">
         {marketCards.map((coin) => {
           const isSelected = coin.asset === selectedAsset;
           const isCoinPos = coin.change >= 0;
@@ -141,22 +141,22 @@ export default function MarketsDashboard({ onNavigate }) {
             <button
               key={coin.asset}
               onClick={() => setSelectedAsset(coin.asset)}
-              className={`flex-1 min-w-[95px] flex items-center justify-between gap-1.5 px-3 py-1.5 rounded-full transition-all duration-200 text-xs font-bold ${
+              className={`flex-1 min-w-0 flex items-center justify-between gap-1 px-2 sm:px-3 py-1.5 rounded-full transition-all duration-200 text-xs font-bold ${
                 isSelected
                   ? "bg-[#0C133D] text-white shadow-sm ring-1 ring-[#D4AF37]/50"
                   : "bg-transparent text-[#5C525A] hover:bg-white/60 hover:text-[#0C133D]"
               }`}
             >
-              <div className="flex items-center gap-1.5 truncate">
+              <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
                 <img
                   src={coin.logo}
                   alt={coin.name}
-                  className="w-4 h-4 rounded-full object-contain shrink-0"
+                  className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full object-contain shrink-0"
                 />
-                <span className="truncate">{coin.asset}</span>
+                <span className="font-bold text-[11px] sm:text-xs shrink-0">{coin.asset}</span>
               </div>
 
-              <span className={`text-[10px] font-mono shrink-0 ${
+              <span className={`text-[10px] sm:text-[11px] font-mono shrink-0 pl-1 font-bold ${
                 isSelected
                   ? isCoinPos ? "text-[#D4AF37]" : "text-rose-300"
                   : isCoinPos ? "text-emerald-700" : "text-rose-600"
@@ -171,40 +171,40 @@ export default function MarketsDashboard({ onNavigate }) {
       {/* 2. Hero Interactive Market Showcase Card (Clickable to open detailed graph page) */}
       <div
         onClick={() => onNavigate?.("CryptoDetail", { symbol: activeCoin.asset })}
-        className="flex-1 flex flex-col justify-between my-2.5 p-3.5 rounded-2xl bg-gradient-to-b from-surface-container-low/50 to-surface-container-low/20 border border-outline-variant/80 hover:border-[#D4AF37] transition-all duration-300 overflow-hidden cursor-pointer group shadow-2xs hover:shadow-xs"
+        className="flex-1 flex flex-col justify-between my-2 p-3 sm:p-3.5 rounded-2xl bg-gradient-to-b from-surface-container-low/50 to-surface-container-low/20 border border-outline-variant/80 hover:border-[#D4AF37] transition-all duration-300 overflow-hidden cursor-pointer group shadow-2xs hover:shadow-xs"
         title="Click to view detailed interactive live charts & market depth"
       >
         {/* Header Row with Modern Pill Badges */}
         <div className="flex items-start justify-between gap-2 shrink-0">
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-extrabold text-base sm:text-lg text-[#0C133D] tracking-tight group-hover:text-[#D4AF37] transition-colors flex items-center gap-1.5">
+              <h3 className="font-extrabold text-sm sm:text-base md:text-lg text-[#0C133D] tracking-tight group-hover:text-[#D4AF37] transition-colors flex items-center gap-1.5">
                 <img
                   src={activeCoin.logo}
                   alt={activeCoin.name}
-                  className="w-5 h-5 rounded-full object-contain shrink-0"
+                  className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-contain shrink-0"
                 />
                 <span>{activeCoin.name}</span>
-                <span className="text-[10px] text-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity font-normal">
+                <span className="text-[10px] text-[#D4AF37] opacity-0 group-hover:opacity-100 transition-opacity font-normal hidden sm:inline">
                   View Full Chart ↗
                 </span>
               </h3>
-              <span className="px-2 py-0.5 rounded-full bg-white text-[#5C525A] text-[10px] font-bold border border-outline-variant font-mono">
+              <span className="px-2 py-0.5 rounded-full bg-white text-[#5C525A] text-[9px] sm:text-[10px] font-bold border border-outline-variant font-mono">
                 {activeCoin.pair}
               </span>
             </div>
             <div className="flex items-baseline gap-2 mt-1">
-              <span className="font-sans text-2xl sm:text-3xl font-black text-[#0C133D] tracking-tight tabular-nums">
+              <span className="font-sans text-xl sm:text-2xl md:text-3xl font-black text-[#0C133D] tracking-tight tabular-nums">
                 ${formatPrice(activeCoin.value)}
               </span>
               <span
-                className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold ${
+                className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-bold ${
                   isPositive
                     ? "bg-[#D4AF37]/20 text-[#8F7418] border border-[#D4AF37]/40"
                     : "bg-rose-50 text-rose-700 border border-rose-200"
                 }`}
               >
-                {isPositive ? <ArrowUpRight size={13} /> : <ArrowDownRight size={13} />}
+                {isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
                 {isPositive ? "+" : ""}{activeCoin.change.toFixed(2)}%
               </span>
             </div>
@@ -216,35 +216,24 @@ export default function MarketsDashboard({ onNavigate }) {
           </div>
         </div>
 
-        {/* Panoramic Full-Width Golden Chart */}
-        <div className="relative flex-1 min-h-[100px] sm:min-h-[120px] my-2 rounded-xl bg-white/90 border border-outline-variant/60 overflow-hidden flex items-end shadow-2xs">
-          {/* Subtle Gridlines */}
-          <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-2.5 opacity-25">
-            <div className="border-b border-dashed border-[#0C133D]" />
-            <div className="border-b border-dashed border-[#0C133D]" />
-            <div className="border-b border-dashed border-[#0C133D]" />
-          </div>
-
+        {/* Dynamic SVG Sparkline Graph */}
+        <div className="relative w-full h-20 sm:h-24 my-auto flex flex-col justify-end overflow-hidden">
           <svg
-            className="absolute inset-0 h-full w-full pointer-events-none overflow-visible"
             viewBox="0 0 360 110"
+            className="w-full h-full overflow-visible preserve-3d"
             preserveAspectRatio="none"
           >
             <defs>
-              <linearGradient id="market-hero-gold" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.38" />
-                <stop offset="100%" stopColor="#D4AF37" stopOpacity="0.01" />
-              </linearGradient>
-              <linearGradient id="market-hero-red" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#EF4444" stopOpacity="0.30" />
-                <stop offset="100%" stopColor="#EF4444" stopOpacity="0.01" />
+              <linearGradient id={`gradient-${activeCoin.asset}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={isPositive ? "#D4AF37" : "#EF4444"} stopOpacity="0.3" />
+                <stop offset="100%" stopColor={isPositive ? "#D4AF37" : "#EF4444"} stopOpacity="0.0" />
               </linearGradient>
             </defs>
 
-            {/* Gradient Area Fill */}
-            <path d={area} fill={isPositive ? "url(#market-hero-gold)" : "url(#market-hero-red)"} />
+            {/* Area Fill */}
+            <path d={area} fill={`url(#gradient-${activeCoin.asset})`} />
 
-            {/* Trend Stroke Line (Gold on up, Red on drop) */}
+            {/* Line Path */}
             <path
               d={line}
               fill="none"
@@ -278,7 +267,7 @@ export default function MarketsDashboard({ onNavigate }) {
           </svg>
 
           {/* Clean Mini Volume Bars */}
-          <div className="relative z-10 w-full h-[22%] flex items-end gap-1 px-3 pb-1.5 opacity-25 pointer-events-none">
+          <div className="relative z-10 w-full h-[22%] flex items-end gap-1 px-3 pb-1 opacity-25 pointer-events-none">
             {activeCoin.data.slice(-20).map((val, idx) => (
               <div
                 key={idx}
@@ -290,22 +279,22 @@ export default function MarketsDashboard({ onNavigate }) {
         </div>
 
         {/* 3. Bottom Modern Pill Metrics Strip */}
-        <div className="grid grid-cols-3 gap-2 shrink-0">
-          <div className="px-2.5 py-1.5 rounded-xl bg-white border border-outline-variant flex items-center justify-between text-[11px]">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2 shrink-0">
+          <div className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-white border border-outline-variant flex flex-col sm:flex-row sm:items-center sm:justify-between text-[10px] sm:text-[11px]">
             <span className="text-[#7F707A] font-medium">24h High</span>
             <span className="font-sans font-bold text-[#0C133D] tabular-nums">
               ${formatPrice(activeCoin.high)}
             </span>
           </div>
 
-          <div className="px-2.5 py-1.5 rounded-xl bg-white border border-outline-variant flex items-center justify-between text-[11px]">
+          <div className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-white border border-outline-variant flex flex-col sm:flex-row sm:items-center sm:justify-between text-[10px] sm:text-[11px]">
             <span className="text-[#7F707A] font-medium">24h Low</span>
             <span className="font-sans font-bold text-[#0C133D] tabular-nums">
               ${formatPrice(activeCoin.low)}
             </span>
           </div>
 
-          <div className="px-2.5 py-1.5 rounded-xl bg-white border border-outline-variant flex items-center justify-between text-[11px]">
+          <div className="px-2 sm:px-2.5 py-1.5 rounded-xl bg-white border border-outline-variant flex flex-col sm:flex-row sm:items-center sm:justify-between text-[10px] sm:text-[11px]">
             <span className="text-[#7F707A] font-medium">Volume</span>
             <span className="font-sans font-bold text-[#0C133D] tabular-nums">
               {activeCoin.volume > 1000 ? `${(activeCoin.volume / 1000).toFixed(1)}k` : activeCoin.volume.toFixed(0)}
@@ -353,21 +342,21 @@ export function ForexRates() {
   return (
     <Reveal
       as="section"
-      className="bg-surface-container-lowest text-on-surface p-3.5 sm:p-4 flex flex-col rounded-2xl relative overflow-hidden h-full border border-outline-variant shadow-xs"
+      className="bg-surface-container-lowest text-on-surface p-3.5 sm:p-4 flex flex-col rounded-2xl relative overflow-hidden min-h-[390px] h-[390px] lg:h-[420px] xl:h-[440px] border border-outline-variant shadow-xs w-full"
     >
       {/* Header Row */}
       <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-outline-variant shrink-0">
         <div className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="font-label-caps text-[11px] tracking-wider text-[#0C133D] font-extrabold uppercase">
+          <span className="font-label-caps text-[10px] sm:text-[11px] tracking-wider text-[#0C133D] font-extrabold uppercase">
             PKR Interbank & Open Rates
           </span>
         </div>
-        <span className="text-[10px] text-[#7F707A] font-medium">Real-Time SBP/Market Avg</span>
+        <span className="text-[9px] sm:text-[10px] text-[#7F707A] font-medium">Real-Time SBP/Market Avg</span>
       </div>
 
       {/* Table Headers */}
-      <div className="grid grid-cols-12 gap-2 px-2 py-1.5 bg-[#F2E7E1]/50 rounded-lg text-[10px] font-bold text-[#7F707A] uppercase tracking-wider shrink-0 mb-1.5">
+      <div className="grid grid-cols-12 gap-1 sm:gap-2 px-2 py-1.5 bg-[#F2E7E1]/50 rounded-lg text-[9px] sm:text-[10px] font-bold text-[#7F707A] uppercase tracking-wider shrink-0 mb-1.5">
         <span className="col-span-5">Currency</span>
         <span className="col-span-4 text-right">Buying (PKR)</span>
         <span className="col-span-3 text-right">Selling</span>
@@ -392,7 +381,7 @@ export function ForexRates() {
             return (
               <div
                 key={rate.currency || `${rate.base}-${rate.quote}` || idx}
-                className="grid grid-cols-12 items-center gap-2 px-2 py-2 sm:py-2.5 hover:bg-surface-container-low/60 rounded-lg transition-colors group"
+                className="grid grid-cols-12 items-center gap-1 sm:gap-2 px-2 py-2 hover:bg-surface-container-low/60 rounded-lg transition-colors group"
               >
                 <div className="col-span-5 flex items-center min-w-0">
                   <div className="truncate">

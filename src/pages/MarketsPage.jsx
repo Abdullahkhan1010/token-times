@@ -267,10 +267,10 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
               <h2 className="font-headline-lg text-xl sm:text-3xl font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors mb-3">
                 {leadMarket.title}
               </h2>
-              <p className="text-sm text-on-surface-variant leading-relaxed mb-4">
+              <p className="text-sm md:text-base text-on-surface-variant font-normal leading-relaxed mb-4">
                 {leadMarket.summary}
               </p>
-              <span className="text-xs font-data-tabular text-on-surface-variant pt-3 border-t border-outline-variant/40 block">
+              <span className="text-xs font-data-tabular text-on-surface-variant font-normal pt-3 border-t border-outline-variant/40 block">
                 By {leadMarket.author} • Live Markets
               </span>
             </div>
@@ -288,11 +288,11 @@ export default function MarketsPage({ onNavigate, onSelectArticle }) {
                 onClick={() => onSelectArticle?.(item)}
                 className="group cursor-pointer border-b border-outline-variant/40 pb-3 last:border-none"
               >
-                <span className="text-[10px] font-bold text-[#D4AF37] uppercase block mb-0.5">MARKETS WIRE</span>
+                <span className="font-label-caps text-[10px] font-bold text-[#D4AF37] uppercase block mb-0.5">MARKETS WIRE</span>
                 <h4 className="text-xs sm:text-sm font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors line-clamp-2">
                   {item.title}
                 </h4>
-                <span className="text-[10px] text-on-surface-variant block mt-1">
+                <span className="font-data-tabular text-[10px] text-on-surface-variant font-normal block mt-1">
                   {item.approx_time_to_read || 4} mins read
                 </span>
               </div>

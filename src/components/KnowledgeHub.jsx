@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Reveal from "./Reveal";
 import { getKnowlegeHubs } from "../services/knowlege-hub.service";
+import { BookOpen, ArrowRight } from "lucide-react";
 
-export default function KnowledgeHub() {
+export default function KnowledgeHub({ onNavigate }) {
   const [hubItems, setHubItems] = useState([]);
   const [statusMessage, setStatusMessage] = useState("");
 
@@ -30,14 +31,14 @@ export default function KnowledgeHub() {
           setStatusMessage("");
         } else {
           setHubItems([]);
-          setStatusMessage("failed to fetch knowledge hub");
+          setStatusMessage("No knowledge hub explainers available.");
         }
       })
       .catch((err) => {
         console.error("Failed to load Knowledge Hub entries", err);
         if (!active) return;
         setHubItems([]);
-        setStatusMessage("failed to fetch knowledge hub");
+        setStatusMessage("Failed to load knowledge hub.");
       });
 
     return () => {
@@ -45,30 +46,56 @@ export default function KnowledgeHub() {
     };
   }, []);
 
+  const handleOpenHub = (e) => {
+    e?.preventDefault?.();
+    if (onNavigate) {
+      onNavigate("Knowledge Hub");
+    }
+  };
+
   return (
     <section>
-      <Reveal as="h2" className="font-headline-lg text-headline-lg text-[#0C133D] section-header-border">
-        Knowledge Hub
-      </Reveal>
+      <div className="flex items-center justify-between section-header-border pb-2 mb-4">
+        <Reveal as="h2" className="font-headline-lg text-headline-lg text-[#0C133D] flex items-center gap-2 m-0 border-none pb-0">
+          <BookOpen size={20} className="text-[#D4AF37]" />
+          Knowledge Hub
+        </Reveal>
+        <button
+          type="button"
+          onClick={handleOpenHub}
+          className="text-xs font-bold text-[#0C133D] hover:text-[#D4AF37] flex items-center gap-1 transition-colors cursor-pointer"
+        >
+          View All Guides <ArrowRight size={14} />
+        </button>
+      </div>
+
       {statusMessage ? (
-        <p className="text-sm text-on-surface-variant">{statusMessage}</p>
+        <p className="text-sm text-on-surface-variant py-4">{statusMessage}</p>
       ) : (
         <div className="flex flex-col gap-4">
           {hubItems.map((item, i) => (
             <Reveal key={item.id || item.title + i} delay={i * 70} as="div">
-              <a
-                href="#"
-                className="group block hover-lift border border-outline-variant p-4 bg-surface-container-lowest"
-                style={{ textDecoration: "none" }}
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={handleOpenHub}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleOpenHub(e); }}
+                className="group block hover-lift border border-outline-variant rounded-xl p-4 bg-surface-container-lowest cursor-pointer shadow-xs hover:border-[#D4AF37] transition-all"
               >
-                <span className="font-label-caps text-label-caps text-on-surface-variant block mb-1">{item.eyebrow}</span>
-                <h3 className="font-headline-md text-headline-md text-on-surface group-hover:text-[#D4AF37] transition-colors mb-1">
+                <span className="font-label-caps text-[10px] font-extrabold text-[#D4AF37] block mb-1 uppercase tracking-wider">
+                  {item.eyebrow}
+                </span>
+                <h3 className="font-headline-md text-sm sm:text-base font-bold text-on-surface group-hover:text-[#D4AF37] transition-colors mb-1.5 leading-snug">
                   {item.title}
                 </h3>
-                <p className="font-body-md text-body-md text-on-surface-variant" style={{ fontSize: 14 }}>
+                <p className="font-body-md text-xs sm:text-sm text-on-surface-variant line-clamp-3 leading-relaxed">
                   {item.desc}
                 </p>
-              </a>
+                <div className="pt-2.5 mt-2.5 border-t border-outline-variant/30 flex items-center justify-between text-[11px] font-semibold text-[#0C133D] group-hover:text-[#D4AF37]">
+                  <span>Educational Explainer</span>
+                  <span className="flex items-center gap-1">Read Full Guide <ArrowRight size={12} /></span>
+                </div>
+              </div>
             </Reveal>
           ))}
         </div>

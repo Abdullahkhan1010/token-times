@@ -5,6 +5,7 @@ import { uploadFileToS3 } from "../../services/file.service";
 import { requestJson } from "../../services/api";
 import { getArticleClickStats } from "../../services/tracker.service";
 import PageHeader from "./PageHeader";
+import MediaUploadInput from "./MediaUploadInput";
 
 const DISPLAY_SECTIONS = [
     { value: "main_story", label: "Main Story", desc: "Hero top headline banner on homepage", icon: Newspaper },
@@ -34,6 +35,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
     const [summary, setSummary] = useState("");
     const [author, setAuthor] = useState("");
     const [imageFile, setImageFile] = useState(null);
+    const [imageUrl, setImageUrl] = useState("");
     const [approxTimeToRead, setApproxTimeToRead] = useState("");
     const [categoryStr, setCategoryStr] = useState("");
     const [tagsStr, setTagsStr] = useState("");
@@ -63,6 +65,9 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
             setTitle(draftData.title || "");
             setArticle(draftData.article || "");
             setSummary(draftData.summary || "");
+            if (draftData.image) {
+                setImageUrl(draftData.image);
+            }
 
             // Parse category array
             if (Array.isArray(draftData.category)) {
@@ -98,6 +103,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
         setSummary("");
         setAuthor("");
         setImageFile(null);
+        setImageUrl("");
         setApproxTimeToRead("");
         setCategoryStr("");
         setTagsStr("");
@@ -117,14 +123,20 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
         setSubmitting(true);
         setMessage(null);
 
-        if (!imageFile) {
-            setMessage({ type: "error", text: "Please select an image." });
+        if (!imageFile && (!imageUrl || !imageUrl.trim())) {
+            setMessage({ type: "error", text: "Please upload an image or provide an image link." });
             setSubmitting(false);
             return;
         }
 
         try {
-            const imageUpload = await uploadFileToS3(imageFile);
+            let finalImageKey = "";
+            if (imageFile) {
+                const imageUpload = await uploadFileToS3(imageFile);
+                finalImageKey = imageUpload.fileKey;
+            } else if (imageUrl && imageUrl.trim()) {
+                finalImageKey = imageUrl.trim();
+            }
 
             const parsedCategories = categoryStr.split(",").map((c) => c.trim()).filter(Boolean);
             const tagsArr = tagsStr.split(",").map((t) => t.trim()).filter(Boolean);
@@ -144,7 +156,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                 article,
                 summary,
                 author,
-                image: imageUpload.fileKey,
+                image: finalImageKey,
                 approx_time_to_read: parseInt(approxTimeToRead) || 0,
                 category: finalCategoryArr,
                 tags: tagsArr,
@@ -287,38 +299,20 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                         />
                     </div>
 
-                    {/* Image Upload */}
+                    {/* Image Upload / Link */}
                     <div className="md:col-span-2">
-                        <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-                            Article Cover Image <span className="text-rose-500">*</span>
-                        </label>
-
-                        <div
-                            onClick={() => imageInputRef.current?.click()}
-                            className="border-2 border-dashed border-outline-variant rounded-xl p-4 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
-                        >
-                            <input
-                                type="file"
-                                ref={imageInputRef}
-                                accept="image/*"
-                                required
-                                onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-                                className="hidden"
-                            />
-                            {imageFile ? (
-                                <div className="py-2 flex items-center justify-center gap-3 text-xs font-bold text-[#0C133D]">
-                                    <FileText size={20} className="text-[#D4AF37]" />
-                                    <span>{imageFile.name}</span>
-                                    <span className="text-[10px] uppercase font-bold text-[#D4AF37] ml-2">Change Image</span>
-                                </div>
-                            ) : (
-                                <div className="py-3 flex flex-col items-center gap-1.5">
-                                    <Upload size={24} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
-                                    <span className="text-xs font-bold text-[#0C133D]">Click to upload Article Cover Image</span>
-                                    <span className="text-[11px] text-on-surface-variant">PNG, JPG, WebP up to 5MB</span>
-                                </div>
-                            )}
-                        </div>
+                        <MediaUploadInput
+                            label="Article Cover Image"
+                            required
+                            file={imageFile}
+                            onFileChange={setImageFile}
+                            url={imageUrl}
+                            onUrlChange={setImageUrl}
+                            accept="image/*"
+                            mediaType="image"
+                            placeholder="https://images.unsplash.com/... or paste direct article image URL"
+                            helperText="PNG, JPG, WebP up to 5MB or direct HTTPS image link"
+                        />
                     </div>
 
                     {/* Category */}

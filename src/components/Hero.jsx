@@ -80,17 +80,17 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
                 <span className="font-label-caps text-xs font-black text-white bg-[#B22222] px-2.5 py-1 rounded mb-2.5 inline-block uppercase tracking-wider shadow-sm">
                   {getSingleCleanTag(activeTopStory, "MARKETS")}
                 </span>
-                <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#B22222] transition-colors text-base sm:text-lg lg:text-xl font-extrabold leading-snug mb-3">
+                <h3 className="text-base sm:text-lg lg:text-xl font-bold text-[#0C133D] group-hover:text-[#B22222] transition-colors leading-snug mb-3">
                   {activeTopStory.title}
                 </h3>
                 {activeTopStory.summary && (
-                  <p className="text-xs sm:text-sm text-on-surface-variant line-clamp-4 lg:line-clamp-5 mb-4 leading-relaxed font-medium">
+                  <p className="text-xs sm:text-sm text-on-surface-variant font-normal line-clamp-4 lg:line-clamp-5 mb-4 leading-relaxed">
                     {activeTopStory.summary}
                   </p>
                 )}
               </div>
-              <div className="flex items-center justify-between font-data-tabular text-xs text-on-surface-variant pt-2.5 border-t border-outline-variant/40 mt-auto">
-                <span className="font-medium">By {activeTopStory.author || "Editorial Desk"} • {activeTopStory.time || `${activeTopStory.approx_time_to_read || 4} mins read`}</span>
+              <div className="flex items-center justify-between font-data-tabular text-xs text-on-surface-variant font-normal pt-2.5 border-t border-outline-variant/40 mt-auto">
+                <span>By {activeTopStory.author || "Editorial Desk"} • {activeTopStory.time || `${activeTopStory.approx_time_to_read || 4} mins read`}</span>
                 <span className="text-[#B22222] font-black text-xs shrink-0 ml-2 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">Read Story →</span>
               </div>
             </div>
@@ -121,11 +121,11 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
                 <span className="font-label-caps text-[9px] font-bold text-[#D4AF37] mb-0.5 block uppercase">
                   {getSingleCleanTag(s, "NEWS")}
                 </span>
-                <h4 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-xs font-semibold leading-snug line-clamp-2">
+                <h4 className="text-xs sm:text-sm font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug line-clamp-2">
                   {s.title}
                 </h4>
               </div>
-              <span className="font-data-tabular text-[9px] text-on-surface-variant pt-1 mt-1 border-t border-outline-variant/20">
+              <span className="font-data-tabular text-[9px] text-on-surface-variant font-normal pt-1 mt-1 border-t border-outline-variant/20">
                 {s.time || `${s.approx_time_to_read || 3} mins read`}
               </span>
             </Reveal>
@@ -168,7 +168,7 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
                 loading="eager"
               />
             ) : (
-              <div className="w-full h-full bg-[#0C133D] flex items-center justify-center text-[#D4AF37] font-headline-md text-center p-4">
+              <div className="w-full h-full bg-[#0C133D] flex items-center justify-center text-[#D4AF37] font-bold text-center p-4">
                 <span>Token Times • Lead Story</span>
               </div>
             )}
@@ -183,10 +183,10 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
             <h2 className="font-headline-lg text-lg sm:text-xl md:text-2xl font-bold mb-2 text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-tight">
               {safeMainStory?.title || "Featured story"}
             </h2>
-            <p className="font-body-md text-body-md text-on-surface-variant mb-4 flex-grow line-clamp-3">
+            <p className="text-xs sm:text-sm text-on-surface-variant font-normal mb-4 flex-grow line-clamp-3 leading-relaxed">
               {safeMainStory?.summary || ""}
             </p>
-            <div className="flex items-center justify-between text-xs text-on-surface-variant font-data-tabular pt-3 border-t border-outline-variant/40 mt-auto">
+            <div className="flex items-center justify-between text-xs text-on-surface-variant font-data-tabular font-normal pt-3 border-t border-outline-variant/40 mt-auto">
               <span>By {safeMainStory?.author || "Editorial Desk"} • {safeMainStory?.approx_time_to_read || 4} mins read</span>
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-[#0C133D] text-[#D4AF37] font-bold text-xs group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all">
                 Read Story →
@@ -231,10 +231,10 @@ export default function Hero({ featuredspotlight = [], substories = [], mainStor
 
               {/* Compact Text Content Below Picture */}
               <div className="p-3.5 flex flex-col flex-grow justify-between">
-                <h3 className="font-headline-md text-[#0C133D] group-hover:text-[#D4AF37] transition-colors text-xs sm:text-sm font-semibold leading-snug mb-2 line-clamp-2">
+                <h3 className="text-xs sm:text-sm font-bold text-[#0C133D] group-hover:text-[#D4AF37] transition-colors leading-snug mb-2 line-clamp-2">
                   {art.title}
                 </h3>
-                <div className="flex items-center justify-between text-[11px] text-on-surface-variant font-data-tabular pt-2 border-t border-outline-variant/30 mt-auto">
+                <div className="flex items-center justify-between text-[11px] text-on-surface-variant font-data-tabular font-normal pt-2 border-t border-outline-variant/30 mt-auto">
                   <span>{art.approx_time_to_read} mins read</span>
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#0C133D] text-[#F7F0EB] font-bold text-[11px] group-hover:bg-[#D4AF37] group-hover:text-[#0C133D] transition-all">
                     Read →

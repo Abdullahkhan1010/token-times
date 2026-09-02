@@ -81,12 +81,12 @@ export default function Interviews() {
           <p className="text-xs text-on-surface-variant">Loading columnists & interviews...</p>
         ) : interviewList.length > 0 ? (
           interviewList.map((iv) => (
-            <article key={iv.id} className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex gap-3 items-center hover:border-[#D4AF37] transition-all cursor-pointer group h-[76px]">
+            <article key={iv.id} className="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl flex gap-3 items-center hover:border-[#D4AF37] transition-all cursor-pointer group min-h-[76px]">
               {iv.interviewee_image ? (
                 <div className="relative shrink-0">
                   <img
                     alt={iv.interviewee_name || "Columnist"}
-                    className="w-11 h-11 rounded-full object-cover border-2 border-[#D4AF37] shadow-sm"
+                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-full object-cover border-2 border-[#D4AF37] shadow-sm"
                     src={iv.interviewee_image}
                   />
                   <span className="absolute -bottom-1 -right-1 bg-[#0C133D] text-[#D4AF37] text-[8px] font-extrabold px-1 rounded border border-[#D4AF37]/40">
@@ -94,7 +94,7 @@ export default function Interviews() {
                   </span>
                 </div>
               ) : (
-                <div className="w-11 h-11 rounded-full bg-[#0C133D] text-[#D4AF37] border-2 border-[#D4AF37] flex items-center justify-center font-bold text-[10px] shrink-0">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-[#0C133D] text-[#D4AF37] border-2 border-[#D4AF37] flex items-center justify-center font-bold text-[10px] shrink-0">
                   COLUMN
                 </div>
               )}

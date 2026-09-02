@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import MediaUploadInput from "./MediaUploadInput";
+import { uploadFileToS3 } from "../../services/file.service";
 
 export default function EditArticleModal({ article, onClose, onSave }) {
   const [form, setForm] = useState(article);
+  const [imageFile, setImageFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState(article?.image || "");
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => setForm(article), [article]);
+  useEffect(() => {
+    setForm(article);
+    setImageUrl(article?.image || "");
+    setImageFile(null);
+  }, [article]);
 
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && onClose?.();
@@ -15,6 +24,23 @@ export default function EditArticleModal({ article, onClose, onSave }) {
   if (!article || !form) return null;
 
   const update = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      let finalImage = imageUrl;
+      if (imageFile) {
+        const uploaded = await uploadFileToS3(imageFile);
+        finalImage = uploaded.fileKey;
+      }
+      onSave?.({ ...form, image: finalImage });
+    } catch (err) {
+      console.error("Failed to save image in edit modal", err);
+      onSave?.({ ...form, image: imageUrl });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div
@@ -67,20 +93,34 @@ export default function EditArticleModal({ article, onClose, onSave }) {
               />
             </Field>
           </div>
+
+          <MediaUploadInput
+            label="Article Cover Image"
+            file={imageFile}
+            onFileChange={setImageFile}
+            url={imageUrl}
+            onUrlChange={setImageUrl}
+            accept="image/*"
+            mediaType="image"
+            placeholder="https://... or direct image URL"
+            helperText="Upload image or provide direct image link"
+          />
         </div>
 
         <div className="flex justify-end gap-3 px-6 py-4 border-t border-outline-variant">
           <button
             onClick={onClose}
+            disabled={saving}
             className="font-label-caps text-label-caps px-4 py-2 border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors"
           >
             Cancel
           </button>
           <button
-            onClick={() => onSave?.(form)}
+            onClick={handleSave}
+            disabled={saving}
             className="font-label-caps text-label-caps px-4 py-2 bg-accent text-on-accent hover:bg-accent-dark transition-colors"
           >
-            Save Changes
+            {saving ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </div>

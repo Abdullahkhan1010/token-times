@@ -2,11 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { FileText, Plus, Trash2, BookOpen, CheckCircle2, AlertCircle } from "lucide-react";
 import { getResearches, postResearch, deleteResearch } from "../../services/research.service";
 import { uploadFileToS3, ToHref } from "../../services/file.service";
-
 import PageHeader from "./PageHeader";
+import MediaUploadInput from "./MediaUploadInput";
 
 export default function ResearchAdmin() {
-  const fileInputRef = React.useRef(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -16,6 +15,7 @@ export default function ResearchAdmin() {
   const [author, setAuthor] = useState("");
   const [publishDate, setPublishDate] = useState("");
   const [file, setFile] = useState(null);
+  const [fileUrl, setFileUrl] = useState("");
 
   const loadData = async () => {
     setLoading(true);
@@ -27,7 +27,6 @@ export default function ResearchAdmin() {
           item.file = link;
         }
       }
-      console.log(data);
       setItems(data);
     } catch (err) {
       console.error("Failed to load research papers", err);
@@ -43,28 +42,36 @@ export default function ResearchAdmin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title || !author) return;
+
+    if (!file && (!fileUrl || !fileUrl.trim())) {
+      setMessage({ type: "error", text: "Please select a file to upload or provide a document link." });
+      return;
+    }
+
     setSubmitting(true);
     setMessage(null);
 
-    if (!file) {
-      setMessage({ type: "error", text: "Please select a file to upload." });
-      setSubmitting(false);
-      return;
-    }
     try {
-      const [fileUpload] = await Promise.all([uploadFileToS3(file)]);
+      let finalFileKey = "";
+      if (file) {
+        const [fileUpload] = await Promise.all([uploadFileToS3(file)]);
+        finalFileKey = fileUpload.fileKey;
+      } else if (fileUrl && fileUrl.trim()) {
+        finalFileKey = fileUrl.trim();
+      }
 
       await postResearch({
         title,
         author,
         publish_date: publishDate || new Date().toISOString().split("T")[0],
-        file: fileUpload.fileKey,
+        file: finalFileKey,
       });
       setMessage({ type: "success", text: "Research paper added successfully!" });
       setTitle("");
       setAuthor("");
       setPublishDate("");
       setFile(null);
+      setFileUrl("");
       await loadData();
     } catch (err) {
       setMessage({ type: "error", text: err.message || "Failed to create research paper." });
@@ -124,7 +131,7 @@ export default function ResearchAdmin() {
             />
           </div>
 
-          <div>
+          <div className="md:col-span-2">
             <label className="block text-xs font-semibold text-on-surface-variant mb-1">Publish Date</label>
             <input
               type="date"
@@ -135,38 +142,19 @@ export default function ResearchAdmin() {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant mb-1.5">
-              Research Report PDF Attachment <span className="text-rose-500">*</span>
-            </label>
-
-            <div
-              onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-outline-variant rounded-xl p-4 text-center bg-surface-bright hover:bg-surface-container-low hover:border-[#D4AF37] transition-all cursor-pointer group"
-            >
-              <input
-                type="file"
-                ref={fileInputRef}
-                accept=".pdf"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-                className="hidden"
-              />
-              {file ? (
-                <div className="py-2 flex items-center justify-center gap-3 text-xs font-bold text-[#0C133D]">
-                  <BookOpen size={22} className="text-[#D4AF37]" />
-                  <span>{file.name}</span>
-                  <span className="text-[11px] font-normal text-on-surface-variant">
-                    ({(file.size / (1024 * 1024)).toFixed(2)} MB)
-                  </span>
-                  <span className="text-[10px] uppercase font-bold text-[#D4AF37] ml-2">Change File</span>
-                </div>
-              ) : (
-                <div className="py-3 flex flex-col items-center gap-1.5">
-                  <BookOpen size={24} className="text-[#D4AF37] group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-bold text-[#0C133D]">Click to upload Research Report PDF</span>
-                  <span className="text-[11px] text-on-surface-variant">PDF Document up to 10MB</span>
-                </div>
-              )}
-            </div>
+            <MediaUploadInput
+              label="Research Report PDF Attachment"
+              required
+              file={file}
+              onFileChange={setFile}
+              url={fileUrl}
+              onUrlChange={setFileUrl}
+              accept="application/pdf,.pdf"
+              mediaType="file"
+              icon={BookOpen}
+              placeholder="https://.../research.pdf or direct PDF document link"
+              helperText="PDF Document up to 10MB or direct document URL"
+            />
           </div>
         </div>
 
