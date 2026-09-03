@@ -67,7 +67,7 @@ export async function login({ emailOrUsername, password, rememberMe = true }) {
     }
 
     const payload = {
-        email: emailOrUsername.includes("@") ? emailOrUsername.trim() : undefined,
+        email: emailOrUsername.trim(),
         password: password,
     };
 
@@ -82,31 +82,31 @@ export async function login({ emailOrUsername, password, rememberMe = true }) {
         });
     } catch (err) {
         requestError = err;
-        console.warn("Backend /auth/login authentication returned an error or is not fully configured yet:", err.message);
+        console.warn("Backend /auth/login authentication error:", err.message);
     }
 
     // Extract token if backend returned JWT or user record
-    const token = responseData?.access_token
-    const user = responseData?.user
+    const token = responseData?.access_token;
+    const user = responseData?.user;
 
     // Save session
-    setAuthSession({ token, user, rememberMe });
-    if (!token || !user) {
-        return {
-            success: false,
-            token,
-            user,
-            serverAck: Boolean(responseData && !requestError),
-        };
-    } else {
+    if (token && user) {
+        setAuthSession({ token, user, rememberMe });
         return {
             success: true,
             token,
             user,
             serverAck: true,
         };
+    } else {
+        return {
+            success: false,
+            token,
+            user,
+            serverAck: Boolean(responseData && !requestError),
+            error: requestError?.message || "Invalid email or password",
+        };
     }
-
 }
 
 /**
