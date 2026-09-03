@@ -1,10 +1,13 @@
 /**
  * Token Times - REIT Service
  * Manages dynamic content and configuration for the REIT & Asset Tokenization page.
- * Frontend persistence via localStorage, ready for REST API integration.
+ * Synchronizes with backend REST API (/reit) with localStorage caching & fallback.
  */
 
+import { requestJson } from './api';
+
 const REIT_STORAGE_KEY = "token_times_reit_page_content";
+const REIT_API_PATH = "/reit";
 
 export const DEFAULT_REIT_CONTENT = {
   heroLandmark: {
@@ -16,7 +19,7 @@ export const DEFAULT_REIT_CONTENT = {
     description:
       "Dolmen City REIT represents Pakistan's premier listed rental REIT, offering investors exposure to top-tier commercial retail and corporate real estate in Karachi. With SECP's regulatory sandbox for digital asset tokenization, assets like Dolmen Mall can be digitized into micro-fractional security tokens, allowing both local retail investors and overseas Pakistanis to invest directly from digital wallets.",
     image:
-      "https://images.unsplash.com/photo-1567449303078-57ad995bd301?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
     annualYield: "11.8% - 13.5%",
     mallOccupancy: "98.4%",
     assetArea: "3.5M+ Sq. Ft",
@@ -108,8 +111,30 @@ export const DEFAULT_REIT_CONTENT = {
   },
 };
 
+function sanitizeContent(raw) {
+  if (!raw || typeof raw !== "object") return DEFAULT_REIT_CONTENT;
+  return {
+    ...DEFAULT_REIT_CONTENT,
+    ...raw,
+    heroLandmark: {
+      ...DEFAULT_REIT_CONTENT.heroLandmark,
+      ...(raw.heroLandmark || {}),
+    },
+    simulatorConfig: {
+      ...DEFAULT_REIT_CONTENT.simulatorConfig,
+      ...(raw.simulatorConfig || {}),
+    },
+    pakistanFeatures: Array.isArray(raw.pakistanFeatures)
+      ? raw.pakistanFeatures
+      : DEFAULT_REIT_CONTENT.pakistanFeatures,
+    globalApplications: Array.isArray(raw.globalApplications)
+      ? raw.globalApplications
+      : DEFAULT_REIT_CONTENT.globalApplications,
+  };
+}
+
 /**
- * Retrieves the current REIT page content from localStorage or default fallback
+ * Retrieves the current REIT page content synchronously from localStorage or default fallback
  */
 export function getReitContent() {
   if (typeof window === "undefined") {
@@ -119,18 +144,7 @@ export function getReitContent() {
     const raw = localStorage.getItem(REIT_STORAGE_KEY);
     if (!raw) return DEFAULT_REIT_CONTENT;
     const parsed = JSON.parse(raw);
-    return {
-      ...DEFAULT_REIT_CONTENT,
-      ...parsed,
-      heroLandmark: {
-        ...DEFAULT_REIT_CONTENT.heroLandmark,
-        ...(parsed.heroLandmark || {}),
-      },
-      simulatorConfig: {
-        ...DEFAULT_REIT_CONTENT.simulatorConfig,
-        ...(parsed.simulatorConfig || {}),
-      },
-    };
+    return sanitizeContent(parsed);
   } catch (err) {
     console.warn("Failed to parse stored REIT content", err);
     return DEFAULT_REIT_CONTENT;
@@ -138,36 +152,73 @@ export function getReitContent() {
 }
 
 /**
- * Saves updated REIT page content to localStorage
+ * Asynchronously fetches live REIT page content from the backend REST API
  */
-export function saveReitContent(updatedContent) {
-  if (typeof window === "undefined") return updatedContent;
+export async function fetchReitContent() {
   try {
-    const payload = {
-      ...DEFAULT_REIT_CONTENT,
-      ...updatedContent,
-    };
-    localStorage.setItem(REIT_STORAGE_KEY, JSON.stringify(payload));
-    // Trigger custom event so open views can update reactively
-    window.dispatchEvent(new Event("reit-content-updated"));
-    return payload;
+    const data = await requestJson(REIT_API_PATH);
+    if (data && typeof data === "object") {
+      const sanitized = sanitizeContent(data);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(REIT_STORAGE_KEY, JSON.stringify(sanitized));
+        window.dispatchEvent(new Event("reit-content-updated"));
+      }
+      return sanitized;
+    }
   } catch (err) {
-    console.error("Failed to save REIT content", err);
-    throw err;
+    console.warn("Could not fetch REIT content from backend, using local/default:", err);
+  }
+  return getReitContent();
+}
+
+/**
+ * Saves updated REIT page content to backend API and updates local cache
+ */
+export async function saveReitContent(updatedContent) {
+  const payload = sanitizeContent(updatedContent);
+
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(REIT_STORAGE_KEY, JSON.stringify(payload));
+      window.dispatchEvent(new Event("reit-content-updated"));
+    } catch (e) {}
+  }
+
+  try {
+    const result = await requestJson(REIT_API_PATH, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    const finalSanitized = sanitizeContent(result || payload);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(REIT_STORAGE_KEY, JSON.stringify(finalSanitized));
+      window.dispatchEvent(new Event("reit-content-updated"));
+    }
+    return finalSanitized;
+  } catch (err) {
+    console.warn("Failed to persist REIT content to backend API, saved locally:", err);
+    return payload;
   }
 }
 
 /**
- * Resets REIT page content to original factory defaults
+ * Resets REIT page content to original factory defaults via backend API
  */
-export function resetReitContent() {
-  if (typeof window === "undefined") return DEFAULT_REIT_CONTENT;
+export async function resetReitContent() {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.removeItem(REIT_STORAGE_KEY);
+      window.dispatchEvent(new Event("reit-content-updated"));
+    } catch (e) {}
+  }
+
   try {
-    localStorage.removeItem(REIT_STORAGE_KEY);
-    window.dispatchEvent(new Event("reit-content-updated"));
-    return DEFAULT_REIT_CONTENT;
+    const result = await requestJson(`${REIT_API_PATH}/reset`, {
+      method: "POST",
+    });
+    return sanitizeContent(result || DEFAULT_REIT_CONTENT);
   } catch (err) {
-    console.error("Failed to reset REIT content", err);
+    console.warn("Failed to reset REIT content on backend, resetting locally:", err);
     return DEFAULT_REIT_CONTENT;
   }
 }

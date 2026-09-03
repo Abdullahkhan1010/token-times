@@ -23,7 +23,7 @@ import {
 import SEOHead from "../components/SEOHead";
 import Breadcrumbs from "../components/Breadcrumbs";
 import Reveal from "../components/Reveal";
-import { getReitContent } from "../services/reit.service";
+import { getReitContent, fetchReitContent } from "../services/reit.service";
 import { getPublishedNews } from "../services/published-news.service";
 import { ToImageUrl } from "../services/file.service";
 import LazyImage from "../components/LazyImage";
@@ -48,14 +48,22 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
 
   // Sync dynamic REIT content from storage & listen for live admin updates
   useEffect(() => {
+    let active = true;
     const updateContent = () => {
       const fresh = getReitContent();
-      setReitContent(fresh);
+      if (active) setReitContent(fresh);
     };
 
     updateContent();
+    fetchReitContent().then((fresh) => {
+      if (active && fresh) setReitContent(fresh);
+    }).catch(() => {});
+
     window.addEventListener("reit-content-updated", updateContent);
-    return () => window.removeEventListener("reit-content-updated", updateContent);
+    return () => {
+      active = false;
+      window.removeEventListener("reit-content-updated", updateContent);
+    };
   }, []);
 
   // Resolve hero image S3/URL & preload
@@ -178,7 +186,7 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
             src={
               resolvedHeroImg ||
               heroLandmark?.image ||
-              "https://images.unsplash.com/photo-1567449303078-57ad995bd301?q=80&w=1000&auto=format&fit=crop"
+              "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop"
             }
             alt={heroLandmark?.title || "Landmark Commercial Real Estate"}
             loading="eager"

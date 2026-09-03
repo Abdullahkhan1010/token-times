@@ -18,6 +18,7 @@ import PageHeader from "./PageHeader";
 import MediaUploadInput from "./MediaUploadInput";
 import {
   getReitContent,
+  fetchReitContent,
   saveReitContent,
   resetReitContent,
   DEFAULT_REIT_CONTENT,
@@ -33,9 +34,18 @@ export default function ReitAdmin() {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
-  // Reload content on mount
+  // Reload content on mount from backend
   useEffect(() => {
-    setContent(getReitContent());
+    let active = true;
+    (async () => {
+      try {
+        const fresh = await fetchReitContent();
+        if (active && fresh) setContent(fresh);
+      } catch (err) {
+        console.warn("Failed to fetch fresh REIT content in admin", err);
+      }
+    })();
+    return () => { active = false; };
   }, []);
 
   const handleHeroChange = (field, value) => {
@@ -188,8 +198,8 @@ export default function ReitAdmin() {
         }
       }
 
-      saveReitContent(finalContent);
-      setContent(finalContent);
+      const saved = await saveReitContent(finalContent);
+      setContent(saved || finalContent);
       setImageFile(null);
       setImagePreview(null);
 
@@ -211,7 +221,7 @@ export default function ReitAdmin() {
   };
 
   // Reset to original factory defaults
-  const handleReset = () => {
+  const handleReset = async () => {
     if (
       !window.confirm(
         "Are you sure you want to reset all REIT page content to original factory defaults?"
@@ -219,15 +229,23 @@ export default function ReitAdmin() {
     ) {
       return;
     }
-    const fresh = resetReitContent();
-    setContent(fresh);
-    setImageFile(null);
-    setImagePreview(null);
-    setMessage({
-      type: "success",
-      text: "REIT page configuration has been restored to factory defaults.",
-    });
-    setTimeout(() => setMessage(null), 6000);
+    try {
+      const fresh = await resetReitContent();
+      setContent(fresh);
+      setImageFile(null);
+      setImagePreview(null);
+      setMessage({
+        type: "success",
+        text: "REIT page configuration has been restored to factory defaults.",
+      });
+      setTimeout(() => setMessage(null), 6000);
+    } catch (err) {
+      console.error("Failed to reset REIT content", err);
+      setMessage({
+        type: "error",
+        text: err.message || "Failed to reset REIT content.",
+      });
+    }
   };
 
   return (
