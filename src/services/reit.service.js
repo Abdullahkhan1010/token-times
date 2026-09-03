@@ -18,8 +18,7 @@ export const DEFAULT_REIT_CONTENT = {
     heading: "Transforming Pakistan's Commercial Property via Tokenized Yields",
     description:
       "Dolmen City REIT represents Pakistan's premier listed rental REIT, offering investors exposure to top-tier commercial retail and corporate real estate in Karachi. With SECP's regulatory sandbox for digital asset tokenization, assets like Dolmen Mall can be digitized into micro-fractional security tokens, allowing both local retail investors and overseas Pakistanis to invest directly from digital wallets.",
-    image:
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop",
+    image: "",
     annualYield: "11.8% - 13.5%",
     mallOccupancy: "98.4%",
     assetArea: "3.5M+ Sq. Ft",

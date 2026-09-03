@@ -182,17 +182,19 @@ export default function ReitPage({ onNavigate, onSelectArticle }) {
         className="bg-surface-container-lowest border-2 border-[#D4AF37]/40 rounded-2xl overflow-hidden shadow-lg grid grid-cols-1 lg:grid-cols-12 gap-8 p-6 sm:p-8 relative"
       >
         <div className="lg:col-span-6 relative rounded-xl overflow-hidden min-h-[280px] sm:min-h-[340px] bg-[#0C133D]/10">
-          <img
-            src={
-              resolvedHeroImg ||
-              heroLandmark?.image ||
-              "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop"
-            }
-            alt={heroLandmark?.title || "Landmark Commercial Real Estate"}
-            loading="eager"
-            decoding="async"
-            className="w-full h-full object-cover"
-          />
+          {(resolvedHeroImg || heroLandmark?.image) ? (
+            <img
+              src={resolvedHeroImg || heroLandmark?.image}
+              alt={heroLandmark?.title || "Landmark Commercial Real Estate"}
+              loading="eager"
+              decoding="async"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-[#D4AF37]/50 bg-[#0C133D]/20">
+              <Building2 className="w-16 h-16 mb-2" />
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0C133D]/95 via-[#0C133D]/40 to-transparent flex flex-col justify-end p-6">
             <span className="bg-[#D4AF37] text-[#0C133D] text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider w-max mb-2 shadow">
               {heroLandmark?.badge || "PAKISTAN LANDMARK REIT"}
