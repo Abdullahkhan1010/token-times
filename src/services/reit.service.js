@@ -154,10 +154,17 @@ export function getReitContent() {
  * Asynchronously fetches live REIT page content from the backend REST API
  */
 export async function fetchReitContent() {
+  const local = getReitContent();
   try {
-    const data = await requestJson(REIT_API_PATH);
+    const data = await requestJson(REIT_API_PATH, { noCache: true });
     if (data && typeof data === "object") {
       const sanitized = sanitizeContent(data);
+
+      // Preserve local image if backend returned empty image but local has one
+      if (!sanitized.heroLandmark?.image && local.heroLandmark?.image) {
+        sanitized.heroLandmark.image = local.heroLandmark.image;
+      }
+
       if (typeof window !== "undefined") {
         localStorage.setItem(REIT_STORAGE_KEY, JSON.stringify(sanitized));
         window.dispatchEvent(new Event("reit-content-updated"));
@@ -167,7 +174,7 @@ export async function fetchReitContent() {
   } catch (err) {
     console.warn("Could not fetch REIT content from backend, using local/default:", err);
   }
-  return getReitContent();
+  return local;
 }
 
 /**
