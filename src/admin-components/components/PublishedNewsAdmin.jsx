@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Newspaper, Plus, Trash2, FileText, CheckCircle2, AlertCircle, Archive, X, Upload, Sparkles, Pin, Star, Zap, Building2, Globe, BookOpen } from "lucide-react";
+import { Newspaper, Plus, Trash2, FileText, CheckCircle2, AlertCircle, Archive, X, Upload, Sparkles, Pin, Star, Zap, Building2, Globe, BookOpen, Pencil } from "lucide-react";
 import { getPublishedNews, postPublishedNews, putPublishedNews, deletePublishedNews, archivePublishedNews } from "../../services/published-news.service";
 import { uploadFileToS3 } from "../../services/file.service";
 import { requestJson } from "../../services/api";
@@ -28,6 +28,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
     const [submitting, setSubmitting] = useState(false);
     const [message, setMessage] = useState(null);
     const [draftId, setDraftId] = useState(null);
+    const [editingId, setEditingId] = useState(null);
 
     // Form fields
     const [title, setTitle] = useState("");
@@ -61,6 +62,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
     useEffect(() => {
         // Populate form with draft data when provided
         if (draftData) {
+            setEditingId(null);
             setDraftId(draftData.id);
             setTitle(draftData.title || "");
             setArticle(draftData.article || "");
@@ -114,6 +116,55 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
         }
     };
 
+    const handleEdit = (item) => {
+        setEditingId(item.id);
+        setDraftId(null);
+        setTitle(item.title || "");
+        setArticle(item.article || "");
+        setSummary(item.summary || "");
+        setAuthor(item.author || "");
+        setApproxTimeToRead(item.approx_time_to_read ? String(item.approx_time_to_read) : "");
+        setImageUrl(item.image || "");
+        setImageFile(null);
+
+        if (Array.isArray(item.category)) {
+            setCategoryStr(item.category.join(", "));
+        } else if (typeof item.category === "string") {
+            setCategoryStr(item.category);
+        } else {
+            setCategoryStr("");
+        }
+
+        if (Array.isArray(item.tags)) {
+            setTagsStr(item.tags.join(", "));
+        } else if (typeof item.tags === "string") {
+            setTagsStr(item.tags);
+        } else {
+            setTagsStr("");
+        }
+
+        if (Array.isArray(item.headlines)) {
+            setHeadlinesStr(item.headlines.join(", "));
+        } else if (typeof item.headlines === "string") {
+            setHeadlinesStr(item.headlines);
+        } else {
+            setHeadlinesStr("");
+        }
+
+        if (Array.isArray(item.display_section)) {
+            setDisplaySections(item.display_section);
+        } else {
+            setDisplaySections([]);
+        }
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        resetForm();
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!title || !article || !summary || !author) {
@@ -151,7 +202,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                 ? Array.from(new Set([...displaySections, "reit_stream", "REIT"]))
                 : displaySections;
 
-            await postPublishedNews({
+            const articleData = {
                 title,
                 article,
                 summary,
@@ -162,29 +213,39 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                 tags: tagsArr,
                 headlines: headlinesArr,
                 display_section: finalDisplaySections,
-            });
+            };
 
-            // If this was from a draft, delete the draft
-            if (draftId) {
-                try {
-                    await requestJson(`/news/drafts/${draftId}`, { method: 'DELETE' });
-                } catch (draftErr) {
-                    console.error('Failed to delete draft:', draftErr);
+            if (editingId) {
+                await putPublishedNews(editingId, articleData);
+                setMessage({ type: "success", text: "Published news updated successfully!" });
+                setEditingId(null);
+                resetForm();
+                await loadData();
+            } else {
+                await postPublishedNews(articleData);
+
+                // If this was from a draft, delete the draft
+                if (draftId) {
+                    try {
+                        await requestJson(`/news/drafts/${draftId}`, { method: 'DELETE' });
+                    } catch (draftErr) {
+                        console.error('Failed to delete draft:', draftErr);
+                    }
+                }
+
+                setMessage({ type: "success", text: "Published news created successfully!" });
+                resetForm();
+                setDraftId(null);
+
+                // If onPublishComplete callback is provided, call it (for draft workflow)
+                if (onPublishComplete) {
+                    setTimeout(() => onPublishComplete(), 500);
+                } else {
+                    await loadData();
                 }
             }
-
-            setMessage({ type: "success", text: "Published news created successfully!" });
-            resetForm();
-            setDraftId(null);
-
-            // If onPublishComplete callback is provided, call it (for draft workflow)
-            if (onPublishComplete) {
-                setTimeout(() => onPublishComplete(), 500);
-            } else {
-                await loadData();
-            }
         } catch (err) {
-            setMessage({ type: "error", text: err.message || "Failed to create published news." });
+            setMessage({ type: "error", text: err.message || `Failed to ${editingId ? "update" : "create"} published news.` });
         } finally {
             setSubmitting(false);
         }
@@ -195,6 +256,9 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
         try {
             await deletePublishedNews(id);
             setItems((prev) => prev.filter((item) => item.id !== id));
+            if (editingId === id) {
+                handleCancelEdit();
+            }
             setMessage({ type: "success", text: "Published news deleted." });
         } catch (err) {
             setMessage({ type: "error", text: "Failed to delete published news." });
@@ -222,11 +286,41 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
             >
             </PageHeader>
 
-            {/* Add New Form */}
+            {/* Add / Edit Form */}
             <form onSubmit={handleSubmit} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 space-y-4 shadow-sm">
-                <h3 className="text-base font-bold text-on-surface flex items-center gap-2">
-                    <Plus size={18} className="text-accent" /> {draftId ? "Publish News from Draft" : "Add Published News"}
-                </h3>
+                <div className="flex items-center justify-between">
+                    <h3 className="text-base font-bold text-on-surface flex items-center gap-2">
+                        {editingId ? (
+                            <>
+                                <Pencil size={18} className="text-accent" /> Edit Published News
+                            </>
+                        ) : draftId ? (
+                            <>
+                                <Plus size={18} className="text-accent" /> Publish News from Draft
+                            </>
+                        ) : (
+                            <>
+                                <Plus size={18} className="text-accent" /> Add Published News
+                            </>
+                        )}
+                    </h3>
+                    {editingId && (
+                        <button
+                            type="button"
+                            onClick={handleCancelEdit}
+                            className="text-xs text-on-surface-variant hover:text-on-surface flex items-center gap-1 font-semibold px-2.5 py-1 rounded border border-outline-variant hover:bg-surface-container-high transition-colors"
+                        >
+                            <X size={14} /> Cancel Edit
+                        </button>
+                    )}
+                </div>
+
+                {editingId && (
+                    <div className="text-xs text-on-surface-variant bg-accent/10 border border-accent/20 rounded px-3 py-2 flex items-center justify-between">
+                        <span>Editing existing article: modify the details below and click <strong>"Update Published News"</strong> to apply changes live.</span>
+                    </div>
+                )}
+
                 {draftId && (
                     <p className="text-xs text-on-surface-variant bg-accent/10 border border-accent/20 rounded px-3 py-2">
                         Editing draft: Fill in the remaining fields and click "Publish News" to publish this article.
@@ -335,7 +429,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                                     onClick={() => {
                                         const parts = categoryStr.split(",").map(c => c.trim()).filter(Boolean);
                                         if (!parts.includes(preset)) {
-                                            setCategoryStr(parts.length ? `${categoryStr}, ${preset}` : preset);
+                                             setCategoryStr(parts.length ? `${categoryStr}, ${preset}` : preset);
                                         }
                                         if (preset === "REIT & PropTech" && !displaySections.includes("reit")) {
                                             setDisplaySections(prev => [...prev, "reit"]);
@@ -376,7 +470,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                         />
                     </div>
 
-                    {/* Display Section Selection Grid - Matching Create Article Studio */}
+                    {/* Display Section Selection Grid */}
                     <div className="md:col-span-2 space-y-3">
                         <div className="flex items-center justify-between border-b border-outline-variant pb-2">
                             <label className="block text-xs font-bold uppercase tracking-wider text-on-surface-variant">
@@ -428,7 +522,18 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                 </div>
 
                 <div className="flex justify-end gap-3 pt-2">
-                    {draftId && onCancel && (
+                    {editingId && (
+                        <button
+                            type="button"
+                            onClick={handleCancelEdit}
+                            disabled={submitting}
+                            className="px-5 py-2.5 bg-surface-container-low text-on-surface border border-outline-variant font-label-caps text-xs font-bold rounded hover:bg-surface-container-high transition-opacity disabled:opacity-50 flex items-center gap-2"
+                        >
+                            <X size={16} />
+                            Cancel Edit
+                        </button>
+                    )}
+                    {draftId && onCancel && !editingId && (
                         <button
                             type="button"
                             onClick={onCancel}
@@ -444,7 +549,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                         disabled={submitting}
                         className="px-5 py-2.5 bg-primary text-on-primary font-label-caps text-xs font-bold rounded hover:opacity-90 transition-opacity disabled:opacity-50"
                     >
-                        {submitting ? "Saving..." : (draftId ? "Publish News" : "Create Published News")}
+                        {submitting ? "Saving..." : (editingId ? "Update Published News" : (draftId ? "Publish News" : "Create Published News"))}
                     </button>
                 </div>
             </form>
@@ -507,10 +612,17 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                                         </td>
                                         <td className="py-3 px-3 text-right">
                                             <div className="flex items-center justify-end gap-2">
+                                                <button
+                                                    onClick={() => handleEdit(item)}
+                                                    className="text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-50 transition-colors"
+                                                    title="Edit News"
+                                                >
+                                                    <Pencil size={16} />
+                                                </button>
                                                 {item.status !== "archived" && (
                                                     <button
                                                         onClick={() => handleArchive(item.id)}
-                                                        className="text-orange-500 hover:text-orange-700 p-1 rounded"
+                                                        className="text-orange-500 hover:text-orange-700 p-1 rounded hover:bg-orange-50 transition-colors"
                                                         title="Archive"
                                                     >
                                                         <Archive size={16} />
@@ -518,7 +630,7 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
                                                 )}
                                                 <button
                                                     onClick={() => handleDelete(item.id)}
-                                                    className="text-red-500 hover:text-red-700 p-1 rounded"
+                                                    className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition-colors"
                                                     title="Delete"
                                                 >
                                                     <Trash2 size={16} />
@@ -534,5 +646,4 @@ export default function PublishedNewsAdmin({ draftData = null, onPublishComplete
             </div>
         </div>
     );
-
 }

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Archive, ExternalLink } from "lucide-react";
+import { Archive, ExternalLink, Pencil, Trash2 } from "lucide-react";
 import PageHeader from "./PageHeader";
 import ArticleTable from "./ArticleTable";
+import EditArticleModal from "./EditArticleModal";
 import { getArticleClickStats } from "../../services/tracker.service";
+import { putPublishedNews, deletePublishedNews } from "../../services/published-news.service";
 
 const fmtDate = (iso) => {
   if (!iso) return "Recently";
@@ -12,7 +14,8 @@ const fmtDate = (iso) => {
     : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 };
 
-export default function Published({ articles = [], onArchive }) {
+export default function Published({ articles = [], onArchive, onRefresh }) {
+  const [editingArticle, setEditingArticle] = useState(null);
   const [articleClicks, setArticleClicks] = useState({});
 
   useEffect(() => {
@@ -36,6 +39,35 @@ export default function Published({ articles = [], onArchive }) {
       0;
 
     return Math.max(clicksFromTracking, r.view_count || r.views || r.clicks || 0);
+  };
+
+  const handleEdit = (row) => {
+    setEditingArticle(row);
+  };
+
+  const handleSaveEdit = async (updatedFields) => {
+    if (!editingArticle?.id) return;
+    try {
+      await putPublishedNews(editingArticle.id, updatedFields);
+      setEditingArticle(null);
+      if (onRefresh) {
+        onRefresh();
+      }
+    } catch (err) {
+      console.error("Failed to update article:", err);
+    }
+  };
+
+  const handleDelete = async (row) => {
+    if (!window.confirm(`Are you sure you want to delete "${row.title || 'this article'}"?`)) return;
+    try {
+      await deletePublishedNews(row.id);
+      if (onRefresh) {
+        onRefresh();
+      }
+    } catch (err) {
+      console.error("Failed to delete article:", err);
+    }
   };
 
   const columns = [
@@ -92,9 +124,34 @@ export default function Published({ articles = [], onArchive }) {
             },
             tone: "accent"
           },
-          { label: "Move to archive", icon: Archive, onClick: onArchive, tone: "error" },
+          {
+            label: "Edit article",
+            icon: Pencil,
+            onClick: handleEdit,
+            tone: "neutral"
+          },
+          {
+            label: "Move to archive",
+            icon: Archive,
+            onClick: onArchive,
+            tone: "neutral"
+          },
+          {
+            label: "Delete article",
+            icon: Trash2,
+            onClick: handleDelete,
+            tone: "error"
+          },
         ]}
       />
+
+      {editingArticle && (
+        <EditArticleModal
+          article={editingArticle}
+          onClose={() => setEditingArticle(null)}
+          onSave={handleSaveEdit}
+        />
+      )}
     </>
   );
 }

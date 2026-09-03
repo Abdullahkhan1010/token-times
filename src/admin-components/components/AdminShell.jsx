@@ -204,6 +204,16 @@ export default function AdminShell() {
     }
   };
 
+  const handleRefreshPublished = async () => {
+    try {
+      const data = await getPublishedNews();
+      const filtered = (data || []).filter((item) => item.status === "published");
+      setPublished(filtered);
+    } catch (err) {
+      console.error('Could not refresh published news', err);
+    }
+  };
+
   const handlePublishComplete = async () => {
     // Reload published news and queue after publishing
     try {
@@ -296,7 +306,13 @@ export default function AdminShell() {
           />
         )}
 
-        {page === "published" && <Published articles={published} onArchive={handleArchive} />}
+        {page === "published" && (
+          <Published
+            articles={published}
+            onArchive={handleArchive}
+            onRefresh={handleRefreshPublished}
+          />
+        )}
 
         {page === "published-news" && (
           <PublishedNewsAdmin
